@@ -28,6 +28,12 @@
  */
 #define MIN_WRITEBACK_PAGES	(4096UL >> (PAGE_CACHE_SHIFT - 10))
 
+
+/*
+ * 4MB minimal write chunk size
+ */
+#define MIN_WRITEBACK_PAGES	(4096UL >> (PAGE_CACHE_SHIFT - 10))
+
 struct backing_dev_info;
 
 /*
@@ -73,7 +79,7 @@ struct writeback_control {
 	 */
 	loff_t range_start;
 	loff_t range_end;
-    
+
 	unsigned for_kupdate:1;		/* A kupdate writeback */
 	unsigned for_background:1;	/* A background writeback */
 	unsigned tagged_writepages:1;	/* tag-and-write to avoid livelock */
@@ -95,6 +101,7 @@ int writeback_inodes_sb_nr_if_idle(struct super_block *, unsigned long nr,
 void sync_inodes_sb(struct super_block *);
 long writeback_inodes_wb(struct bdi_writeback *wb, long nr_pages,
                          enum wb_reason reason);
+long writeback_inodes_wb(struct bdi_writeback *wb, long nr_pages);
 long wb_do_writeback(struct bdi_writeback *wb, int force_wait);
 void wakeup_flusher_threads(long nr_pages, enum wb_reason reason);
 
@@ -168,6 +175,13 @@ void __bdi_update_bandwidth(struct backing_dev_info *bdi,
                             unsigned long bdi_thresh,
                             unsigned long bdi_dirty,
                             unsigned long start_time);
+
+void __bdi_update_bandwidth(struct backing_dev_info *bdi,
+			    unsigned long thresh,
+			    unsigned long dirty,
+			    unsigned long bdi_thresh,
+			    unsigned long bdi_dirty,
+			    unsigned long start_time);
 
 void page_writeback_init(void);
 void balance_dirty_pages_ratelimited_nr(struct address_space *mapping,

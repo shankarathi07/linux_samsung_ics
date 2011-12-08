@@ -87,6 +87,9 @@ static int bdi_debug_stats_show(struct seq_file *m, void *v)
     nr_more_io++;
 	spin_unlock(&wb->list_lock);
     
+		nr_more_io++;
+	spin_unlock(&wb->list_lock);
+
 	global_dirty_limits(&background_thresh, &dirty_thresh);
 	bdi_thresh = bdi_dirty_limit(bdi, dirty_thresh);
     
@@ -117,6 +120,29 @@ static int bdi_debug_stats_show(struct seq_file *m, void *v)
                nr_io,
                nr_more_io,
                !list_empty(&bdi->bdi_list), bdi->state);
+		   "BdiWriteback:       %10lu kB\n"
+		   "BdiReclaimable:     %10lu kB\n"
+		   "BdiDirtyThresh:     %10lu kB\n"
+		   "DirtyThresh:        %10lu kB\n"
+		   "BackgroundThresh:   %10lu kB\n"
+		   "BdiWritten:         %10lu kB\n"
+		   "BdiWriteBandwidth:  %10lu kBps\n"
+		   "b_dirty:            %10lu\n"
+		   "b_io:               %10lu\n"
+		   "b_more_io:          %10lu\n"
+		   "bdi_list:           %10u\n"
+		   "state:              %10lx\n",
+		   (unsigned long) K(bdi_stat(bdi, BDI_WRITEBACK)),
+		   (unsigned long) K(bdi_stat(bdi, BDI_RECLAIMABLE)),
+		   K(bdi_thresh),
+		   K(dirty_thresh),
+		   K(background_thresh),
+		   (unsigned long) K(bdi_stat(bdi, BDI_WRITTEN)),
+		   (unsigned long) K(bdi->write_bandwidth),
+		   nr_dirty,
+		   nr_io,
+		   nr_more_io,
+		   !list_empty(&bdi->bdi_list), bdi->state);
 #undef K
     
 	return 0;
@@ -501,6 +527,40 @@ static int bdi_forker_thread(void *ptr)
                 
             case NO_ACTION:
                 if (!wb_has_dirty_io(me) || !dirty_writeback_interval)
+		case FORK_THREAD:
+			__set_current_state(TASK_RUNNING);
+			task = kthread_create(bdi_writeback_thread, &bdi->wb,
+					      "flush-%s", dev_name(bdi->dev));
+			if (IS_ERR(task)) {
+				/*
+				 * If thread creation fails, force writeout of
+				 * the bdi from the thread. Hopefully 1024 is
+				 * large enough for efficient IO.
+				 */
+				writeback_inodes_wb(&bdi->wb, 1024);
+			} else {
+				/*
+				 * The spinlock makes sure we do not lose
+				 * wake-ups when racing with 'bdi_queue_work()'.
+				 * And as soon as the bdi thread is visible, we
+				 * can start it.
+				 */
+				spin_lock_bh(&bdi->wb_lock);
+				bdi->wb.task = task;
+				spin_unlock_bh(&bdi->wb_lock);
+				wake_up_process(task);
+			}
+			bdi_clear_pending(bdi);
+			break;
+
+		case KILL_THREAD:
+			__set_current_state(TASK_RUNNING);
+			kthread_stop(task);
+			bdi_clear_pending(bdi);
+			break;
+
+		case NO_ACTION:
+			if (!wb_has_dirty_io(me) || !dirty_writeback_interval)
 				/*
 				 * There are no dirty data. The only thing we
 				 * should now care about is checking for
@@ -513,6 +573,11 @@ static int bdi_forker_thread(void *ptr)
                     schedule_timeout(msecs_to_jiffies(dirty_writeback_interval * 10));
                 try_to_freeze();
                 break;
+				schedule_timeout(bdi_longest_inactive());
+			else
+				schedule_timeout(msecs_to_jiffies(dirty_writeback_interval * 10));
+			try_to_freeze();
+			break;
 		}
 	}
     
@@ -527,7 +592,7 @@ static void bdi_remove_from_list(struct backing_dev_info *bdi)
 	spin_lock_bh(&bdi_lock);
 	list_del_rcu(&bdi->bdi_list);
 	spin_unlock_bh(&bdi_lock);
-    
+
 	synchronize_rcu_expedited();
 }
 
@@ -692,6 +757,13 @@ int bdi_init(struct backing_dev_info *bdi)
 	bdi->write_bandwidth = INIT_BW;
 	bdi->avg_write_bandwidth = INIT_BW;
     
+
+	bdi->bw_time_stamp = jiffies;
+	bdi->written_stamp = 0;
+
+	bdi->write_bandwidth = INIT_BW;
+	bdi->avg_write_bandwidth = INIT_BW;
+
 	err = prop_local_init_percpu(&bdi->completions);
     
 	if (err) {
@@ -714,7 +786,7 @@ void bdi_destroy(struct backing_dev_info *bdi)
 	 */
 	if (bdi_has_dirty_io(bdi)) {
 		struct bdi_writeback *dst = &default_backing_dev_info.wb;
-        
+
 		bdi_lock_two(&bdi->wb, dst);
 		list_splice(&bdi->wb.b_dirty, &dst->b_dirty);
 		list_splice(&bdi->wb.b_io, &dst->b_io);
