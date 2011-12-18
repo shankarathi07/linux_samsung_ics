@@ -43,11 +43,25 @@ static struct vibrator {
 	struct work_struct work;
 } vibdata;
 
+#ifdef CONFIG_CPU_DIDLE
+static bool vibrator_running = false;
+
+bool vibrator_is_running(void)
+{
+    return vibrator_running;
+}
+EXPORT_SYMBOL(vibrator_is_running);
+#endif
+
 static void herring_vibrator_off(void)
 {
 	pwm_disable(vibdata.pwm_dev);
 	gpio_direction_output(GPIO_VIBTONE_EN1, GPIO_LEVEL_LOW);
 	wake_unlock(&vibdata.wklock);
+    
+#ifdef CONFIG_CPU_DIDLE
+	vibrator_running = false;
+#endif
 }
 
 static int herring_vibrator_get_time(struct timed_output_dev *dev)
@@ -56,34 +70,38 @@ static int herring_vibrator_get_time(struct timed_output_dev *dev)
 		ktime_t r = hrtimer_get_remaining(&vibdata.timer);
 		return ktime_to_ms(r);
 	}
-
+    
 	return 0;
 }
 
 static void herring_vibrator_enable(struct timed_output_dev *dev, int value)
 {
 	mutex_lock(&vibdata.lock);
-
+    
 	/* cancel previous timer and set GPIO according to value */
 	hrtimer_cancel(&vibdata.timer);
 	cancel_work_sync(&vibdata.work);
 	if (value) {
+#ifdef CONFIG_CPU_DIDLE
+		vibrator_running = true;
+#endif
+        
 		wake_lock(&vibdata.wklock);
 		pwm_config(vibdata.pwm_dev, PWM_DUTY, PWM_PERIOD);
 		pwm_enable(vibdata.pwm_dev);
 		gpio_direction_output(GPIO_VIBTONE_EN1, GPIO_LEVEL_HIGH);
-
+        
 		if (value > 0) {
 			if (value > MAX_TIMEOUT)
 				value = MAX_TIMEOUT;
-
+            
 			hrtimer_start(&vibdata.timer,
-				ns_to_ktime((u64)value * NSEC_PER_MSEC),
-				HRTIMER_MODE_REL);
+                          ns_to_ktime((u64)value * NSEC_PER_MSEC),
+                          HRTIMER_MODE_REL);
 		}
 	} else
 		herring_vibrator_off();
-
+    
 	mutex_unlock(&vibdata.lock);
 }
 
@@ -107,7 +125,7 @@ static void herring_vibrator_work(struct work_struct *work)
 static int __init herring_init_vibrator(void)
 {
 	int ret = 0;
-
+    
 #ifdef CONFIG_MACH_HERRING
 	if (!machine_is_herring())
 		return 0;
@@ -115,28 +133,28 @@ static int __init herring_init_vibrator(void)
 	hrtimer_init(&vibdata.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 	vibdata.timer.function = herring_vibrator_timer_func;
 	INIT_WORK(&vibdata.work, herring_vibrator_work);
-
+    
 	ret = gpio_request(GPIO_VIBTONE_EN1, "vibrator-en");
 	if (ret < 0)
 		return ret;
-
+    
 	s3c_gpio_cfgpin(GPIO_VIBTONE_PWM, GPD0_TOUT_1);
-
+    
 	vibdata.pwm_dev = pwm_request(1, "vibrator-pwm");
 	if (IS_ERR(vibdata.pwm_dev)) {
 		ret = PTR_ERR(vibdata.pwm_dev);
 		goto err_pwm_req;
 	}
-
+    
 	wake_lock_init(&vibdata.wklock, WAKE_LOCK_SUSPEND, "vibrator");
 	mutex_init(&vibdata.lock);
-
+    
 	ret = timed_output_dev_register(&to_dev);
 	if (ret < 0)
 		goto err_to_dev_reg;
-
+    
 	return 0;
-
+    
 err_to_dev_reg:
 	mutex_destroy(&vibdata.lock);
 	wake_lock_destroy(&vibdata.wklock);
