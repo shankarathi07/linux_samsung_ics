@@ -59,3 +59,5 @@ obj-$(CONFIG_USB_SWITCH_FSA9480)	+= fsa9480.o
 obj-$(CONFIG_SAMSUNG_MODEMCTL) += samsung_modemctl/
 obj-$(CONFIG_GENERIC_BLN)	+= bln.o
 obj-$(CONFIG_BLD)		+= bld.o
+obj-$(CONFIG_BLX)		+= blx.o
+obj-$(CONFIG_LIVE_OC)		+= live_oc.o

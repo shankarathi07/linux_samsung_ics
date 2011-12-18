@@ -607,4 +607,16 @@ config BLD
        help
          Say Y here to enable Backlight Dimmer
 
+config BLX
+       bool "Support for Battery Life eXtender"
+       default y
+       help
+         Say Y here to enable Battery Life eXtender
+
+config LIVE_OC
+       bool "Support for Live OC"
+       default y
+       help
+         Say Y here to enable Live OC
+
 endif # MISC_DEVICES
