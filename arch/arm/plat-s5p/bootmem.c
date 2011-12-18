@@ -97,10 +97,13 @@ void s5p_reserve_bootmem(struct s5p_media_device *mdevs,
 	struct s5p_media_device *mdev;
 	u64 start, end;
 	int i, ret;
+<<<<<<< HEAD
 
 #ifdef CONFIG_S5PV210_BIGMEM
 	dma_addr_t mfc_paddr;
 #endif
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	media_devs = mdevs;
 	nr_media_devs = nr_mdevs;
@@ -113,11 +116,14 @@ void s5p_reserve_bootmem(struct s5p_media_device *mdevs,
 		if (mdev->memsize <= 0)
 			continue;
 
+<<<<<<< HEAD
 #ifdef CONFIG_S5PV210_BIGMEM
 		if (!strcmp(mdev->name, "jpeg"))
 			mdev->paddr = mfc_paddr;
 		else
 #endif
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		if (!mdev->paddr) {
 			start = meminfo.bank[mdev->bank].start;
 			end = start + meminfo.bank[mdev->bank].size;
@@ -137,11 +143,14 @@ void s5p_reserve_bootmem(struct s5p_media_device *mdevs,
 		if (media_base[mdev->bank] > mdev->paddr)
 			media_base[mdev->bank] = mdev->paddr;
 
+<<<<<<< HEAD
 #ifdef CONFIG_S5PV210_BIGMEM
 		if (!strcmp(mdev->name, "mfc") && mdev->bank == 0)
 		    mfc_paddr = mdev->paddr;
 #endif
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		printk(KERN_INFO "s5p: %lu bytes system memory reserved "
 			"for %s at 0x%08x, %d-bank base(0x%08x)\n",
 			(unsigned long) mdev->memsize, mdev->name, mdev->paddr,

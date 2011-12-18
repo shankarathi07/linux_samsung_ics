@@ -28,7 +28,10 @@
 #include <linux/cpu.h>
 #include <linux/completion.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/sched.h>
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #include <linux/syscore_ops.h>
 
 #include <trace/events/power.h>
@@ -323,11 +326,19 @@ static int cpufreq_parse_governor(char *str_governor, unsigned int *policy,
 
 		if (t == NULL) {
 			int ret;
+<<<<<<< HEAD
 
 			mutex_unlock(&cpufreq_governor_mutex);
 			ret = request_module("cpufreq_%s", str_governor);
 			mutex_lock(&cpufreq_governor_mutex);
 
+=======
+
+			mutex_unlock(&cpufreq_governor_mutex);
+			ret = request_module("cpufreq_%s", str_governor);
+			mutex_lock(&cpufreq_governor_mutex);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			if (ret == 0)
 				t = __find_governor(str_governor);
 		}

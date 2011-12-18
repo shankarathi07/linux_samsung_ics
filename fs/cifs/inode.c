@@ -474,12 +474,21 @@ static int cifs_sfu_mode(struct cifs_fattr *fattr, const unsigned char *path,
 	__u32 mode;
 	struct tcon_link *tlink;
 	struct cifs_tcon *tcon;
+<<<<<<< HEAD
 
 	tlink = cifs_sb_tlink(cifs_sb);
 	if (IS_ERR(tlink))
 		return PTR_ERR(tlink);
 	tcon = tlink_tcon(tlink);
 
+=======
+
+	tlink = cifs_sb_tlink(cifs_sb);
+	if (IS_ERR(tlink))
+		return PTR_ERR(tlink);
+	tcon = tlink_tcon(tlink);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	rc = CIFSSMBQAllEAs(xid, tcon, path, "SETFILEBITS",
 			    ea_value, 4 /* size of buf */, cifs_sb->local_nls,
 			    cifs_sb->mnt_cifs_flags &
@@ -896,12 +905,21 @@ struct inode *cifs_root_iget(struct super_block *sb)
 		inode = ERR_PTR(rc);
 		goto out;
 	}
+<<<<<<< HEAD
 
 #ifdef CONFIG_CIFS_FSCACHE
 	/* populate tcon->resource_id */
 	tcon->resource_id = CIFS_I(inode)->uniqueid;
 #endif
 
+=======
+
+#ifdef CONFIG_CIFS_FSCACHE
+	/* populate tcon->resource_id */
+	tcon->resource_id = CIFS_I(inode)->uniqueid;
+#endif
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (rc && tcon->ipc) {
 		cFYI(1, "ipc connection - fake read inode");
 		inode->i_mode |= S_IFDIR;
@@ -1802,6 +1820,7 @@ int cifs_getattr(struct vfsmount *mnt, struct dentry *dentry,
 			mapping_set_error(inode->i_mapping, rc);
 			return rc;
 		}
+<<<<<<< HEAD
 	}
 
 	rc = cifs_revalidate_dentry_attr(dentry);
@@ -1824,6 +1843,30 @@ int cifs_getattr(struct vfsmount *mnt, struct dentry *dentry,
 		if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_OVERR_GID))
 			stat->gid = current_fsgid();
 	}
+=======
+	}
+
+	rc = cifs_revalidate_dentry_attr(dentry);
+	if (rc)
+		return rc;
+
+	generic_fillattr(inode, stat);
+	stat->blksize = CIFS_MAX_MSGSIZE;
+	stat->ino = CIFS_I(inode)->uniqueid;
+
+	/*
+	 * If on a multiuser mount without unix extensions, and the admin hasn't
+	 * overridden them, set the ownership to the fsuid/fsgid of the current
+	 * process.
+	 */
+	if ((cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MULTIUSER) &&
+	    !tcon->unix_ext) {
+		if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_OVERR_UID))
+			stat->uid = current_fsuid();
+		if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_OVERR_GID))
+			stat->gid = current_fsgid();
+	}
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return rc;
 }
 

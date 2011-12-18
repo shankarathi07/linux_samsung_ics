@@ -188,6 +188,7 @@ static void nfs4_file_put_fd(struct nfs4_file *fp, int oflag)
 static void __nfs4_file_put_access(struct nfs4_file *fp, int oflag)
 {
 	if (atomic_dec_and_test(&fp->fi_access[oflag])) {
+<<<<<<< HEAD
 		nfs4_file_put_fd(fp, oflag);
 		/*
 		 * It's also safe to get rid of the RDWR open *if*
@@ -197,6 +198,10 @@ static void __nfs4_file_put_access(struct nfs4_file *fp, int oflag)
 		if (fp->fi_fds[1-oflag]
 			|| atomic_read(&fp->fi_access[1 - oflag]) == 0)
 			nfs4_file_put_fd(fp, O_RDWR);
+=======
+		nfs4_file_put_fd(fp, O_RDWR);
+		nfs4_file_put_fd(fp, oflag);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 }
 
@@ -701,6 +706,7 @@ static __be32 nfsd4_new_conn_from_crses(struct svc_rqst *rqstp, struct nfsd4_ses
 
 	return nfsd4_new_conn(rqstp, ses, dir);
 }
+<<<<<<< HEAD
 
 /* must be called under client_lock */
 static void nfsd4_del_conns(struct nfsd4_session *s)
@@ -714,10 +720,26 @@ static void nfsd4_del_conns(struct nfsd4_session *s)
 		list_del_init(&c->cn_persession);
 		spin_unlock(&clp->cl_lock);
 
+=======
+
+/* must be called under client_lock */
+static void nfsd4_del_conns(struct nfsd4_session *s)
+{
+	struct nfs4_client *clp = s->se_client;
+	struct nfsd4_conn *c;
+
+	spin_lock(&clp->cl_lock);
+	while (!list_empty(&s->se_conns)) {
+		c = list_first_entry(&s->se_conns, struct nfsd4_conn, cn_persession);
+		list_del_init(&c->cn_persession);
+		spin_unlock(&clp->cl_lock);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		unregister_xpt_user(c->cn_xprt, &c->cn_xpt_user);
 		free_conn(c);
 
 		spin_lock(&clp->cl_lock);
+<<<<<<< HEAD
 	}
 	spin_unlock(&clp->cl_lock);
 }
@@ -762,6 +784,52 @@ static struct nfsd4_session *alloc_init_session(struct svc_rqst *rqstp, struct n
 		nfsd4_put_drc_mem(slotsize, fchan->maxreqs);
 		return NULL;
 	}
+=======
+	}
+	spin_unlock(&clp->cl_lock);
+}
+
+void free_session(struct kref *kref)
+{
+	struct nfsd4_session *ses;
+	int mem;
+
+	ses = container_of(kref, struct nfsd4_session, se_ref);
+	nfsd4_del_conns(ses);
+	spin_lock(&nfsd_drc_lock);
+	mem = ses->se_fchannel.maxreqs * slot_bytes(&ses->se_fchannel);
+	nfsd_drc_mem_used -= mem;
+	spin_unlock(&nfsd_drc_lock);
+	free_session_slots(ses);
+	kfree(ses);
+}
+
+static struct nfsd4_session *alloc_init_session(struct svc_rqst *rqstp, struct nfs4_client *clp, struct nfsd4_create_session *cses)
+{
+	struct nfsd4_session *new;
+	struct nfsd4_channel_attrs *fchan = &cses->fore_channel;
+	int numslots, slotsize;
+	int status;
+	int idx;
+
+	/*
+	 * Note decreasing slot size below client's request may
+	 * make it difficult for client to function correctly, whereas
+	 * decreasing the number of slots will (just?) affect
+	 * performance.  When short on memory we therefore prefer to
+	 * decrease number of slots instead of their size.
+	 */
+	slotsize = nfsd4_sanitize_slot_size(fchan->maxresp_cached);
+	numslots = nfsd4_get_drc_mem(slotsize, fchan->maxreqs);
+	if (numslots < 1)
+		return NULL;
+
+	new = alloc_session(slotsize, numslots);
+	if (!new) {
+		nfsd4_put_drc_mem(slotsize, fchan->maxreqs);
+		return NULL;
+	}
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	init_forechannel_attrs(&new->se_fchannel, fchan, numslots, slotsize);
 
 	new->se_client = clp;
@@ -1910,7 +1978,11 @@ nfsd4_setclientid(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	 * of 5 bullet points, labeled as CASE0 - CASE4 below.
 	 */
 	unconf = find_unconfirmed_client_by_str(dname, strhashval);
+<<<<<<< HEAD
 	status = nfserr_jukebox;
+=======
+	status = nfserr_resource;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!conf) {
 		/*
 		 * RFC 3530 14.2.33 CASE 4:
@@ -3388,9 +3460,14 @@ static inline void nfs4_file_downgrade(struct nfs4_stateid *stp, unsigned int to
 	int i;
 
 	for (i = 1; i < 4; i++) {
+<<<<<<< HEAD
 		if (test_bit(i, &stp->st_access_bmap)
 					&& ((i & to_access) != i)) {
 			nfs4_file_put_access(stp->st_file, nfs4_access_to_omode(i));
+=======
+		if (test_bit(i, &stp->st_access_bmap) && !(i & to_access)) {
+			nfs4_file_put_access(stp->st_file, i);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			__clear_bit(i, &stp->st_access_bmap);
 		}
 	}

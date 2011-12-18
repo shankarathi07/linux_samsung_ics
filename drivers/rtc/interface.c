@@ -301,6 +301,7 @@ int rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
 	int err;
 
 	err = mutex_lock_interruptible(&rtc->ops_lock);
+<<<<<<< HEAD
 	if (err)
 		return err;
 	if (rtc->ops == NULL)
@@ -321,6 +322,47 @@ EXPORT_SYMBOL_GPL(rtc_read_alarm);
 static int ___rtc_set_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
 {
 	int err;
+=======
+	if (err)
+		return err;
+	if (rtc->ops == NULL)
+		err = -ENODEV;
+	else if (!rtc->ops->read_alarm)
+		err = -EINVAL;
+	else {
+		memset(alarm, 0, sizeof(struct rtc_wkalrm));
+		alarm->enabled = rtc->aie_timer.enabled;
+		alarm->time = rtc_ktime_to_tm(rtc->aie_timer.node.expires);
+	}
+	mutex_unlock(&rtc->ops_lock);
+
+	return err;
+}
+EXPORT_SYMBOL_GPL(rtc_read_alarm);
+
+static int __rtc_set_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
+{
+	struct rtc_time tm;
+	long now, scheduled;
+	int err;
+
+	err = rtc_valid_tm(&alarm->time);
+	if (err)
+		return err;
+	rtc_tm_to_time(&alarm->time, &scheduled);
+
+	/* Make sure we're not setting alarms in the past */
+	err = __rtc_read_time(rtc, &tm);
+	rtc_tm_to_time(&tm, &now);
+	if (scheduled <= now)
+		return -ETIME;
+	/*
+	 * XXX - We just checked to make sure the alarm time is not
+	 * in the past, but there is still a race window where if
+	 * the is alarm set for the next second and the second ticks
+	 * over right here, before we set the alarm.
+	 */
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	if (!rtc->ops)
 		err = -ENODEV;
@@ -332,6 +374,7 @@ static int ___rtc_set_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
 	return err;
 }
 
+<<<<<<< HEAD
 static int __rtc_set_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
 {
 	struct rtc_time tm;
@@ -358,6 +401,8 @@ static int __rtc_set_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
 	return ___rtc_set_alarm(rtc, alarm);
 }
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 int rtc_set_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
 {
 	int err;
@@ -769,6 +814,7 @@ static int rtc_timer_enqueue(struct rtc_device *rtc, struct rtc_timer *timer)
 	return 0;
 }
 
+<<<<<<< HEAD
 static void rtc_alarm_disable(struct rtc_device *rtc)
 {
 	struct rtc_wkalrm alarm;
@@ -783,6 +829,8 @@ static void rtc_alarm_disable(struct rtc_device *rtc)
 	___rtc_set_alarm(rtc, &alarm);
 }
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 /**
  * rtc_timer_remove - Removes a rtc_timer from the rtc_device timerqueue
  * @rtc rtc device
@@ -804,10 +852,15 @@ static void rtc_timer_remove(struct rtc_device *rtc, struct rtc_timer *timer)
 		struct rtc_wkalrm alarm;
 		int err;
 		next = timerqueue_getnext(&rtc->timerqueue);
+<<<<<<< HEAD
 		if (!next) {
 			rtc_alarm_disable(rtc);
 			return;
 		}
+=======
+		if (!next)
+			return;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		alarm.time = rtc_ktime_to_tm(next->expires);
 		alarm.enabled = 1;
 		err = __rtc_set_alarm(rtc, &alarm);
@@ -869,8 +922,12 @@ again:
 		err = __rtc_set_alarm(rtc, &alarm);
 		if (err == -ETIME)
 			goto again;
+<<<<<<< HEAD
 	} else
 		rtc_alarm_disable(rtc);
+=======
+	}
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	mutex_unlock(&rtc->ops_lock);
 }

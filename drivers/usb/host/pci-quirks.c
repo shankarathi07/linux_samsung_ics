@@ -626,7 +626,11 @@ static void __devinit quirk_usb_disable_ehci(struct pci_dev *pdev)
 	void __iomem *base, *op_reg_base;
 	u32	hcc_params, cap, val;
 	u8	offset, cap_length;
+<<<<<<< HEAD
 	int	wait_time, count = 256/4;
+=======
+	int	wait_time, delta, count = 256/4;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	if (!mmio_resource_enabled(pdev, 0))
 		return;

@@ -2270,9 +2270,15 @@ void /* __init_or_exit */ regulatory_exit(void)
 	mutex_lock(&cfg80211_mutex);
 	mutex_lock(&reg_mutex);
 
+<<<<<<< HEAD
 	reset_regdomains(true);
 
 	dev_set_uevent_suppress(&reg_pdev->dev, true);
+=======
+	reset_regdomains();
+
+	kfree(last_request);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	platform_device_unregister(reg_pdev);
 

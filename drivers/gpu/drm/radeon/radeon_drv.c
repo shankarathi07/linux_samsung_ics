@@ -117,7 +117,10 @@ int radeon_audio = 0;
 int radeon_disp_priority = 0;
 int radeon_hw_i2c = 0;
 int radeon_pcie_gen2 = 0;
+<<<<<<< HEAD
 int radeon_msi = -1;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 MODULE_PARM_DESC(no_wb, "Disable AGP writeback for scratch registers");
 module_param_named(no_wb, radeon_no_wb, int, 0444);
@@ -164,9 +167,12 @@ module_param_named(hw_i2c, radeon_hw_i2c, int, 0444);
 MODULE_PARM_DESC(pcie_gen2, "PCIE Gen2 mode (1 = enable)");
 module_param_named(pcie_gen2, radeon_pcie_gen2, int, 0444);
 
+<<<<<<< HEAD
 MODULE_PARM_DESC(msi, "MSI support (1 = enable, 0 = disable, -1 = auto)");
 module_param_named(msi, radeon_msi, int, 0444);
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 static int radeon_suspend(struct drm_device *dev, pm_message_t state)
 {
 	drm_radeon_private_t *dev_priv = dev->dev_private;

@@ -124,8 +124,11 @@
 
 extern int w1_ds2780_io(struct device *dev, char *buf, int addr, size_t count,
 			int io);
+<<<<<<< HEAD
 extern int w1_ds2780_io_nolock(struct device *dev, char *buf, int addr,
 			size_t count, int io);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 extern int w1_ds2780_eeprom_cmd(struct device *dev, int addr, int cmd);
 
 #endif /* !_W1_DS2780_H */

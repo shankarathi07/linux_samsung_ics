@@ -363,6 +363,7 @@ static int __init find_min_common_depth(void)
 		}
 
 		depth = distance_ref_points[1];
+<<<<<<< HEAD
 	}
 
 	/*
@@ -375,6 +376,20 @@ static int __init find_min_common_depth(void)
 		distance_ref_points_depth = MAX_DISTANCE_REF_POINTS;
 	}
 
+=======
+	}
+
+	/*
+	 * Warn and cap if the hardware supports more than
+	 * MAX_DISTANCE_REF_POINTS domains.
+	 */
+	if (distance_ref_points_depth > MAX_DISTANCE_REF_POINTS) {
+		printk(KERN_WARNING "NUMA: distance array capped at "
+			"%d entries\n", MAX_DISTANCE_REF_POINTS);
+		distance_ref_points_depth = MAX_DISTANCE_REF_POINTS;
+	}
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	of_node_put(root);
 	return depth;
 

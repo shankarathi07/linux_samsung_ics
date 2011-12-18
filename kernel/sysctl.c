@@ -182,6 +182,11 @@ static int proc_dmesg_restrict(struct ctl_table *table, int write,
                                void __user *buffer, size_t *lenp, loff_t *ppos);
 #endif
 
+#ifdef CONFIG_PRINTK
+static int proc_dmesg_restrict(struct ctl_table *table, int write,
+				void __user *buffer, size_t *lenp, loff_t *ppos);
+#endif
+
 #ifdef CONFIG_MAGIC_SYSRQ
 /* Note: sysrq code uses it's own private copy */
 static int __sysrq_enabled = SYSRQ_DEFAULT_ENABLE;
@@ -208,8 +213,13 @@ static struct ctl_table root_table[];
 static struct ctl_table_root sysctl_table_root;
 static struct ctl_table_header root_table_header = {
 	{{.count = 1,
+<<<<<<< HEAD
         .ctl_table = root_table,
         .ctl_entry = LIST_HEAD_INIT(sysctl_table_root.default_set.list),}},
+=======
+	.ctl_table = root_table,
+	.ctl_entry = LIST_HEAD_INIT(sysctl_table_root.default_set.list),}},
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	.root = &sysctl_table_root,
 	.set = &sysctl_table_root.default_set,
 };
@@ -386,7 +396,10 @@ static struct ctl_table kern_table[] = {
 		.extra2		= &one,
 	},
 #endif
+<<<<<<< HEAD
 #endif /* !CONFIG_SCHED_BFS */
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #ifdef CONFIG_PROVE_LOCKING
 	{
 		.procname	= "prove_locking",
@@ -769,6 +782,7 @@ static struct ctl_table kern_table[] = {
 	{
 		.procname       = "nmi_watchdog",
 		.data           = &watchdog_enabled,
+<<<<<<< HEAD
 		.maxlen         = sizeof (int),
 		.mode           = 0644,
 		.proc_handler   = proc_dowatchdog,
@@ -782,6 +796,21 @@ static struct ctl_table kern_table[] = {
 		.data           = &unknown_nmi_panic,
 		.maxlen         = sizeof (int),
 		.mode           = 0644,
+=======
+		.maxlen         = sizeof (int),
+		.mode           = 0644,
+		.proc_handler   = proc_dowatchdog,
+		.extra1		= &zero,
+		.extra2		= &one,
+	},
+#endif
+#if defined(CONFIG_X86_LOCAL_APIC) && defined(CONFIG_X86)
+	{
+		.procname       = "unknown_nmi_panic",
+		.data           = &unknown_nmi_panic,
+		.maxlen         = sizeof (int),
+		.mode           = 0644,
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		.proc_handler   = proc_dointvec,
 	},
 #endif
@@ -1547,7 +1576,11 @@ static struct ctl_table fs_table[] = {
 
 static struct ctl_table debug_table[] = {
 #if defined(CONFIG_X86) || defined(CONFIG_PPC) || defined(CONFIG_SPARC) || \
+<<<<<<< HEAD
 defined(CONFIG_S390) || defined(CONFIG_TILE)
+=======
+    defined(CONFIG_S390) || defined(CONFIG_TILE)
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	{
 		.procname	= "exception-trace",
 		.data		= &show_unhandled_signals,
@@ -1749,7 +1782,11 @@ static int test_perm(int mode, int op)
 int sysctl_perm(struct ctl_table_root *root, struct ctl_table *table, int op)
 {
 	int mode;
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (root->permissions)
 		mode = root->permissions(root, current->nsproxy, table);
 	else
@@ -2452,11 +2489,19 @@ static int proc_taint(struct ctl_table *table, int write,
 
 #ifdef CONFIG_PRINTK
 static int proc_dmesg_restrict(struct ctl_table *table, int write,
+<<<<<<< HEAD
                                void __user *buffer, size_t *lenp, loff_t *ppos)
 {
 	if (write && !capable(CAP_SYS_ADMIN))
 		return -EPERM;
     
+=======
+				void __user *buffer, size_t *lenp, loff_t *ppos)
+{
+	if (write && !capable(CAP_SYS_ADMIN))
+		return -EPERM;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
 }
 #endif
@@ -2553,7 +2598,11 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int 
 		}
 		kbuf[left] = 0;
 	}
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	for (; left && vleft--; i++, first = 0) {
 		unsigned long val;
         

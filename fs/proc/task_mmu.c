@@ -1039,9 +1039,12 @@ static int show_numa_map(struct seq_file *m, void *v)
 		seq_printf(m, " stack");
 	}
 
+<<<<<<< HEAD
 	if (is_vm_hugetlb_page(vma))
 		seq_printf(m, " huge");
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	walk_page_range(vma->vm_start, vma->vm_end, &walk);
 
 	if (!md->pages)

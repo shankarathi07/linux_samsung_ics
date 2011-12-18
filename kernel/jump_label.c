@@ -66,9 +66,14 @@ void jump_label_inc(struct jump_label_key *key)
 		return;
 
 	jump_label_lock();
+<<<<<<< HEAD
 	if (atomic_read(&key->enabled) == 0)
 		jump_label_update(key, JUMP_LABEL_ENABLE);
 	atomic_inc(&key->enabled);
+=======
+	if (atomic_add_return(1, &key->enabled) == 1)
+		jump_label_update(key, JUMP_LABEL_ENABLE);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	jump_label_unlock();
 }
 

@@ -1879,9 +1879,15 @@ static int hugetlb_sysctl_handler_common(bool obey_mempolicy,
 	struct hstate *h = &default_hstate;
 	unsigned long tmp;
 	int ret;
+<<<<<<< HEAD
 
 	tmp = h->max_huge_pages;
 
+=======
+
+	tmp = h->max_huge_pages;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (write && h->order >= MAX_ORDER)
 		return -EINVAL;
 
@@ -2415,8 +2421,11 @@ retry_avoidcopy:
 	 * anon_vma prepared.
 	 */
 	if (unlikely(anon_vma_prepare(vma))) {
+<<<<<<< HEAD
 		page_cache_release(new_page);
 		page_cache_release(old_page);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		/* Caller expects lock to be held */
 		spin_lock(&mm->page_table_lock);
 		return VM_FAULT_OOM;

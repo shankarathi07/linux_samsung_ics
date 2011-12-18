@@ -33,7 +33,10 @@ struct dibx000_i2c_master {
 	struct i2c_msg msg[34];
 	u8 i2c_write_buffer[8];
 	u8 i2c_read_buffer[2];
+<<<<<<< HEAD
 	struct mutex i2c_buffer_lock;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 };
 
 extern int dibx000_init_i2c_master(struct dibx000_i2c_master *mst,

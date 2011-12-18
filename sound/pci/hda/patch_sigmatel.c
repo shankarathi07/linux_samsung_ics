@@ -4641,6 +4641,7 @@ static void stac92xx_pin_sense(struct hda_codec *codec, hda_nid_t nid)
 
 /* get the pin connection (fixed, none, etc) */
 static unsigned int stac_get_defcfg_connect(struct hda_codec *codec, int idx)
+<<<<<<< HEAD
 {
 	struct sigmatel_spec *spec = codec->spec;
 	unsigned int cfg;
@@ -4656,6 +4657,23 @@ static int stac92xx_connected_ports(struct hda_codec *codec,
 	int idx, num;
 	unsigned int def_conf;
 
+=======
+{
+	struct sigmatel_spec *spec = codec->spec;
+	unsigned int cfg;
+
+	cfg = snd_hda_codec_get_pincfg(codec, spec->pin_nids[idx]);
+	return get_defcfg_connect(cfg);
+}
+
+static int stac92xx_connected_ports(struct hda_codec *codec,
+				    const hda_nid_t *nids, int num_nids)
+{
+	struct sigmatel_spec *spec = codec->spec;
+	int idx, num;
+	unsigned int def_conf;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	for (num = 0; num < num_nids; num++) {
 		for (idx = 0; idx < spec->num_pins; idx++)
 			if (spec->pin_nids[idx] == nids[num])
@@ -5465,8 +5483,31 @@ again:
 		stac92xx_set_config_regs(codec,
 				stac92hd83xxx_brd_tbl[spec->board_config]);
 
+<<<<<<< HEAD
 	if (spec->board_config != STAC_92HD83XXX_PWR_REF)
 		spec->num_pwrs = 0;
+=======
+	switch (codec->vendor_id) {
+	case 0x111d76d1:
+	case 0x111d76d9:
+	case 0x111d76df:
+	case 0x111d76e5:
+	case 0x111d7666:
+	case 0x111d7667:
+	case 0x111d7668:
+	case 0x111d7669:
+	case 0x111d76e3:
+	case 0x111d7604:
+	case 0x111d76d4:
+	case 0x111d7605:
+	case 0x111d76d5:
+	case 0x111d76e7:
+		if (spec->board_config == STAC_92HD83XXX_PWR_REF)
+			break;
+		spec->num_pwrs = 0;
+		break;
+	}
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	codec->patch_ops = stac92xx_patch_ops;
 
@@ -6373,6 +6414,7 @@ static const struct hda_codec_preset snd_hda_preset_sigmatel[] = {
 	{ .id = 0x111d76e3, .name = "92HD98BXX", .patch = patch_stac92hd83xxx},
 	{ .id = 0x111d76e5, .name = "92HD99BXX", .patch = patch_stac92hd83xxx},
 	{ .id = 0x111d76e7, .name = "92HD90BXX", .patch = patch_stac92hd83xxx},
+<<<<<<< HEAD
 	{ .id = 0x111d76e8, .name = "92HD66B1X5", .patch = patch_stac92hd83xxx},
 	{ .id = 0x111d76e9, .name = "92HD66B2X5", .patch = patch_stac92hd83xxx},
 	{ .id = 0x111d76ea, .name = "92HD66B3X5", .patch = patch_stac92hd83xxx},
@@ -6385,6 +6427,8 @@ static const struct hda_codec_preset snd_hda_preset_sigmatel[] = {
 	{ .id = 0x111d76f1, .name = "92HD66C1X3", .patch = patch_stac92hd83xxx},
 	{ .id = 0x111d76f2, .name = "92HD66C2X3", .patch = patch_stac92hd83xxx},
 	{ .id = 0x111d76f3, .name = "92HD66C3/65", .patch = patch_stac92hd83xxx},
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	{} /* terminator */
 };
 

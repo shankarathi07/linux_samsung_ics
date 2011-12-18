@@ -79,11 +79,15 @@ struct dib0070_state {
 	struct i2c_msg msg[2];
 	u8 i2c_write_buffer[3];
 	u8 i2c_read_buffer[2];
+<<<<<<< HEAD
 	struct mutex i2c_buffer_lock;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 };
 
 static u16 dib0070_read_reg(struct dib0070_state *state, u8 reg)
 {
+<<<<<<< HEAD
 	u16 ret;
 
 	if (mutex_lock_interruptible(&state->i2c_buffer_lock) < 0) {
@@ -112,15 +116,50 @@ static u16 dib0070_read_reg(struct dib0070_state *state, u8 reg)
 
 	mutex_unlock(&state->i2c_buffer_lock);
 	return ret;
+=======
+	state->i2c_write_buffer[0] = reg;
+
+	memset(state->msg, 0, 2 * sizeof(struct i2c_msg));
+	state->msg[0].addr = state->cfg->i2c_address;
+	state->msg[0].flags = 0;
+	state->msg[0].buf = state->i2c_write_buffer;
+	state->msg[0].len = 1;
+	state->msg[1].addr = state->cfg->i2c_address;
+	state->msg[1].flags = I2C_M_RD;
+	state->msg[1].buf = state->i2c_read_buffer;
+	state->msg[1].len = 2;
+
+	if (i2c_transfer(state->i2c, state->msg, 2) != 2) {
+		printk(KERN_WARNING "DiB0070 I2C read failed\n");
+		return 0;
+	}
+	return (state->i2c_read_buffer[0] << 8) | state->i2c_read_buffer[1];
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static int dib0070_write_reg(struct dib0070_state *state, u8 reg, u16 val)
 {
+<<<<<<< HEAD
 	int ret;
 
 	if (mutex_lock_interruptible(&state->i2c_buffer_lock) < 0) {
 		dprintk("could not acquire lock");
 		return -EINVAL;
+=======
+	state->i2c_write_buffer[0] = reg;
+	state->i2c_write_buffer[1] = val >> 8;
+	state->i2c_write_buffer[2] = val & 0xff;
+
+	memset(state->msg, 0, sizeof(struct i2c_msg));
+	state->msg[0].addr = state->cfg->i2c_address;
+	state->msg[0].flags = 0;
+	state->msg[0].buf = state->i2c_write_buffer;
+	state->msg[0].len = 3;
+
+	if (i2c_transfer(state->i2c, state->msg, 1) != 1) {
+		printk(KERN_WARNING "DiB0070 I2C write failed\n");
+		return -EREMOTEIO;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 	state->i2c_write_buffer[0] = reg;
 	state->i2c_write_buffer[1] = val >> 8;

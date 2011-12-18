@@ -204,10 +204,14 @@ int blk_rq_map_user_iov(struct request_queue *q, struct request *rq,
 		if (!iov[i].iov_len)
 			return -EINVAL;
 
+<<<<<<< HEAD
 		/*
 		 * Keep going so we check length of all segments
 		 */
 		if (uaddr & queue_dma_alignment(q))
+=======
+		if (uaddr & queue_dma_alignment(q)) {
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			unaligned = 1;
 	}
 

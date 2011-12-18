@@ -1526,6 +1526,7 @@ static int nfs_commit_unstable_pages(struct inode *inode, struct writeback_contr
 	int flags = FLUSH_SYNC;
 	int ret = 0;
 
+<<<<<<< HEAD
 	/* no commits means nothing needs to be done */
 	if (!nfsi->ncommit)
 		return ret;
@@ -1537,6 +1538,15 @@ static int nfs_commit_unstable_pages(struct inode *inode, struct writeback_contr
 		if (nfsi->ncommit <= (nfsi->npages >> 1))
 			goto out_mark_dirty;
 
+=======
+	if (wbc->sync_mode == WB_SYNC_NONE) {
+		/* Don't commit yet if this is a non-blocking flush and there
+		 * are a lot of outstanding writes for this mapping.
+		 */
+		if (nfsi->ncommit <= (nfsi->npages >> 1))
+			goto out_mark_dirty;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		/* don't wait for the COMMIT response */
 		flags = 0;
 	}

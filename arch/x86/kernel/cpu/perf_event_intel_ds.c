@@ -218,10 +218,17 @@ static void reserve_ds_buffers(void)
 			bts_err = 1;
 			pebs_err = 1;
 		}
+<<<<<<< HEAD
 
 		if (!bts_err && alloc_bts_buffer(cpu))
 			bts_err = 1;
 
+=======
+
+		if (!bts_err && alloc_bts_buffer(cpu))
+			bts_err = 1;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		if (!pebs_err && alloc_pebs_buffer(cpu))
 			pebs_err = 1;
 

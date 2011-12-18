@@ -106,6 +106,19 @@ static inline void get_head_page_multiple(struct page *page, int nr)
 	VM_BUG_ON(page_count(page) == 0);
 	atomic_add(nr, &page->_count);
 	SetPageReferenced(page);
+<<<<<<< HEAD
+=======
+}
+
+static inline void get_huge_page_tail(struct page *page)
+{
+	/*
+	 * __split_huge_page_refcount() cannot run
+	 * from under us.
+	 */
+	VM_BUG_ON(atomic_read(&page->_count) < 0);
+	atomic_inc(&page->_count);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static noinline int gup_huge_pmd(pmd_t pmd, unsigned long addr,

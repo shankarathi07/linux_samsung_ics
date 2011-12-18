@@ -309,6 +309,7 @@ xfs_file_aio_read(
 	if (XFS_FORCED_SHUTDOWN(mp))
 		return -EIO;
 
+<<<<<<< HEAD
 	/*
 	 * Locking is a bit tricky here. If we take an exclusive lock
 	 * for direct IO, we effectively serialise all new concurrent
@@ -322,6 +323,9 @@ xfs_file_aio_read(
 	xfs_rw_ilock(ip, XFS_IOLOCK_SHARED);
 	if ((ioflags & IO_ISDIRECT) && inode->i_mapping->nrpages) {
 		xfs_rw_iunlock(ip, XFS_IOLOCK_SHARED);
+=======
+	if (unlikely(ioflags & IO_ISDIRECT)) {
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		xfs_rw_ilock(ip, XFS_IOLOCK_EXCL);
 
 		if (inode->i_mapping->nrpages) {
@@ -334,7 +338,12 @@ xfs_file_aio_read(
 			}
 		}
 		xfs_rw_ilock_demote(ip, XFS_IOLOCK_EXCL);
+<<<<<<< HEAD
 	}
+=======
+	} else
+		xfs_rw_ilock(ip, XFS_IOLOCK_SHARED);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	trace_xfs_file_read(ip, size, iocb->ki_pos, ioflags);
 
@@ -669,7 +678,10 @@ xfs_file_aio_write_checks(
 	xfs_fsize_t		new_size;
 	int			error = 0;
 
+<<<<<<< HEAD
 	xfs_rw_ilock(ip, XFS_ILOCK_EXCL);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	error = generic_write_checks(file, pos, count, S_ISBLK(inode->i_mode));
 	if (error) {
 		xfs_rw_iunlock(ip, XFS_ILOCK_EXCL | *iolock);
@@ -749,6 +761,7 @@ xfs_file_dio_aio_write(
 	int			unaligned_io = 0;
 	struct xfs_buftarg	*target = XFS_IS_REALTIME_INODE(ip) ?
 					mp->m_rtdev_targp : mp->m_ddev_targp;
+<<<<<<< HEAD
 
 	*iolock = 0;
 	if ((pos & target->bt_smask) || (count & target->bt_smask))
@@ -832,6 +845,81 @@ xfs_file_buffered_aio_write(
 	/* We can write back this queue in page reclaim */
 	current->backing_dev_info = mapping->backing_dev_info;
 
+=======
+
+	*iolock = 0;
+	if ((pos & target->bt_smask) || (count & target->bt_smask))
+		return -XFS_ERROR(EINVAL);
+
+	if ((pos & mp->m_blockmask) || ((pos + count) & mp->m_blockmask))
+		unaligned_io = 1;
+
+	if (unaligned_io || mapping->nrpages || pos > ip->i_size)
+		*iolock = XFS_IOLOCK_EXCL;
+	else
+		*iolock = XFS_IOLOCK_SHARED;
+	xfs_rw_ilock(ip, XFS_ILOCK_EXCL | *iolock);
+
+	ret = xfs_file_aio_write_checks(file, &pos, &count, iolock);
+	if (ret)
+		return ret;
+
+	if (mapping->nrpages) {
+		WARN_ON(*iolock != XFS_IOLOCK_EXCL);
+		ret = -xfs_flushinval_pages(ip, (pos & PAGE_CACHE_MASK), -1,
+							FI_REMAPF_LOCKED);
+		if (ret)
+			return ret;
+	}
+
+	/*
+	 * If we are doing unaligned IO, wait for all other IO to drain,
+	 * otherwise demote the lock if we had to flush cached pages
+	 */
+	if (unaligned_io)
+		xfs_ioend_wait(ip);
+	else if (*iolock == XFS_IOLOCK_EXCL) {
+		xfs_rw_ilock_demote(ip, XFS_IOLOCK_EXCL);
+		*iolock = XFS_IOLOCK_SHARED;
+	}
+
+	trace_xfs_file_direct_write(ip, count, iocb->ki_pos, 0);
+	ret = generic_file_direct_write(iocb, iovp,
+			&nr_segs, pos, &iocb->ki_pos, count, ocount);
+
+	/* No fallback to buffered IO on errors for XFS. */
+	ASSERT(ret < 0 || ret == count);
+	return ret;
+}
+
+STATIC ssize_t
+xfs_file_buffered_aio_write(
+	struct kiocb		*iocb,
+	const struct iovec	*iovp,
+	unsigned long		nr_segs,
+	loff_t			pos,
+	size_t			ocount,
+	int			*iolock)
+{
+	struct file		*file = iocb->ki_filp;
+	struct address_space	*mapping = file->f_mapping;
+	struct inode		*inode = mapping->host;
+	struct xfs_inode	*ip = XFS_I(inode);
+	ssize_t			ret;
+	int			enospc = 0;
+	size_t			count = ocount;
+
+	*iolock = XFS_IOLOCK_EXCL;
+	xfs_rw_ilock(ip, XFS_ILOCK_EXCL | *iolock);
+
+	ret = xfs_file_aio_write_checks(file, &pos, &count, iolock);
+	if (ret)
+		return ret;
+
+	/* We can write back this queue in page reclaim */
+	current->backing_dev_info = mapping->backing_dev_info;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 write_retry:
 	trace_xfs_file_buffered_write(ip, count, iocb->ki_pos, 0);
 	ret = generic_file_buffered_write(iocb, iovp, nr_segs,

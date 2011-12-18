@@ -137,7 +137,11 @@ static irqreturn_t sr_interrupt(int irq, void *data)
 		sr_write_reg(sr_info, ERRCONFIG_V1, status);
 	} else if (sr_info->ip_type == SR_TYPE_V2) {
 		/* Read the status bits */
+<<<<<<< HEAD
 		status = sr_read_reg(sr_info, IRQSTATUS);
+=======
+		sr_read_reg(sr_info, IRQSTATUS);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 		/* Clear them by writing back */
 		sr_write_reg(sr_info, IRQSTATUS, status);

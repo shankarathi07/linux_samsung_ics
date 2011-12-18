@@ -211,6 +211,10 @@ static void __devexit jsm_remove_one(struct pci_dev *pdev)
 		if (brd->channels[i]) {
 			kfree(brd->channels[i]->ch_rqueue);
 			kfree(brd->channels[i]->ch_equeue);
+<<<<<<< HEAD
+=======
+			kfree(brd->channels[i]->ch_wqueue);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			kfree(brd->channels[i]);
 		}
 	}

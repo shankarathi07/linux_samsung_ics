@@ -709,6 +709,7 @@ will behave normally, not taking the autosuspend delay into account.
 Similarly, if the power.use_autosuspend field isn't set then the autosuspend
 helper functions will behave just like the non-autosuspend counterparts.
 
+<<<<<<< HEAD
 Under some circumstances a driver or subsystem may want to prevent a device
 from autosuspending immediately, even though the usage counter is zero and the
 autosuspend delay time has expired.  If the ->runtime_suspend() callback
@@ -719,6 +720,8 @@ autosuspend.  The ->runtime_suspend() callback can't do this rescheduling
 itself because no suspend requests of any kind are accepted while the device is
 suspending (i.e., while the callback is running).
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 The implementation is well suited for asynchronous use in interrupt contexts.
 However such use inevitably involves races, because the PM core can't
 synchronize ->runtime_suspend() callbacks with the arrival of I/O requests.

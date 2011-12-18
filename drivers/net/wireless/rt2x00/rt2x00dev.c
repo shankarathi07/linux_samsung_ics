@@ -418,6 +418,7 @@ void rt2x00lib_txdone(struct queue_entry *entry,
 EXPORT_SYMBOL_GPL(rt2x00lib_txdone);
 
 void rt2x00lib_txdone_noinfo(struct queue_entry *entry, u32 status)
+<<<<<<< HEAD
 {
 	struct txdone_entry_desc txdesc;
 
@@ -519,6 +520,93 @@ static void rt2x00lib_rxdone_check_ps(struct rt2x00_dev *rt2x00dev,
 static int rt2x00lib_rxdone_read_signal(struct rt2x00_dev *rt2x00dev,
 					struct rxdone_entry_desc *rxdesc)
 {
+=======
+{
+	struct txdone_entry_desc txdesc;
+
+	txdesc.flags = 0;
+	__set_bit(status, &txdesc.flags);
+	txdesc.retry = 0;
+
+	rt2x00lib_txdone(entry, &txdesc);
+}
+EXPORT_SYMBOL_GPL(rt2x00lib_txdone_noinfo);
+
+static u8 *rt2x00lib_find_ie(u8 *data, unsigned int len, u8 ie)
+{
+	struct ieee80211_mgmt *mgmt = (void *)data;
+	u8 *pos, *end;
+
+	pos = (u8 *)mgmt->u.beacon.variable;
+	end = data + len;
+	while (pos < end) {
+		if (pos + 2 + pos[1] > end)
+			return NULL;
+
+		if (pos[0] == ie)
+			return pos;
+
+		pos += 2 + pos[1];
+	}
+
+	return NULL;
+}
+
+static void rt2x00lib_rxdone_check_ps(struct rt2x00_dev *rt2x00dev,
+				      struct sk_buff *skb,
+				      struct rxdone_entry_desc *rxdesc)
+{
+	struct ieee80211_hdr *hdr = (void *) skb->data;
+	struct ieee80211_tim_ie *tim_ie;
+	u8 *tim;
+	u8 tim_len;
+	bool cam;
+
+	/* If this is not a beacon, or if mac80211 has no powersaving
+	 * configured, or if the device is already in powersaving mode
+	 * we can exit now. */
+	if (likely(!ieee80211_is_beacon(hdr->frame_control) ||
+		   !(rt2x00dev->hw->conf.flags & IEEE80211_CONF_PS)))
+		return;
+
+	/* min. beacon length + FCS_LEN */
+	if (skb->len <= 40 + FCS_LEN)
+		return;
+
+	/* and only beacons from the associated BSSID, please */
+	if (!(rxdesc->dev_flags & RXDONE_MY_BSS) ||
+	    !rt2x00dev->aid)
+		return;
+
+	rt2x00dev->last_beacon = jiffies;
+
+	tim = rt2x00lib_find_ie(skb->data, skb->len - FCS_LEN, WLAN_EID_TIM);
+	if (!tim)
+		return;
+
+	if (tim[1] < sizeof(*tim_ie))
+		return;
+
+	tim_len = tim[1];
+	tim_ie = (struct ieee80211_tim_ie *) &tim[2];
+
+	/* Check whenever the PHY can be turned off again. */
+
+	/* 1. What about buffered unicast traffic for our AID? */
+	cam = ieee80211_check_tim(tim_ie, tim_len, rt2x00dev->aid);
+
+	/* 2. Maybe the AP wants to send multicast/broadcast data? */
+	cam |= (tim_ie->bitmap_ctrl & 0x01);
+
+	if (!cam && !test_bit(CONFIG_POWERSAVING, &rt2x00dev->flags))
+		rt2x00lib_config(rt2x00dev, &rt2x00dev->hw->conf,
+				 IEEE80211_CONF_CHANGE_PS);
+}
+
+static int rt2x00lib_rxdone_read_signal(struct rt2x00_dev *rt2x00dev,
+					struct rxdone_entry_desc *rxdesc)
+{
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	struct ieee80211_supported_band *sband;
 	const struct rt2x00_rate *rate;
 	unsigned int i;
@@ -1124,7 +1212,10 @@ int rt2x00lib_probe_dev(struct rt2x00_dev *rt2x00dev)
 
 	INIT_WORK(&rt2x00dev->intf_work, rt2x00lib_intf_scheduled);
 	INIT_DELAYED_WORK(&rt2x00dev->autowakeup_work, rt2x00lib_autowakeup);
+<<<<<<< HEAD
 	INIT_WORK(&rt2x00dev->sleep_work, rt2x00lib_sleep);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	/*
 	 * Let the driver probe the device to detect the capabilities.
@@ -1181,7 +1272,10 @@ void rt2x00lib_remove_dev(struct rt2x00_dev *rt2x00dev)
 	 */
 	cancel_work_sync(&rt2x00dev->intf_work);
 	cancel_delayed_work_sync(&rt2x00dev->autowakeup_work);
+<<<<<<< HEAD
 	cancel_work_sync(&rt2x00dev->sleep_work);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (rt2x00_is_usb(rt2x00dev)) {
 		del_timer_sync(&rt2x00dev->txstatus_timer);
 		cancel_work_sync(&rt2x00dev->rxdone_work);

@@ -142,6 +142,7 @@ static void ext4_end_io_work(struct work_struct *work)
 	unsigned long		flags;
 	int			ret;
 
+<<<<<<< HEAD
 	if (!mutex_trylock(&inode->i_mutex)) {
 		/*
 		 * Requeue the work instead of waiting so that the work
@@ -159,6 +160,9 @@ static void ext4_end_io_work(struct work_struct *work)
 		io->flag |= EXT4_IO_END_QUEUED;
 		return;
 	}
+=======
+	mutex_lock(&inode->i_mutex);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	ret = ext4_end_io_nolock(io);
 	if (ret < 0) {
 		mutex_unlock(&inode->i_mutex);

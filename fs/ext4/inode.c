@@ -190,6 +190,12 @@ void ext4_evict_inode(struct inode *inode)
 
 	trace_ext4_evict_inode(inode);
 
+<<<<<<< HEAD
+=======
+	mutex_lock(&inode->i_mutex);
+	ext4_flush_completed_IO(inode);
+	mutex_unlock(&inode->i_mutex);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	ext4_ioend_wait(inode);
 
 	if (inode->i_nlink) {

@@ -3818,10 +3818,17 @@ static int b43_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 	switch (key->cipher) {
 	case WLAN_CIPHER_SUITE_WEP40:
 		algorithm = B43_SEC_ALGO_WEP40;
+<<<<<<< HEAD
 		break;
 	case WLAN_CIPHER_SUITE_WEP104:
 		algorithm = B43_SEC_ALGO_WEP104;
 		break;
+=======
+		break;
+	case WLAN_CIPHER_SUITE_WEP104:
+		algorithm = B43_SEC_ALGO_WEP104;
+		break;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	case WLAN_CIPHER_SUITE_TKIP:
 		algorithm = B43_SEC_ALGO_TKIP;
 		break;

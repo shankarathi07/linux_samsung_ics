@@ -14,6 +14,7 @@
 #include <linux/module.h>
 #include <linux/sigma.h>
 
+<<<<<<< HEAD
 static size_t sigma_action_size(struct sigma_action *sa)
 {
 	size_t payload = 0;
@@ -42,6 +43,15 @@ process_sigma_action(struct i2c_client *client, struct sigma_action *sa)
 {
 	size_t len = sigma_action_len(sa);
 	int ret;
+=======
+/* Return: 0==OK, <0==error, =1 ==no more actions */
+static int
+process_sigma_action(struct i2c_client *client, struct sigma_firmware *ssfw)
+{
+	struct sigma_action *sa = (void *)(ssfw->fw->data + ssfw->pos);
+	size_t len = sigma_action_len(sa);
+	int ret = 0;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	pr_debug("%s: instr:%i addr:%#x len:%zu\n", __func__,
 		sa->instr, sa->addr, len);
@@ -50,26 +60,51 @@ process_sigma_action(struct i2c_client *client, struct sigma_action *sa)
 	case SIGMA_ACTION_WRITEXBYTES:
 	case SIGMA_ACTION_WRITESINGLE:
 	case SIGMA_ACTION_WRITESAFELOAD:
+<<<<<<< HEAD
+=======
+		if (ssfw->fw->size < ssfw->pos + len)
+			return -EINVAL;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		ret = i2c_master_send(client, (void *)&sa->addr, len);
 		if (ret < 0)
 			return -EINVAL;
 		break;
+<<<<<<< HEAD
 	case SIGMA_ACTION_DELAY:
 		udelay(len);
 		len = 0;
 		break;
 	case SIGMA_ACTION_END:
 		return 0;
+=======
+
+	case SIGMA_ACTION_DELAY:
+		ret = 0;
+		udelay(len);
+		len = 0;
+		break;
+
+	case SIGMA_ACTION_END:
+		return 1;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	default:
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	return 1;
+=======
+	/* when arrive here ret=0 or sent data */
+	ssfw->pos += sigma_action_size(sa, len);
+	return ssfw->pos == ssfw->fw->size;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static int
 process_sigma_actions(struct i2c_client *client, struct sigma_firmware *ssfw)
 {
+<<<<<<< HEAD
 	struct sigma_action *sa;
 	size_t size;
 	int ret;
@@ -94,6 +129,18 @@ process_sigma_actions(struct i2c_client *client, struct sigma_firmware *ssfw)
 		return -EINVAL;
 
 	return 0;
+=======
+	pr_debug("%s: processing %p\n", __func__, ssfw);
+
+	while (1) {
+		int ret = process_sigma_action(client, ssfw);
+		pr_debug("%s: action returned %i\n", __func__, ret);
+		if (ret == 1)
+			return 0;
+		else if (ret)
+			return ret;
+	}
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 int process_sigma_firmware(struct i2c_client *client, const char *name)
@@ -116,6 +163,7 @@ int process_sigma_firmware(struct i2c_client *client, const char *name)
 
 	/* then verify the header */
 	ret = -EINVAL;
+<<<<<<< HEAD
 
 	/*
 	 * Reject too small or unreasonable large files. The upper limit has been
@@ -124,16 +172,25 @@ int process_sigma_firmware(struct i2c_client *client, const char *name)
 	 * overflows later in the loading process.
 	 */
 	if (fw->size < sizeof(*ssfw_head) || fw->size >= 0x4000000)
+=======
+	if (fw->size < sizeof(*ssfw_head))
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		goto done;
 
 	ssfw_head = (void *)fw->data;
 	if (memcmp(ssfw_head->magic, SIGMA_MAGIC, ARRAY_SIZE(ssfw_head->magic)))
 		goto done;
 
+<<<<<<< HEAD
 	crc = crc32(0, fw->data + sizeof(*ssfw_head),
 			fw->size - sizeof(*ssfw_head));
 	pr_debug("%s: crc=%x\n", __func__, crc);
 	if (crc != le32_to_cpu(ssfw_head->crc))
+=======
+	crc = crc32(0, fw->data, fw->size);
+	pr_debug("%s: crc=%x\n", __func__, crc);
+	if (crc != ssfw_head->crc)
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		goto done;
 
 	ssfw.pos = sizeof(*ssfw_head);

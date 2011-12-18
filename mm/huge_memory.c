@@ -989,7 +989,11 @@ struct page *follow_trans_huge_pmd(struct mm_struct *mm,
 	page += (addr & ~HPAGE_PMD_MASK) >> PAGE_SHIFT;
 	VM_BUG_ON(!PageCompound(page));
 	if (flags & FOLL_GET)
+<<<<<<< HEAD
 		get_page_foll(page);
+=======
+		get_page(page);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 out:
 	return page;
@@ -1156,7 +1160,10 @@ static void __split_huge_page_refcount(struct page *page)
 	unsigned long head_index = page->index;
 	struct zone *zone = page_zone(page);
 	int zonestat;
+<<<<<<< HEAD
 	int tail_count = 0;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	/* prevent PageLRU to go away from under us, and freeze lru stats */
 	spin_lock_irq(&zone->lru_lock);
@@ -1165,6 +1172,7 @@ static void __split_huge_page_refcount(struct page *page)
 	for (i = 1; i < HPAGE_PMD_NR; i++) {
 		struct page *page_tail = page + i;
 
+<<<<<<< HEAD
 		/* tail_page->_mapcount cannot change */
 		BUG_ON(page_mapcount(page_tail) < 0);
 		tail_count += page_mapcount(page_tail);
@@ -1186,6 +1194,13 @@ static void __split_huge_page_refcount(struct page *page)
 		 */
 		atomic_add(page_mapcount(page) + page_mapcount(page_tail) + 1,
 			   &page_tail->_count);
+=======
+		/* tail_page->_count cannot change */
+		atomic_sub(atomic_read(&page_tail->_count), &page->_count);
+		BUG_ON(page_count(page) <= 0);
+		atomic_add(page_mapcount(page) + 1, &page_tail->_count);
+		BUG_ON(atomic_read(&page_tail->_count) <= 0);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 		/* after clearing PageTail the gup refcount can be released */
 		smp_mb();
@@ -1203,7 +1218,14 @@ static void __split_huge_page_refcount(struct page *page)
 				      (1L << PG_uptodate)));
 		page_tail->flags |= (1L << PG_dirty);
 
+<<<<<<< HEAD
 		/* clear PageTail before overwriting first_page */
+=======
+		/*
+		 * 1) clear PageTail before overwriting first_page
+		 * 2) clear PageTail before clearing PageHead for VM_BUG_ON
+		 */
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		smp_wmb();
 
 		/*
@@ -1220,6 +1242,10 @@ static void __split_huge_page_refcount(struct page *page)
 		 * status is achieved setting a reserved bit in the
 		 * pmd, not by clearing the present bit.
 		*/
+<<<<<<< HEAD
+=======
+		BUG_ON(page_mapcount(page_tail));
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		page_tail->_mapcount = page->_mapcount;
 
 		BUG_ON(page_tail->mapping);
@@ -1236,8 +1262,11 @@ static void __split_huge_page_refcount(struct page *page)
 
 		lru_add_page_tail(zone, page, page_tail);
 	}
+<<<<<<< HEAD
 	atomic_sub(tail_count, &page->_count);
 	BUG_ON(atomic_read(&page->_count) <= 0);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	__dec_zone_page_state(page, NR_ANON_TRANSPARENT_HUGEPAGES);
 	__mod_zone_page_state(zone, NR_ANON_PAGES, HPAGE_PMD_NR);

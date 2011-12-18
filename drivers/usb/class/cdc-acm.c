@@ -327,12 +327,21 @@ exit:
 static int acm_submit_read_urb(struct acm *acm, int index, gfp_t mem_flags)
 {
 	int res;
+<<<<<<< HEAD
 
 	if (!test_and_clear_bit(index, &acm->read_urbs_free))
 		return 0;
 
 	dev_vdbg(&acm->data->dev, "%s - urb %d\n", __func__, index);
 
+=======
+
+	if (!test_and_clear_bit(index, &acm->read_urbs_free))
+		return 0;
+
+	dev_vdbg(&acm->data->dev, "%s - urb %d\n", __func__, index);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	res = usb_submit_urb(acm->read_urbs[index], mem_flags);
 	if (res) {
 		if (res != -EPERM) {
@@ -539,6 +548,10 @@ static void acm_port_down(struct acm *acm)
 {
 	int i;
 
+<<<<<<< HEAD
+=======
+	mutex_lock(&open_mutex);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (acm->dev) {
 		usb_autopm_get_interface(acm->control);
 		acm_set_control(acm, acm->ctrlout = 0);
@@ -556,9 +569,13 @@ static void acm_tty_hangup(struct tty_struct *tty)
 {
 	struct acm *acm = tty->driver_data;
 	tty_port_hangup(&acm->port);
+<<<<<<< HEAD
 	mutex_lock(&open_mutex);
 	acm_port_down(acm);
 	mutex_unlock(&open_mutex);
+=======
+	acm_port_down(acm);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static void acm_tty_close(struct tty_struct *tty, struct file *filp)

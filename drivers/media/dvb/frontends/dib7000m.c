@@ -56,7 +56,10 @@ struct dib7000m_state {
 	struct i2c_msg msg[2];
 	u8 i2c_write_buffer[4];
 	u8 i2c_read_buffer[2];
+<<<<<<< HEAD
 	struct mutex i2c_buffer_lock;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 };
 
 enum dib7000m_power_mode {
@@ -71,6 +74,7 @@ enum dib7000m_power_mode {
 
 static u16 dib7000m_read_word(struct dib7000m_state *state, u16 reg)
 {
+<<<<<<< HEAD
 	u16 ret;
 
 	if (mutex_lock_interruptible(&state->i2c_buffer_lock) < 0) {
@@ -78,6 +82,8 @@ static u16 dib7000m_read_word(struct dib7000m_state *state, u16 reg)
 		return 0;
 	}
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	state->i2c_write_buffer[0] = (reg >> 8) | 0x80;
 	state->i2c_write_buffer[1] = reg & 0xff;
 
@@ -94,14 +100,19 @@ static u16 dib7000m_read_word(struct dib7000m_state *state, u16 reg)
 	if (i2c_transfer(state->i2c_adap, state->msg, 2) != 2)
 		dprintk("i2c read error on %d",reg);
 
+<<<<<<< HEAD
 	ret = (state->i2c_read_buffer[0] << 8) | state->i2c_read_buffer[1];
 	mutex_unlock(&state->i2c_buffer_lock);
 
 	return ret;
+=======
+	return (state->i2c_read_buffer[0] << 8) | state->i2c_read_buffer[1];
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static int dib7000m_write_word(struct dib7000m_state *state, u16 reg, u16 val)
 {
+<<<<<<< HEAD
 	int ret;
 
 	if (mutex_lock_interruptible(&state->i2c_buffer_lock) < 0) {
@@ -109,6 +120,8 @@ static int dib7000m_write_word(struct dib7000m_state *state, u16 reg, u16 val)
 		return -EINVAL;
 	}
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	state->i2c_write_buffer[0] = (reg >> 8) & 0xff;
 	state->i2c_write_buffer[1] = reg & 0xff;
 	state->i2c_write_buffer[2] = (val >> 8) & 0xff;
@@ -120,10 +133,14 @@ static int dib7000m_write_word(struct dib7000m_state *state, u16 reg, u16 val)
 	state->msg[0].buf = state->i2c_write_buffer;
 	state->msg[0].len = 4;
 
+<<<<<<< HEAD
 	ret = (i2c_transfer(state->i2c_adap, state->msg, 1) != 1 ?
 			-EREMOTEIO : 0);
 	mutex_unlock(&state->i2c_buffer_lock);
 	return ret;
+=======
+	return i2c_transfer(state->i2c_adap, state->msg, 1) != 1 ? -EREMOTEIO : 0;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 static void dib7000m_write_tab(struct dib7000m_state *state, u16 *buf)
 {

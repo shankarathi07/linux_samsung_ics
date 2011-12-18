@@ -212,6 +212,7 @@ static int xhci_setup_msi(struct xhci_hcd *xhci)
 		xhci_err(xhci, "failed to allocate MSI entry\n");
 		return ret;
 	}
+<<<<<<< HEAD
 
 	ret = request_irq(pdev->irq, (irq_handler_t)xhci_msi_irq,
 				0, "xhci_hcd", xhci_to_hcd(xhci));
@@ -242,6 +243,38 @@ static int xhci_setup_msix(struct xhci_hcd *xhci)
 	xhci->msix_count = min(num_online_cpus() + 1,
 				HCS_MAX_INTRS(xhci->hcs_params1));
 
+=======
+
+	ret = request_irq(pdev->irq, (irq_handler_t)xhci_msi_irq,
+				0, "xhci_hcd", xhci_to_hcd(xhci));
+	if (ret) {
+		xhci_err(xhci, "disable MSI interrupt\n");
+		pci_disable_msi(pdev);
+	}
+
+	return ret;
+}
+
+/*
+ * Set up MSI-X
+ */
+static int xhci_setup_msix(struct xhci_hcd *xhci)
+{
+	int i, ret = 0;
+	struct usb_hcd *hcd = xhci_to_hcd(xhci);
+	struct pci_dev *pdev = to_pci_dev(hcd->self.controller);
+
+	/*
+	 * calculate number of msi-x vectors supported.
+	 * - HCS_MAX_INTRS: the max number of interrupts the host can handle,
+	 *   with max number of interrupters based on the xhci HCSPARAMS1.
+	 * - num_online_cpus: maximum msi-x vectors per CPUs core.
+	 *   Add additional 1 vector to ensure always available interrupt.
+	 */
+	xhci->msix_count = min(num_online_cpus() + 1,
+				HCS_MAX_INTRS(xhci->hcs_params1));
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	xhci->msix_entries =
 		kmalloc((sizeof(struct msix_entry))*xhci->msix_count,
 				GFP_KERNEL);
@@ -657,10 +690,14 @@ static void xhci_clear_command_ring(struct xhci_hcd *xhci)
 	ring = xhci->cmd_ring;
 	seg = ring->deq_seg;
 	do {
+<<<<<<< HEAD
 		memset(seg->trbs, 0,
 			sizeof(union xhci_trb) * (TRBS_PER_SEGMENT - 1));
 		seg->trbs[TRBS_PER_SEGMENT - 1].link.control &=
 			cpu_to_le32(~TRB_CYCLE);
+=======
+		memset(seg->trbs, 0, SEGMENT_SIZE);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		seg = seg->next;
 	} while (seg != ring->deq_seg);
 
@@ -752,7 +789,11 @@ int xhci_resume(struct xhci_hcd *xhci, bool hibernated)
 	u32			command, temp = 0;
 	struct usb_hcd		*hcd = xhci_to_hcd(xhci);
 	struct usb_hcd		*secondary_hcd;
+<<<<<<< HEAD
 	int			retval = 0;
+=======
+	int			retval;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	/* Wait a bit if either of the roothubs need to settle from the
 	 * transition into bus suspend.
@@ -762,9 +803,12 @@ int xhci_resume(struct xhci_hcd *xhci, bool hibernated)
 				xhci->bus_state[1].next_statechange))
 		msleep(100);
 
+<<<<<<< HEAD
 	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
 	set_bit(HCD_FLAG_HW_ACCESSIBLE, &xhci->shared_hcd->flags);
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spin_lock_irq(&xhci->lock);
 	if (xhci->quirks & XHCI_RESET_ON_RESUME)
 		hibernated = true;
@@ -834,6 +878,7 @@ int xhci_resume(struct xhci_hcd *xhci, bool hibernated)
 			return retval;
 		xhci_dbg(xhci, "Start the primary HCD\n");
 		retval = xhci_run(hcd->primary_hcd);
+<<<<<<< HEAD
 		if (!retval) {
 			xhci_dbg(xhci, "Start the secondary HCD\n");
 			retval = xhci_run(secondary_hcd);
@@ -841,6 +886,22 @@ int xhci_resume(struct xhci_hcd *xhci, bool hibernated)
 		hcd->state = HC_STATE_SUSPENDED;
 		xhci->shared_hcd->state = HC_STATE_SUSPENDED;
 		goto done;
+=======
+		if (retval)
+			goto failed_restart;
+
+		xhci_dbg(xhci, "Start the secondary HCD\n");
+		retval = xhci_run(secondary_hcd);
+		if (!retval) {
+			set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+			set_bit(HCD_FLAG_HW_ACCESSIBLE,
+					&xhci->shared_hcd->flags);
+		}
+failed_restart:
+		hcd->state = HC_STATE_SUSPENDED;
+		xhci->shared_hcd->state = HC_STATE_SUSPENDED;
+		return retval;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 
 	/* step 4: set Run/Stop bit */
@@ -859,6 +920,7 @@ int xhci_resume(struct xhci_hcd *xhci, bool hibernated)
 	 * Running endpoints by ringing their doorbells
 	 */
 
+<<<<<<< HEAD
 	spin_unlock_irq(&xhci->lock);
 
  done:
@@ -867,6 +929,13 @@ int xhci_resume(struct xhci_hcd *xhci, bool hibernated)
 		usb_hcd_resume_root_hub(xhci->shared_hcd);
 	}
 	return retval;
+=======
+	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+	set_bit(HCD_FLAG_HW_ACCESSIBLE, &xhci->shared_hcd->flags);
+
+	spin_unlock_irq(&xhci->lock);
+	return 0;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 #endif	/* CONFIG_PM */
 
@@ -1891,12 +1960,15 @@ int xhci_check_bandwidth(struct usb_hcd *hcd, struct usb_device *udev)
 	ctrl_ctx->add_flags |= cpu_to_le32(SLOT_FLAG);
 	ctrl_ctx->add_flags &= cpu_to_le32(~EP0_FLAG);
 	ctrl_ctx->drop_flags &= cpu_to_le32(~(SLOT_FLAG | EP0_FLAG));
+<<<<<<< HEAD
 
 	/* Don't issue the command if there's no endpoints to update. */
 	if (ctrl_ctx->add_flags == cpu_to_le32(SLOT_FLAG) &&
 			ctrl_ctx->drop_flags == 0)
 		return 0;
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	xhci_dbg(xhci, "New Input Control Context:\n");
 	slot_ctx = xhci_get_slot_ctx(xhci, virt_dev->in_ctx);
 	xhci_dbg_ctx(xhci, virt_dev->in_ctx,
@@ -2877,10 +2949,13 @@ int xhci_address_device(struct usb_hcd *hcd, struct usb_device *udev)
 	/* Otherwise, update the control endpoint ring enqueue pointer. */
 	else
 		xhci_copy_ep0_dequeue_into_input_ctx(xhci, udev);
+<<<<<<< HEAD
 	ctrl_ctx = xhci_get_input_control_ctx(xhci, virt_dev->in_ctx);
 	ctrl_ctx->add_flags = cpu_to_le32(SLOT_FLAG | EP0_FLAG);
 	ctrl_ctx->drop_flags = 0;
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	xhci_dbg(xhci, "Slot ID %d Input Context:\n", udev->slot_id);
 	xhci_dbg_ctx(xhci, virt_dev->in_ctx, 2);
 

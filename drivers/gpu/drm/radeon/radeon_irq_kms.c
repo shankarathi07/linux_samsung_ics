@@ -164,8 +164,17 @@ int radeon_irq_kms_init(struct radeon_device *rdev)
 	}
 	/* enable msi */
 	rdev->msi_enabled = 0;
+<<<<<<< HEAD
 
 	if (radeon_msi_ok(rdev)) {
+=======
+	/* MSIs don't seem to work reliably on all IGP
+	 * chips.  Disable MSI on them for now.
+	 */
+	if ((rdev->family >= CHIP_RV380) &&
+	    ((!(rdev->flags & RADEON_IS_IGP)) || (rdev->family >= CHIP_PALM)) &&
+	    (!(rdev->flags & RADEON_IS_AGP))) {
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		int ret = pci_enable_msi(rdev->pdev);
 		if (!ret) {
 			rdev->msi_enabled = 1;

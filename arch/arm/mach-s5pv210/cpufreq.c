@@ -32,11 +32,17 @@ static struct clk *dmc1_clk;
 static struct cpufreq_freqs freqs;
 static DEFINE_MUTEX(set_freq_lock);
 
+<<<<<<< HEAD
 #define APLL_VAL_1460   ((1<<31)|(365<<16)|(6<<8)|(0))
 #define APLL_VAL_1300   ((1<<31)|(325<<16)|(6<<8)|(0))
 #define APLL_VAL_1200	((1<<31)|(150<<16)|(3<<8)|(1))
 #define APLL_VAL_1000	((1<<31)|(125<<16)|(3<<8)|(1))
 #define APLL_VAL_800	((1<<31)|(100<<16)|(3<<8)|(1))
+=======
+/* APLL M,P,S values for 1G/800Mhz */
+#define APLL_VAL_1000	((1 << 31) | (125 << 16) | (3 << 8) | 1)
+#define APLL_VAL_800	((1 << 31) | (100 << 16) | (3 << 8) | 1)
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 #define SLEEP_FREQ	(800 * 1000) /* Use 800MHz when entering sleep */
 
@@ -64,7 +70,11 @@ struct dram_conf {
 static struct dram_conf s5pv210_dram_conf[2];
 
 enum perf_level {
+<<<<<<< HEAD
 	L0, L1, L2, L3, L4,L5, L6, L7
+=======
+	L0, L1, L2, L3, L4,
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 };
 
 enum s5pv210_mem_type {
@@ -79,6 +89,7 @@ enum s5pv210_dmc_port {
 };
 
 static struct cpufreq_frequency_table s5pv210_freq_table[] = {
+<<<<<<< HEAD
 	{L0, 1460*1000},
     {L1, 1300*1000},
 	{L2, 1200*1000},
@@ -88,6 +99,15 @@ static struct cpufreq_frequency_table s5pv210_freq_table[] = {
 	{L6, 200*1000},
 	{L7, 100*1000},
 	{0, CPUFREQ_TABLE_END},};
+=======
+	{L0, 1000*1000},
+	{L1, 800*1000},
+	{L2, 400*1000},
+	{L3, 200*1000},
+	{L4, 100*1000},
+	{0, CPUFREQ_TABLE_END},
+};
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 static struct regulator *arm_regulator;
 static struct regulator *internal_regulator;
@@ -97,6 +117,7 @@ struct s5pv210_dvs_conf {
 	unsigned long	int_volt; /* uV */
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_CUSTOM_VOLTAGE
 unsigned long arm_volt_max = 1500000;
 unsigned long int_volt_max = 1300000;
@@ -174,6 +195,57 @@ static unsigned long original_fclk[] = {1460000, 1300000, 1200000, 1000000, 8000
 
 static u32 apll_values[sizeof(original_fclk) / sizeof(unsigned long)];
 #endif
+=======
+const unsigned long arm_volt_max = 1350000;
+const unsigned long int_volt_max = 1250000;
+
+static struct s5pv210_dvs_conf dvs_conf[] = {
+	[L0] = {
+		.arm_volt   = 1250000,
+		.int_volt   = 1100000,
+	},
+	[L1] = {
+		.arm_volt   = 1200000,
+		.int_volt   = 1100000,
+	},
+	[L2] = {
+		.arm_volt   = 1050000,
+		.int_volt   = 1100000,
+	},
+	[L3] = {
+		.arm_volt   = 950000,
+		.int_volt   = 1100000,
+	},
+	[L4] = {
+		.arm_volt   = 950000,
+		.int_volt   = 1000000,
+	},
+};
+
+static u32 clkdiv_val[5][11] = {
+	/*
+	 * Clock divider value for following
+	 * { APLL, A2M, HCLK_MSYS, PCLK_MSYS,
+	 *   HCLK_DSYS, PCLK_DSYS, HCLK_PSYS, PCLK_PSYS,
+	 *   ONEDRAM, MFC, G3D }
+	 */
+
+	/* L0 : [1000/200/100][166/83][133/66][200/200] */
+	{0, 4, 4, 1, 3, 1, 4, 1, 3, 0, 0},
+
+	/* L1 : [800/200/100][166/83][133/66][200/200] */
+	{0, 3, 3, 1, 3, 1, 4, 1, 3, 0, 0},
+
+	/* L2 : [400/200/100][166/83][133/66][200/200] */
+	{1, 3, 1, 1, 3, 1, 4, 1, 3, 0, 0},
+
+	/* L3 : [200/200/100][166/83][133/66][200/200] */
+	{3, 3, 1, 1, 3, 1, 4, 1, 3, 0, 0},
+
+	/* L4 : [100/100/100][83/83][66/66][100/100] */
+	{7, 7, 0, 0, 7, 0, 9, 0, 7, 0, 0},
+};
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 /*
  * This function set DRAM refresh counter
@@ -198,11 +270,15 @@ static void s5pv210_set_refresh(enum s5pv210_dmc_port ch, unsigned long freq)
 	/* Find current DRAM frequency */
 	tmp = s5pv210_dram_conf[ch].freq;
 
+<<<<<<< HEAD
 #ifdef CONFIG_LIVE_OC
 	do_div(tmp, (freq * oc_value) / 100);
 #else
 	do_div(tmp, freq);
 #endif
+=======
+	do_div(tmp, freq);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	tmp1 = s5pv210_dram_conf[ch].refresh;
 
@@ -296,11 +372,19 @@ static int s5pv210_target(struct cpufreq_policy *policy,
 	cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
 
 	/* Check if there need to change PLL */
+<<<<<<< HEAD
 	if ((index <= L3) || (priv_index <= L3))
 		pll_changing = 1;
 
 	/* Check if there need to change System bus clock */
 	if ((index == L7) || (priv_index == L7))
+=======
+	if ((index == L0) || (priv_index == L0))
+		pll_changing = 1;
+
+	/* Check if there need to change System bus clock */
+	if ((index == L4) || (priv_index == L4))
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		bus_speed_changing = 1;
 
 	if (bus_speed_changing) {
@@ -354,7 +438,11 @@ static int s5pv210_target(struct cpufreq_policy *policy,
 		} while (reg & ((1 << 7) | (1 << 3)));
 
 		/*
+<<<<<<< HEAD
 		 * 3. DMC1 refresh count for 133Mhz if (index == L7) is
+=======
+		 * 3. DMC1 refresh count for 133Mhz if (index == L4) is
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		 * true refresh counter is already programed in upper
 		 * code. 0x287@83Mhz
 		 */
@@ -415,6 +503,7 @@ static int s5pv210_target(struct cpufreq_policy *policy,
 		 * 6-1. Set PMS values
 		 * 6-2. Wait untile the PLL is locked
 		 */
+<<<<<<< HEAD
         switch ( index ) {
             case L0:
                 /* APLL FOUT becomes 1460 Mhz */
@@ -444,6 +533,17 @@ static int s5pv210_target(struct cpufreq_policy *policy,
         do {
             reg = __raw_readl(S5P_APLL_CON);
         } while (!(reg & (0x1 << 29)));
+=======
+		if (index == L0)
+			__raw_writel(APLL_VAL_1000, S5P_APLL_CON);
+		else
+			__raw_writel(APLL_VAL_800, S5P_APLL_CON);
+
+		do {
+			reg = __raw_readl(S5P_APLL_CON);
+		} while (!(reg & (0x1 << 29)));
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		/*
 		 * 7. Change souce clock from SCLKMPLL(667Mhz)
 		 * to SCLKA2M(200Mhz) in MFC_MUX and G3D MUX
@@ -486,7 +586,11 @@ static int s5pv210_target(struct cpufreq_policy *policy,
 
 		/*
 		 * 10. DMC1 refresh counter
+<<<<<<< HEAD
 		 * L7 : DMC1 = 100Mhz 7.8us/(1/100) = 0x30c
+=======
+		 * L4 : DMC1 = 100Mhz 7.8us/(1/100) = 0x30c
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		 * Others : DMC1 = 200Mhz 7.8us/(1/200) = 0x618
 		 */
 		if (!bus_speed_changing)
@@ -494,7 +598,11 @@ static int s5pv210_target(struct cpufreq_policy *policy,
 	}
 
 	/*
+<<<<<<< HEAD
 	 * L7 level need to change memory bus speed, hence onedram clock divier
+=======
+	 * L4 level need to change memory bus speed, hence onedram clock divier
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	 * and memory refresh parameter should be changed
 	 */
 	if (bus_speed_changing) {
@@ -566,6 +674,7 @@ static int check_mem_type(void __iomem *dmc_reg)
 	return val >> 8;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_LIVE_OC
 static int find_divider(int freq)
 {
@@ -751,6 +860,11 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
 	unsigned long mem_type;
     
     int ret;
+=======
+static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
+{
+	unsigned long mem_type;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	cpu_clk = clk_get(NULL, "armclk");
 	if (IS_ERR(cpu_clk))
@@ -795,6 +909,7 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
 	cpufreq_frequency_table_get_attr(s5pv210_freq_table, policy->cpu);
 
 	policy->cpuinfo.transition_latency = 40000;
+<<<<<<< HEAD
     
     ret = cpufreq_frequency_table_cpuinfo(policy, s5pv210_freq_table);
     
@@ -806,6 +921,8 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
 #ifdef CONFIG_LIVE_OC
 	liveoc_init();
 #endif
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	return cpufreq_frequency_table_cpuinfo(policy, s5pv210_freq_table);
 }
@@ -817,6 +934,7 @@ static int s5pv210_cpufreq_notifier_event(struct notifier_block *this,
 
 	switch (event) {
 	case PM_SUSPEND_PREPARE:
+<<<<<<< HEAD
 #ifdef CONFIG_LIVE_OC
 		ret = cpufreq_driver_target(cpufreq_cpu_get(0), sleep_freq,
 				DISABLE_FURTHER_CPUFREQ);
@@ -824,11 +942,16 @@ static int s5pv210_cpufreq_notifier_event(struct notifier_block *this,
 		ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
 				DISABLE_FURTHER_CPUFREQ);
 #endif
+=======
+		ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
+				DISABLE_FURTHER_CPUFREQ);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		if (ret < 0)
 			return NOTIFY_BAD;
 		return NOTIFY_OK;
 	case PM_POST_RESTORE:
 	case PM_POST_SUSPEND:
+<<<<<<< HEAD
 #ifdef CONFIG_LIVE_OC
 		cpufreq_driver_target(cpufreq_cpu_get(0), sleep_freq,
 				ENABLE_FURTHER_CPUFREQ);
@@ -836,6 +959,10 @@ static int s5pv210_cpufreq_notifier_event(struct notifier_block *this,
 		cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
 				ENABLE_FURTHER_CPUFREQ);
 #endif
+=======
+		cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
+				ENABLE_FURTHER_CPUFREQ);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		return NOTIFY_OK;
 	}
 	return NOTIFY_DONE;
@@ -854,11 +981,14 @@ static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
 	return NOTIFY_DONE;
 }
 
+<<<<<<< HEAD
 static struct freq_attr *s5pv210_cpufreq_attr[] = {
 	&cpufreq_freq_attr_scaling_available_freqs,
 	NULL,
 };
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 static struct cpufreq_driver s5pv210_driver = {
 	.flags		= CPUFREQ_STICKY,
 	.verify		= s5pv210_verify_speed,
@@ -866,7 +996,10 @@ static struct cpufreq_driver s5pv210_driver = {
 	.get		= s5pv210_getspeed,
 	.init		= s5pv210_cpu_init,
 	.name		= "s5pv210",
+<<<<<<< HEAD
     .attr		= s5pv210_cpufreq_attr,
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #ifdef CONFIG_PM
 	.suspend	= s5pv210_cpufreq_suspend,
 	.resume		= s5pv210_cpufreq_resume,

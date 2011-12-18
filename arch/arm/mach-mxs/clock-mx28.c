@@ -404,7 +404,11 @@ static int name##_set_rate(struct clk *clk, unsigned long rate)		\
 	reg = __raw_readl(CLKCTRL_BASE_ADDR + HW_CLKCTRL_##dr);		\
 	reg &= ~BM_CLKCTRL_##dr##_DIV;					\
 	reg |= div << BP_CLKCTRL_##dr##_DIV;				\
+<<<<<<< HEAD
 	if (reg & (1 << clk->enable_shift)) {				\
+=======
+	if (reg | (1 << clk->enable_shift)) {				\
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		pr_err("%s: clock is gated\n", __func__);		\
 		return -EINVAL;						\
 	}								\

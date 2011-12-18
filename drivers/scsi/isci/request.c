@@ -1490,6 +1490,7 @@ sci_io_request_frame_handler(struct isci_request *ireq,
 		return SCI_SUCCESS;
 
 	case SCI_REQ_SMP_WAIT_RESP: {
+<<<<<<< HEAD
 		struct sas_task *task = isci_request_access_task(ireq);
 		struct scatterlist *sg = &task->smp_task.smp_resp;
 		void *frame_header, *kaddr;
@@ -1514,6 +1515,31 @@ sci_io_request_frame_handler(struct isci_request *ireq,
 				word_cnt = min_t(unsigned int, word_cnt,
 						 SCU_UNSOLICITED_FRAME_BUFFER_SIZE/4);
 			sci_swab32_cpy(rsp + 4, smp_resp, word_cnt);
+=======
+		struct smp_resp *rsp_hdr = &ireq->smp.rsp;
+		void *frame_header;
+
+		sci_unsolicited_frame_control_get_header(&ihost->uf_control,
+							      frame_index,
+							      &frame_header);
+
+		/* byte swap the header. */
+		word_cnt = SMP_RESP_HDR_SZ / sizeof(u32);
+		sci_swab32_cpy(rsp_hdr, frame_header, word_cnt);
+
+		if (rsp_hdr->frame_type == SMP_RESPONSE) {
+			void *smp_resp;
+
+			sci_unsolicited_frame_control_get_buffer(&ihost->uf_control,
+								      frame_index,
+								      &smp_resp);
+
+			word_cnt = (sizeof(struct smp_resp) - SMP_RESP_HDR_SZ) /
+				sizeof(u32);
+
+			sci_swab32_cpy(((u8 *) rsp_hdr) + SMP_RESP_HDR_SZ,
+				       smp_resp, word_cnt);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 			ireq->scu_status = SCU_TASK_DONE_GOOD;
 			ireq->sci_status = SCI_SUCCESS;
@@ -1529,13 +1555,20 @@ sci_io_request_frame_handler(struct isci_request *ireq,
 				__func__,
 				ireq,
 				frame_index,
+<<<<<<< HEAD
 				rsp[0]);
+=======
+				rsp_hdr->frame_type);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 			ireq->scu_status = SCU_TASK_DONE_SMP_FRM_TYPE_ERR;
 			ireq->sci_status = SCI_FAILURE_CONTROLLER_SPECIFIC_IO_ERR;
 			sci_change_state(&ireq->sm, SCI_REQ_COMPLETED);
 		}
+<<<<<<< HEAD
 		kunmap_atomic(kaddr, KM_IRQ0);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 		sci_controller_release_frame(ihost, frame_index);
 
@@ -2605,7 +2638,22 @@ static void isci_request_io_request_complete(struct isci_host *ihost,
 			status   = SAM_STAT_GOOD;
 			set_bit(IREQ_COMPLETE_IN_TARGET, &request->flags);
 
+<<<<<<< HEAD
 			if (completion_status == SCI_IO_SUCCESS_IO_DONE_EARLY) {
+=======
+			if (task->task_proto == SAS_PROTOCOL_SMP) {
+				void *rsp = &request->smp.rsp;
+
+				dev_dbg(&ihost->pdev->dev,
+					"%s: SMP protocol completion\n",
+					__func__);
+
+				sg_copy_from_buffer(
+					&task->smp_task.smp_resp, 1,
+					rsp, sizeof(struct smp_resp));
+			} else if (completion_status
+				   == SCI_IO_SUCCESS_IO_DONE_EARLY) {
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 				/* This was an SSP / STP / SATA transfer.
 				 * There is a possibility that less data than

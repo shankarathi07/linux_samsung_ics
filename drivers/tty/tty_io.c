@@ -193,7 +193,12 @@ static inline struct tty_struct *file_tty(struct file *file)
 	return ((struct tty_file_private *)file->private_data)->tty;
 }
 
+<<<<<<< HEAD
 int tty_alloc_file(struct file *file)
+=======
+/* Associate a new file with the tty structure */
+int tty_add_file(struct tty_struct *tty, struct file *file)
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 {
 	struct tty_file_private *priv;
 
@@ -201,6 +206,7 @@ int tty_alloc_file(struct file *file)
 	if (!priv)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	file->private_data = priv;
 
 	return 0;
@@ -213,10 +219,16 @@ void tty_add_file(struct tty_struct *tty, struct file *file)
 
 	priv->tty = tty;
 	priv->file = file;
+=======
+	priv->tty = tty;
+	priv->file = file;
+	file->private_data = priv;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	spin_lock(&tty_files_lock);
 	list_add(&priv->list, &tty->tty_files);
 	spin_unlock(&tty_files_lock);
+<<<<<<< HEAD
 }
 
 /**
@@ -231,6 +243,10 @@ void tty_free_file(struct file *file)
 
 	file->private_data = NULL;
 	kfree(priv);
+=======
+
+	return 0;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 /* Delete file from its tty */
@@ -241,7 +257,12 @@ void tty_del_file(struct file *file)
 	spin_lock(&tty_files_lock);
 	list_del(&priv->list);
 	spin_unlock(&tty_files_lock);
+<<<<<<< HEAD
 	tty_free_file(file);
+=======
+	file->private_data = NULL;
+	kfree(priv);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 
@@ -1830,10 +1851,13 @@ static int tty_open(struct inode *inode, struct file *filp)
 	nonseekable_open(inode, filp);
 
 retry_open:
+<<<<<<< HEAD
 	retval = tty_alloc_file(filp);
 	if (retval)
 		return -ENOMEM;
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	noctty = filp->f_flags & O_NOCTTY;
 	index  = -1;
 	retval = 0;
@@ -1846,7 +1870,10 @@ retry_open:
 		if (!tty) {
 			tty_unlock();
 			mutex_unlock(&tty_mutex);
+<<<<<<< HEAD
 			tty_free_file(filp);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			return -ENXIO;
 		}
 		driver = tty_driver_kref_get(tty->driver);
@@ -1879,7 +1906,10 @@ retry_open:
 		}
 		tty_unlock();
 		mutex_unlock(&tty_mutex);
+<<<<<<< HEAD
 		tty_free_file(filp);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		return -ENODEV;
 	}
 
@@ -1887,7 +1917,10 @@ retry_open:
 	if (!driver) {
 		tty_unlock();
 		mutex_unlock(&tty_mutex);
+<<<<<<< HEAD
 		tty_free_file(filp);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		return -ENODEV;
 	}
 got_driver:
@@ -1898,8 +1931,11 @@ got_driver:
 		if (IS_ERR(tty)) {
 			tty_unlock();
 			mutex_unlock(&tty_mutex);
+<<<<<<< HEAD
 			tty_driver_kref_put(driver);
 			tty_free_file(filp);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			return PTR_ERR(tty);
 		}
 	}
@@ -1915,11 +1951,23 @@ got_driver:
 	tty_driver_kref_put(driver);
 	if (IS_ERR(tty)) {
 		tty_unlock();
+<<<<<<< HEAD
 		tty_free_file(filp);
 		return PTR_ERR(tty);
 	}
 
 	tty_add_file(tty, filp);
+=======
+		return PTR_ERR(tty);
+	}
+
+	retval = tty_add_file(tty, filp);
+	if (retval) {
+		tty_unlock();
+		tty_release(inode, filp);
+		return retval;
+	}
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	check_tty_count(tty, "tty_open");
 	if (tty->driver->type == TTY_DRIVER_TYPE_PTY &&

@@ -558,6 +558,7 @@ wmi_notify_handler handler, void *data)
 
 	wmi_parse_guid(guid, tmp);
 	wmi_swap_bytes(tmp, guid_input);
+<<<<<<< HEAD
 
 	list_for_each(p, &wmi_block_list) {
 		acpi_status wmi_status;
@@ -571,6 +572,21 @@ wmi_notify_handler handler, void *data)
 			block->handler = handler;
 			block->handler_data = data;
 
+=======
+
+	list_for_each(p, &wmi_block_list) {
+		acpi_status wmi_status;
+		block = list_entry(p, struct wmi_block, list);
+
+		if (memcmp(block->gblock.guid, guid_input, 16) == 0) {
+			if (block->handler &&
+			    block->handler != wmi_notify_debug)
+				return AE_ALREADY_ACQUIRED;
+
+			block->handler = handler;
+			block->handler_data = data;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			wmi_status = wmi_method_enable(block, 1);
 			if ((wmi_status != AE_OK) ||
 			    ((wmi_status == AE_OK) && (status == AE_NOT_EXIST)))
@@ -738,6 +754,7 @@ static int wmi_create_device(const struct guid_block *gblock,
 			     struct wmi_block *wblock, acpi_handle handle)
 {
 	char guid_string[37];
+<<<<<<< HEAD
 
 	wblock->dev.class = &wmi_class;
 
@@ -746,6 +763,16 @@ static int wmi_create_device(const struct guid_block *gblock,
 
 	dev_set_drvdata(&wblock->dev, wblock);
 
+=======
+
+	wblock->dev.class = &wmi_class;
+
+	wmi_gtoa(gblock->guid, guid_string);
+	dev_set_name(&wblock->dev, guid_string);
+
+	dev_set_drvdata(&wblock->dev, wblock);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return device_register(&wblock->dev);
 }
 
@@ -754,6 +781,7 @@ static void wmi_free_devices(void)
 	struct wmi_block *wblock, *next;
 
 	/* Delete devices for all the GUIDs */
+<<<<<<< HEAD
 	list_for_each_entry_safe(wblock, next, &wmi_block_list, list) {
 		list_del(&wblock->list);
 		if (wblock->dev.class)
@@ -761,6 +789,11 @@ static void wmi_free_devices(void)
 		else
 			kfree(wblock);
 	}
+=======
+	list_for_each_entry_safe(wblock, next, &wmi_block_list, list)
+		if (wblock->dev.class)
+			device_unregister(&wblock->dev);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static bool guid_already_parsed(const char *guid_string)

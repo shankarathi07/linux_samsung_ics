@@ -418,7 +418,11 @@ struct phy_driver {
 
 	/*
 	 * Requests a Tx timestamp for 'skb'. The phy driver promises
+<<<<<<< HEAD
 	 * to deliver it using skb_complete_tx_timestamp() as soon as a
+=======
+	 * to deliver it to the socket's error queue as soon as a
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	 * timestamp becomes available. One of the PTP_CLASS_ values
 	 * is passed in 'type'.
 	 */

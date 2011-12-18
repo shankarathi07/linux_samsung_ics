@@ -358,6 +358,7 @@ void iwlagn_send_prio_tbl(struct iwl_priv *priv)
 }
 
 int iwlagn_send_bt_env(struct iwl_priv *priv, u8 action, u8 type)
+<<<<<<< HEAD
 {
 	struct iwl_bt_coex_prot_env_cmd env_cmd;
 	int ret;
@@ -374,6 +375,24 @@ int iwlagn_send_bt_env(struct iwl_priv *priv, u8 action, u8 type)
 
 static int iwlagn_alive_notify(struct iwl_priv *priv)
 {
+=======
+{
+	struct iwl_bt_coex_prot_env_cmd env_cmd;
+	int ret;
+
+	env_cmd.action = action;
+	env_cmd.type = type;
+	ret = iwl_send_cmd_pdu(priv, REPLY_BT_COEX_PROT_ENV,
+			       sizeof(env_cmd), &env_cmd);
+	if (ret)
+		IWL_ERR(priv, "failed to send BT env command\n");
+	return ret;
+}
+
+
+static int iwlagn_alive_notify(struct iwl_priv *priv)
+{
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	const struct queue_to_fifo_ac *queue_to_fifo;
 	struct iwl_rxon_context *ctx;
 	u32 a;
@@ -477,6 +496,7 @@ static int iwlagn_alive_notify(struct iwl_priv *priv)
 	/* Enable L1-Active */
 	iwl_clear_bits_prph(priv, APMG_PCIDEV_STT_REG,
 			  APMG_PCIDEV_STT_VAL_L1_ACT_DIS);
+<<<<<<< HEAD
 
 	ret = iwlagn_send_wimax_coex(priv);
 	if (ret)
@@ -490,6 +510,21 @@ static int iwlagn_alive_notify(struct iwl_priv *priv)
 }
 
 
+=======
+
+	ret = iwlagn_send_wimax_coex(priv);
+	if (ret)
+		return ret;
+
+	ret = iwlagn_set_Xtal_calib(priv);
+	if (ret)
+		return ret;
+
+	return iwl_send_calib_results(priv);
+}
+
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 /**
  * iwl_verify_inst_sparse - verify runtime uCode image in card vs. host,
  *   using sample data 100 bytes apart.  If these sample points are good,

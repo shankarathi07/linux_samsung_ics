@@ -209,6 +209,7 @@ static struct pxa3xx_nand_timing timing[] = {
 	{ 10, 25, 15,  25, 15,  30, 25000,  60, 10, },
 	{ 10, 35, 15,  25, 15,  25, 25000,  60, 10, },
 };
+<<<<<<< HEAD
 
 static struct pxa3xx_nand_flash builtin_flash_types[] = {
 { "DEFAULT FLASH",      0,   0, 2048,  8,  8,    0, &timing[0] },
@@ -225,6 +226,24 @@ static struct pxa3xx_nand_flash builtin_flash_types[] = {
 /* Define a default flash type setting serve as flash detecting only */
 #define DEFAULT_FLASH_TYPE (&builtin_flash_types[0])
 
+=======
+
+static struct pxa3xx_nand_flash builtin_flash_types[] = {
+{ "DEFAULT FLASH",      0,   0, 2048,  8,  8,    0, &timing[0] },
+{ "64MiB 16-bit",  0x46ec,  32,  512, 16, 16, 4096, &timing[1] },
+{ "256MiB 8-bit",  0xdaec,  64, 2048,  8,  8, 2048, &timing[1] },
+{ "4GiB 8-bit",    0xd7ec, 128, 4096,  8,  8, 8192, &timing[1] },
+{ "128MiB 8-bit",  0xa12c,  64, 2048,  8,  8, 1024, &timing[2] },
+{ "128MiB 16-bit", 0xb12c,  64, 2048, 16, 16, 1024, &timing[2] },
+{ "512MiB 8-bit",  0xdc2c,  64, 2048,  8,  8, 4096, &timing[2] },
+{ "512MiB 16-bit", 0xcc2c,  64, 2048, 16, 16, 4096, &timing[2] },
+{ "256MiB 16-bit", 0xba20,  64, 2048, 16, 16, 2048, &timing[3] },
+};
+
+/* Define a default flash type setting serve as flash detecting only */
+#define DEFAULT_FLASH_TYPE (&builtin_flash_types[0])
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 const char *mtd_names[] = {"pxa3xx_nand-0", NULL};
 
 #define NDTR0_tCH(c)	(min((c), 7) << 19)
@@ -620,6 +639,7 @@ static int prepare_command_pool(struct pxa3xx_nand_info *info, int command,
 			" command %x\n", command);
 		break;
 	}
+<<<<<<< HEAD
 
 	return exec_cmd;
 }
@@ -643,6 +663,31 @@ static void pxa3xx_nand_cmdfunc(struct mtd_info *mtd, unsigned command,
 		init_completion(&info->cmd_complete);
 		pxa3xx_nand_start(info);
 
+=======
+
+	return exec_cmd;
+}
+
+static void pxa3xx_nand_cmdfunc(struct mtd_info *mtd, unsigned command,
+				int column, int page_addr)
+{
+	struct pxa3xx_nand_info *info = mtd->priv;
+	int ret, exec_cmd;
+
+	/*
+	 * if this is a x16 device ,then convert the input
+	 * "byte" address into a "word" address appropriate
+	 * for indexing a word-oriented device
+	 */
+	if (info->reg_ndcr & NDCR_DWIDTH_M)
+		column /= 2;
+
+	exec_cmd = prepare_command_pool(info, command, column, page_addr);
+	if (exec_cmd) {
+		init_completion(&info->cmd_complete);
+		pxa3xx_nand_start(info);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		ret = wait_for_completion_timeout(&info->cmd_complete,
 				CHIP_DELAY_TIMEOUT);
 		if (!ret) {
@@ -685,8 +730,11 @@ static int pxa3xx_nand_read_page_hwecc(struct mtd_info *mtd,
 		 * OOB, ignore such double bit errors
 		 */
 		if (is_buf_blank(buf, mtd->writesize))
+<<<<<<< HEAD
 			info->retcode = ERR_NONE;
 		else
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			mtd->ecc_stats.failed++;
 	}
 
@@ -815,7 +863,11 @@ static int pxa3xx_nand_detect_config(struct pxa3xx_nand_info *info)
 	info->page_size = ndcr & NDCR_PAGE_SZ ? 2048 : 512;
 	/* set info fields needed to read id */
 	info->read_id_bytes = (info->page_size == 2048) ? 4 : 2;
+<<<<<<< HEAD
 	info->reg_ndcr = ndcr & ~NDCR_INT_MASK;
+=======
+	info->reg_ndcr = ndcr;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	info->cmdset = &default_cmdset;
 
 	info->ndtr0cs0 = nand_readl(info, NDTR0CS0);
@@ -884,7 +936,11 @@ static int pxa3xx_nand_scan(struct mtd_info *mtd)
 	struct pxa3xx_nand_info *info = mtd->priv;
 	struct platform_device *pdev = info->pdev;
 	struct pxa3xx_nand_platform_data *pdata = pdev->dev.platform_data;
+<<<<<<< HEAD
 	struct nand_flash_dev pxa3xx_flash_ids[2], *def = NULL;
+=======
+	struct nand_flash_dev pxa3xx_flash_ids[2] = { {NULL,}, {NULL,} };
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	const struct pxa3xx_nand_flash *f = NULL;
 	struct nand_chip *chip = mtd->priv;
 	uint32_t id = -1;
@@ -944,10 +1000,15 @@ static int pxa3xx_nand_scan(struct mtd_info *mtd)
 	pxa3xx_flash_ids[0].erasesize = f->page_size * f->page_per_block;
 	if (f->flash_width == 16)
 		pxa3xx_flash_ids[0].options = NAND_BUSWIDTH_16;
+<<<<<<< HEAD
 	pxa3xx_flash_ids[1].name = NULL;
 	def = pxa3xx_flash_ids;
 KEEP_CONFIG:
 	if (nand_scan_ident(mtd, 1, def))
+=======
+KEEP_CONFIG:
+	if (nand_scan_ident(mtd, 1, pxa3xx_flash_ids))
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		return -ENODEV;
 	/* calculate addressing information */
 	info->col_addr_cycles = (mtd->writesize >= 2048) ? 2 : 1;
@@ -958,9 +1019,15 @@ KEEP_CONFIG:
 		info->row_addr_cycles = 2;
 	mtd->name = mtd_names[0];
 	chip->ecc.mode = NAND_ECC_HW;
+<<<<<<< HEAD
 	chip->ecc.size = info->page_size;
 
 	chip->options = (info->reg_ndcr & NDCR_DWIDTH_M) ? NAND_BUSWIDTH_16 : 0;
+=======
+	chip->ecc.size = f->page_size;
+
+	chip->options = (f->flash_width == 16) ? NAND_BUSWIDTH_16 : 0;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	chip->options |= NAND_NO_AUTOINCR;
 	chip->options |= NAND_NO_READRDY;
 

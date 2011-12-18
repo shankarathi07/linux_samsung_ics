@@ -278,9 +278,12 @@ static int rpm_callback(int (*cb)(struct device *), struct device *dev)
  * If a deferred resume was requested while the callback was running then carry
  * it out; otherwise send an idle notification for the device (if the suspend
  * failed) or for its parent (if the suspend succeeded).
+<<<<<<< HEAD
  * If ->runtime_suspend failed with -EAGAIN or -EBUSY, and if the RPM_AUTO
  * flag is set and the next autosuspend-delay expiration time is in the
  * future, schedule another autosuspend attempt.
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
  *
  * This function must be called under dev->power.lock with interrupts disabled.
  */
@@ -392,6 +395,7 @@ static int rpm_suspend(struct device *dev, int rpmflags)
 	if (retval) {
 		__update_runtime_status(dev, RPM_ACTIVE);
 		dev->power.deferred_resume = 0;
+<<<<<<< HEAD
 		if (retval == -EAGAIN || retval == -EBUSY) {
 			dev->power.runtime_error = 0;
 
@@ -405,8 +409,12 @@ static int rpm_suspend(struct device *dev, int rpmflags)
 			    pm_runtime_autosuspend_expiration(dev) != 0)
 				goto repeat;
 		} else {
+=======
+		if (retval == -EAGAIN || retval == -EBUSY)
+			dev->power.runtime_error = 0;
+		else
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			pm_runtime_cancel_pending(dev);
-		}
 	} else {
  no_callback:
 		__update_runtime_status(dev, RPM_SUSPENDED);

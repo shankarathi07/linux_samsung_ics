@@ -87,12 +87,15 @@ static void __ccwgroup_remove_cdev_refs(struct ccwgroup_device *gdev)
 	}
 }
 
+<<<<<<< HEAD
 static ssize_t ccwgroup_online_store(struct device *dev,
 				     struct device_attribute *attr,
 				     const char *buf, size_t count);
 static ssize_t ccwgroup_online_show(struct device *dev,
 				    struct device_attribute *attr,
 				    char *buf);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 /*
  * Provide an 'ungroup' attribute so the user can remove group devices no
  * longer needed or accidentially created. Saves memory :)

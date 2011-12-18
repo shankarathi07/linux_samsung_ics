@@ -397,6 +397,7 @@ static int bdi_forker_thread(void *ptr)
 
 			have_dirty_io = !list_empty(&bdi->work_list) ||
 					wb_has_dirty_io(&bdi->wb);
+<<<<<<< HEAD
 
 			/*
 			 * If the bdi has work to do, but the thread does not
@@ -434,6 +435,45 @@ static int bdi_forker_thread(void *ptr)
 		}
 		spin_unlock_bh(&bdi_lock);
 
+=======
+
+			/*
+			 * If the bdi has work to do, but the thread does not
+			 * exist - create it.
+			 */
+			if (!bdi->wb.task && have_dirty_io) {
+				/*
+				 * Set the pending bit - if someone will try to
+				 * unregister this bdi - it'll wait on this bit.
+				 */
+				set_bit(BDI_pending, &bdi->state);
+				action = FORK_THREAD;
+				break;
+			}
+
+			spin_lock(&bdi->wb_lock);
+
+			/*
+			 * If there is no work to do and the bdi thread was
+			 * inactive long enough - kill it. The wb_lock is taken
+			 * to make sure no-one adds more work to this bdi and
+			 * wakes the bdi thread up.
+			 */
+			if (bdi->wb.task && !have_dirty_io &&
+			    time_after(jiffies, bdi->wb.last_active +
+						bdi_longest_inactive())) {
+				task = bdi->wb.task;
+				bdi->wb.task = NULL;
+				spin_unlock(&bdi->wb_lock);
+				set_bit(BDI_pending, &bdi->state);
+				action = KILL_THREAD;
+				break;
+			}
+			spin_unlock(&bdi->wb_lock);
+		}
+		spin_unlock_bh(&bdi_lock);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		/* Keep working if default bdi still has things to do */
 		if (!list_empty(&me->bdi->work_list))
 			__set_current_state(TASK_RUNNING);

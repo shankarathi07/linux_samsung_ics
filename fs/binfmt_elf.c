@@ -796,6 +796,7 @@ static int load_elf_binary(struct linux_binprm *bprm, struct pt_regs *regs)
 			 * might try to exec.  This is because the brk will
 			 * follow the loader, and is not movable.  */
 #if defined(CONFIG_X86) || defined(CONFIG_ARM)
+<<<<<<< HEAD
 			/* Memory randomization might have been switched off
 			 * in runtime via sysctl.
 			 * If that is the case, retain the original non-zero
@@ -806,6 +807,9 @@ static int load_elf_binary(struct linux_binprm *bprm, struct pt_regs *regs)
 				load_bias = 0;
 			else
 				load_bias = ELF_PAGESTART(ELF_ET_DYN_BASE - vaddr);
+=======
+			load_bias = 0;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #else
 			load_bias = ELF_PAGESTART(ELF_ET_DYN_BASE - vaddr);
 #endif

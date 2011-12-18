@@ -189,6 +189,7 @@ static int wm8753_set_dai(struct snd_kcontrol *kcontrol,
 	struct wm8753_priv *wm8753 = snd_soc_codec_get_drvdata(codec);
 	u16 ioctl;
 
+<<<<<<< HEAD
 	if (wm8753->dai_func == ucontrol->value.integer.value[0])
 		return 0;
 
@@ -202,6 +203,18 @@ static int wm8753_set_dai(struct snd_kcontrol *kcontrol,
 	if (((ioctl >> 2) & 0x3) == wm8753->dai_func)
 		return 1;
 
+=======
+	if (codec->active)
+		return -EBUSY;
+
+	ioctl = snd_soc_read(codec, WM8753_IOCTL);
+
+	wm8753->dai_func = ucontrol->value.integer.value[0];
+
+	if (((ioctl >> 2) & 0x3) == wm8753->dai_func)
+		return 1;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	ioctl = (ioctl & 0x1f3) | (wm8753->dai_func << 2);
 	snd_soc_write(codec, WM8753_IOCTL, ioctl);
 

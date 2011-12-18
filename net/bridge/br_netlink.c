@@ -208,7 +208,10 @@ static struct rtnl_link_ops br_link_ops __read_mostly = {
 	.priv_size	= sizeof(struct net_bridge),
 	.setup		= br_dev_setup,
 	.validate	= br_validate,
+<<<<<<< HEAD
 	.dellink	= br_dev_delete,
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 };
 
 int __init br_netlink_init(void)

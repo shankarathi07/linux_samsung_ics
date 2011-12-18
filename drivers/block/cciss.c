@@ -4302,6 +4302,7 @@ static int __devinit cciss_pci_init(ctlr_info_t *h)
 	if (err) {
 		dev_warn(&h->pdev->dev, "Unable to Enable PCI device\n");
 		return err;
+<<<<<<< HEAD
 	}
 
 	err = pci_request_regions(h->pdev, "cciss");
@@ -4335,6 +4336,41 @@ static int __devinit cciss_pci_init(ctlr_info_t *h)
 	print_cfg_table(h);
 	cciss_find_board_params(h);
 
+=======
+	}
+
+	err = pci_request_regions(h->pdev, "cciss");
+	if (err) {
+		dev_warn(&h->pdev->dev,
+			"Cannot obtain PCI resources, aborting\n");
+		return err;
+	}
+
+	dev_dbg(&h->pdev->dev, "irq = %x\n", h->pdev->irq);
+	dev_dbg(&h->pdev->dev, "board_id = %x\n", h->board_id);
+
+/* If the kernel supports MSI/MSI-X we will try to enable that functionality,
+ * else we use the IO-APIC interrupt assigned to us by system ROM.
+ */
+	cciss_interrupt_mode(h);
+	err = cciss_pci_find_memory_BAR(h->pdev, &h->paddr);
+	if (err)
+		goto err_out_free_res;
+	h->vaddr = remap_pci_mem(h->paddr, 0x250);
+	if (!h->vaddr) {
+		err = -ENOMEM;
+		goto err_out_free_res;
+	}
+	err = cciss_wait_for_board_state(h->pdev, h->vaddr, BOARD_READY);
+	if (err)
+		goto err_out_free_res;
+	err = cciss_find_cfgtables(h);
+	if (err)
+		goto err_out_free_res;
+	print_cfg_table(h);
+	cciss_find_board_params(h);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!CISS_signature_present(h)) {
 		err = -ENODEV;
 		goto err_out_free_res;
@@ -4533,6 +4569,7 @@ static int cciss_controller_hard_reset(struct pci_dev *pdev,
 		pmcsr &= ~PCI_PM_CTRL_STATE_MASK;
 		pmcsr |= PCI_D0;
 		pci_write_config_word(pdev, pos + PCI_PM_CTRL, pmcsr);
+<<<<<<< HEAD
 
 		/*
 		 * The P600 requires a small delay when changing states.
@@ -4540,6 +4577,8 @@ static int cciss_controller_hard_reset(struct pci_dev *pdev,
 		 * This for kdump only and is particular to the P600.
 		 */
 		msleep(500);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 	return 0;
 }
@@ -4549,6 +4588,7 @@ static __devinit void init_driver_version(char *driver_version, int len)
 	memset(driver_version, 0, len);
 	strncpy(driver_version, "cciss " DRIVER_NAME, len - 1);
 }
+<<<<<<< HEAD
 
 static __devinit int write_driver_ver_to_cfgtable(
 	CfgTable_struct __iomem *cfgtable)
@@ -4556,6 +4596,15 @@ static __devinit int write_driver_ver_to_cfgtable(
 	char *driver_version;
 	int i, size = sizeof(cfgtable->driver_version);
 
+=======
+
+static __devinit int write_driver_ver_to_cfgtable(
+	CfgTable_struct __iomem *cfgtable)
+{
+	char *driver_version;
+	int i, size = sizeof(cfgtable->driver_version);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	driver_version = kmalloc(size, GFP_KERNEL);
 	if (!driver_version)
 		return -ENOMEM;
@@ -4643,6 +4692,7 @@ static __devinit int cciss_kdump_hard_reset_controller(struct pci_dev *pdev)
 	/* if controller is soft- but not hard resettable... */
 	if (!ctlr_is_hard_resettable(board_id))
 		return -ENOTSUPP; /* try soft reset later. */
+<<<<<<< HEAD
 
 	/* Save the PCI command register */
 	pci_read_config_word(pdev, 4, &command_register);
@@ -4660,6 +4710,25 @@ static __devinit int cciss_kdump_hard_reset_controller(struct pci_dev *pdev)
 	if (!vaddr)
 		return -ENOMEM;
 
+=======
+
+	/* Save the PCI command register */
+	pci_read_config_word(pdev, 4, &command_register);
+	/* Turn the board off.  This is so that later pci_restore_state()
+	 * won't turn the board on before the rest of config space is ready.
+	 */
+	pci_disable_device(pdev);
+	pci_save_state(pdev);
+
+	/* find the first memory BAR, so we can find the cfg table */
+	rc = cciss_pci_find_memory_BAR(pdev, &paddr);
+	if (rc)
+		return rc;
+	vaddr = remap_pci_mem(paddr, 0x250);
+	if (!vaddr)
+		return -ENOMEM;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/* find cfgtable in order to check if reset via doorbell is supported */
 	rc = cciss_find_cfg_addrs(pdev, vaddr, &cfg_base_addr,
 					&cfg_base_addr_index, &cfg_offset);
@@ -4775,6 +4844,7 @@ static __devinit int cciss_init_reset_devices(struct pci_dev *pdev)
 				(i < CCISS_POST_RESET_NOOP_RETRIES - 1 ?
 					"; re-trying" : ""));
 		msleep(CCISS_POST_RESET_NOOP_INTERVAL_MSECS);
+<<<<<<< HEAD
 	}
 	return 0;
 }
@@ -4795,10 +4865,35 @@ static __devinit int cciss_allocate_cmd_pool(ctlr_info_t *h)
 		|| (h->errinfo_pool == NULL)) {
 		dev_err(&h->pdev->dev, "out of memory");
 		return -ENOMEM;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static __devinit int cciss_allocate_cmd_pool(ctlr_info_t *h)
+{
+	h->cmd_pool_bits = kmalloc(
+		DIV_ROUND_UP(h->nr_cmds, BITS_PER_LONG) *
+		sizeof(unsigned long), GFP_KERNEL);
+	h->cmd_pool = pci_alloc_consistent(h->pdev,
+		h->nr_cmds * sizeof(CommandList_struct),
+		&(h->cmd_pool_dhandle));
+	h->errinfo_pool = pci_alloc_consistent(h->pdev,
+		h->nr_cmds * sizeof(ErrorInfo_struct),
+		&(h->errinfo_pool_dhandle));
+	if ((h->cmd_pool_bits == NULL)
+		|| (h->cmd_pool == NULL)
+		|| (h->errinfo_pool == NULL)) {
+		dev_err(&h->pdev->dev, "out of memory");
+		return -ENOMEM;
+	}
+	return 0;
+}
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 static __devinit int cciss_allocate_scatterlists(ctlr_info_t *h)
 {
 	int i;

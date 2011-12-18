@@ -226,7 +226,11 @@ static void intel_pch_panel_set_backlight(struct drm_device *dev, u32 level)
 	I915_WRITE(BLC_PWM_CPU_CTL, val | level);
 }
 
+<<<<<<< HEAD
 static void intel_panel_actually_set_backlight(struct drm_device *dev, u32 level)
+=======
+void intel_panel_set_backlight(struct drm_device *dev, u32 level)
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	u32 tmp;
@@ -254,6 +258,7 @@ static void intel_panel_actually_set_backlight(struct drm_device *dev, u32 level
 	I915_WRITE(BLC_PWM_CTL, tmp | level);
 }
 
+<<<<<<< HEAD
 void intel_panel_set_backlight(struct drm_device *dev, u32 level)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
@@ -263,12 +268,23 @@ void intel_panel_set_backlight(struct drm_device *dev, u32 level)
 		intel_panel_actually_set_backlight(dev, level);
 }
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 void intel_panel_disable_backlight(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
 
+<<<<<<< HEAD
 	dev_priv->backlight_enabled = false;
 	intel_panel_actually_set_backlight(dev, 0);
+=======
+	if (dev_priv->backlight_enabled) {
+		dev_priv->backlight_level = intel_panel_get_backlight(dev);
+		dev_priv->backlight_enabled = false;
+	}
+
+	intel_panel_set_backlight(dev, 0);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 void intel_panel_enable_backlight(struct drm_device *dev)
@@ -278,8 +294,13 @@ void intel_panel_enable_backlight(struct drm_device *dev)
 	if (dev_priv->backlight_level == 0)
 		dev_priv->backlight_level = intel_panel_get_max_backlight(dev);
 
+<<<<<<< HEAD
 	dev_priv->backlight_enabled = true;
 	intel_panel_actually_set_backlight(dev, dev_priv->backlight_level);
+=======
+	intel_panel_set_backlight(dev, dev_priv->backlight_level);
+	dev_priv->backlight_enabled = true;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 void intel_panel_setup_backlight(struct drm_device *dev)

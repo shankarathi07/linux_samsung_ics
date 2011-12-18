@@ -894,6 +894,7 @@ void iwlagn_fw_error(struct iwl_priv *priv, bool ondemand)
 	clear_bit(STATUS_HCMD_ACTIVE, &priv->status);
 
 	iwlagn_abort_notification_waits(priv);
+<<<<<<< HEAD
 
 	/* Keep the restart process from trying to send host
 	 * commands by clearing the ready bit */
@@ -922,6 +923,36 @@ void iwlagn_fw_error(struct iwl_priv *priv, bool ondemand)
 			priv->reload_count = 0;
 	}
 
+=======
+
+	/* Keep the restart process from trying to send host
+	 * commands by clearing the ready bit */
+	clear_bit(STATUS_READY, &priv->status);
+
+	wake_up_interruptible(&priv->wait_command_queue);
+
+	if (!ondemand) {
+		/*
+		 * If firmware keep reloading, then it indicate something
+		 * serious wrong and firmware having problem to recover
+		 * from it. Instead of keep trying which will fill the syslog
+		 * and hang the system, let's just stop it
+		 */
+		reload_jiffies = jiffies;
+		reload_msec = jiffies_to_msecs((long) reload_jiffies -
+					(long) priv->reload_jiffies);
+		priv->reload_jiffies = reload_jiffies;
+		if (reload_msec <= IWL_MIN_RELOAD_DURATION) {
+			priv->reload_count++;
+			if (priv->reload_count >= IWL_MAX_CONTINUE_RELOAD_CNT) {
+				IWL_ERR(priv, "BUG_ON, Stop restarting\n");
+				return;
+			}
+		} else
+			priv->reload_count = 0;
+	}
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!test_bit(STATUS_EXIT_PENDING, &priv->status)) {
 		if (iwlagn_mod_params.restart_fw) {
 			IWL_DEBUG(priv, IWL_DL_FW_ERRORS,
@@ -950,7 +981,11 @@ void iwl_irq_handle_error(struct iwl_priv *priv)
 		 */
 		clear_bit(STATUS_READY, &priv->status);
 		clear_bit(STATUS_HCMD_ACTIVE, &priv->status);
+<<<<<<< HEAD
 		wake_up(&priv->wait_command_queue);
+=======
+		wake_up_interruptible(&priv->wait_command_queue);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		IWL_ERR(priv, "RF is used by WiMAX\n");
 		return;
 	}
@@ -1147,11 +1182,19 @@ int iwl_set_tx_power(struct iwl_priv *priv, s8 tx_power, bool force)
 
 	if (!iwl_is_ready_rf(priv))
 		return -EIO;
+<<<<<<< HEAD
 
 	/* scan complete and commit_rxon use tx_power_next value,
 	 * it always need to be updated for newest request */
 	priv->tx_power_next = tx_power;
 
+=======
+
+	/* scan complete and commit_rxon use tx_power_next value,
+	 * it always need to be updated for newest request */
+	priv->tx_power_next = tx_power;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/* do not set tx power when scanning or channel changing */
 	defer = test_bit(STATUS_SCANNING, &priv->status) ||
 		memcmp(&ctx->active, &ctx->staging, sizeof(ctx->staging));
@@ -1162,9 +1205,15 @@ int iwl_set_tx_power(struct iwl_priv *priv, s8 tx_power, bool force)
 
 	prev_tx_power = priv->tx_power_user_lmt;
 	priv->tx_power_user_lmt = tx_power;
+<<<<<<< HEAD
 
 	ret = priv->cfg->ops->lib->send_tx_power(priv);
 
+=======
+
+	ret = priv->cfg->ops->lib->send_tx_power(priv);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/* if fail to set tx_power, restore the orig. tx power */
 	if (ret) {
 		priv->tx_power_user_lmt = prev_tx_power;
@@ -1267,6 +1316,7 @@ int iwl_mac_conf_tx(struct ieee80211_hw *hw, u16 queue,
 int iwl_mac_tx_last_beacon(struct ieee80211_hw *hw)
 {
 	struct iwl_priv *priv = hw->priv;
+<<<<<<< HEAD
 
 	return priv->ibss_manager == IWL_IBSS_MANAGER;
 }
@@ -1275,6 +1325,16 @@ static int iwl_set_mode(struct iwl_priv *priv, struct iwl_rxon_context *ctx)
 {
 	iwl_connection_init_rx_config(priv, ctx);
 
+=======
+
+	return priv->ibss_manager == IWL_IBSS_MANAGER;
+}
+
+static int iwl_set_mode(struct iwl_priv *priv, struct iwl_rxon_context *ctx)
+{
+	iwl_connection_init_rx_config(priv, ctx);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (priv->cfg->ops->hcmd->set_rxon_chain)
 		priv->cfg->ops->hcmd->set_rxon_chain(priv, ctx);
 

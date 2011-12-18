@@ -980,8 +980,12 @@ pnfs_update_layout(struct inode *ino,
 		arg.offset -= pg_offset;
 		arg.length += pg_offset;
 	}
+<<<<<<< HEAD
 	if (arg.length != NFS4_MAX_UINT64)
 		arg.length = PAGE_CACHE_ALIGN(arg.length);
+=======
+	arg.length = PAGE_CACHE_ALIGN(arg.length);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	lseg = send_layoutget(lo, ctx, &arg, gfp_flags);
 	if (!lseg && first) {

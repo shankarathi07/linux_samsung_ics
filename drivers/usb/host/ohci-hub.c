@@ -356,7 +356,14 @@ static void ohci_finish_controller_resume(struct usb_hcd *hcd)
 		msleep(20);
 	}
 
+<<<<<<< HEAD
 	usb_hcd_resume_root_hub(hcd);
+=======
+	/* Does the root hub have a port wakeup pending? */
+	if (ohci_readl(ohci, &ohci->regs->intrstatus) &
+			(OHCI_INTR_RD | OHCI_INTR_RHSC))
+		usb_hcd_resume_root_hub(hcd);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 /* Carry out polling-, autostop-, and autoresume-related state changes */

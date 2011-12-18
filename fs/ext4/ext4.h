@@ -175,7 +175,10 @@ struct mpage_da_data {
  */
 #define	EXT4_IO_END_UNWRITTEN	0x0001
 #define EXT4_IO_END_ERROR	0x0002
+<<<<<<< HEAD
 #define EXT4_IO_END_QUEUED	0x0004
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 struct ext4_io_page {
 	struct page	*p_page;

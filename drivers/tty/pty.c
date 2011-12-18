@@ -670,18 +670,26 @@ static int ptmx_open(struct inode *inode, struct file *filp)
 
 	nonseekable_open(inode, filp);
 
+<<<<<<< HEAD
 	retval = tty_alloc_file(filp);
 	if (retval)
 		return retval;
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/* find a device that is not in use. */
 	tty_lock();
 	index = devpts_new_index(inode);
 	tty_unlock();
+<<<<<<< HEAD
 	if (index < 0) {
 		retval = index;
 		goto err_file;
 	}
+=======
+	if (index < 0)
+		return index;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	mutex_lock(&tty_mutex);
 	tty_lock();
@@ -695,6 +703,7 @@ static int ptmx_open(struct inode *inode, struct file *filp)
 
 	set_bit(TTY_PTY_LOCK, &tty->flags); /* LOCK THE SLAVE */
 
+<<<<<<< HEAD
 	tty_add_file(tty, filp);
 
 	retval = devpts_pty_new(inode, tty->link);
@@ -708,14 +717,34 @@ static int ptmx_open(struct inode *inode, struct file *filp)
 	tty_unlock();
 	return 0;
 err_release:
+=======
+	retval = tty_add_file(tty, filp);
+	if (retval)
+		goto out;
+
+	retval = devpts_pty_new(inode, tty->link);
+	if (retval)
+		goto out1;
+
+	retval = ptm_driver->ops->open(tty, filp);
+	if (retval)
+		goto out2;
+out1:
+	tty_unlock();
+	return retval;
+out2:
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	tty_unlock();
 	tty_release(inode, filp);
 	return retval;
 out:
 	devpts_kill_index(inode, index);
 	tty_unlock();
+<<<<<<< HEAD
 err_file:
 	tty_free_file(filp);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return retval;
 }
 

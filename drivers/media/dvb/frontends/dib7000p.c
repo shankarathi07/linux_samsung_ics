@@ -69,7 +69,10 @@ struct dib7000p_state {
 	struct i2c_msg msg[2];
 	u8 i2c_write_buffer[4];
 	u8 i2c_read_buffer[2];
+<<<<<<< HEAD
 	struct mutex i2c_buffer_lock;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 };
 
 enum dib7000p_power_mode {
@@ -83,6 +86,7 @@ static int dib7090_set_diversity_in(struct dvb_frontend *fe, int onoff);
 
 static u16 dib7000p_read_word(struct dib7000p_state *state, u16 reg)
 {
+<<<<<<< HEAD
 	u16 ret;
 
 	if (mutex_lock_interruptible(&state->i2c_buffer_lock) < 0) {
@@ -90,6 +94,8 @@ static u16 dib7000p_read_word(struct dib7000p_state *state, u16 reg)
 		return 0;
 	}
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	state->i2c_write_buffer[0] = reg >> 8;
 	state->i2c_write_buffer[1] = reg & 0xff;
 
@@ -106,13 +112,18 @@ static u16 dib7000p_read_word(struct dib7000p_state *state, u16 reg)
 	if (i2c_transfer(state->i2c_adap, state->msg, 2) != 2)
 		dprintk("i2c read error on %d", reg);
 
+<<<<<<< HEAD
 	ret = (state->i2c_read_buffer[0] << 8) | state->i2c_read_buffer[1];
 	mutex_unlock(&state->i2c_buffer_lock);
 	return ret;
+=======
+	return (state->i2c_read_buffer[0] << 8) | state->i2c_read_buffer[1];
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static int dib7000p_write_word(struct dib7000p_state *state, u16 reg, u16 val)
 {
+<<<<<<< HEAD
 	int ret;
 
 	if (mutex_lock_interruptible(&state->i2c_buffer_lock) < 0) {
@@ -120,6 +131,8 @@ static int dib7000p_write_word(struct dib7000p_state *state, u16 reg, u16 val)
 		return -EINVAL;
 	}
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	state->i2c_write_buffer[0] = (reg >> 8) & 0xff;
 	state->i2c_write_buffer[1] = reg & 0xff;
 	state->i2c_write_buffer[2] = (val >> 8) & 0xff;
@@ -131,10 +144,14 @@ static int dib7000p_write_word(struct dib7000p_state *state, u16 reg, u16 val)
 	state->msg[0].buf = state->i2c_write_buffer;
 	state->msg[0].len = 4;
 
+<<<<<<< HEAD
 	ret = (i2c_transfer(state->i2c_adap, state->msg, 1) != 1 ?
 			-EREMOTEIO : 0);
 	mutex_unlock(&state->i2c_buffer_lock);
 	return ret;
+=======
+	return i2c_transfer(state->i2c_adap, state->msg, 1) != 1 ? -EREMOTEIO : 0;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static void dib7000p_write_tab(struct dib7000p_state *state, u16 * buf)
@@ -405,6 +422,7 @@ static void dib7000p_reset_pll(struct dib7000p_state *state)
 
 	if (state->version == SOC7090) {
 		dib7000p_write_word(state, 1856, (!bw->pll_reset << 13) | (bw->pll_range << 12) | (bw->pll_ratio << 6) | (bw->pll_prediv));
+<<<<<<< HEAD
 
 		while (((dib7000p_read_word(state, 1856) >> 15) & 0x1) != 1)
 			;
@@ -417,6 +435,20 @@ static void dib7000p_reset_pll(struct dib7000p_state *state)
 
 		dib7000p_write_word(state, 900, clk_cfg0);
 
+=======
+
+		while (((dib7000p_read_word(state, 1856) >> 15) & 0x1) != 1)
+			;
+
+		dib7000p_write_word(state, 1857, dib7000p_read_word(state, 1857) | (!bw->pll_bypass << 15));
+	} else {
+		/* force PLL bypass */
+		clk_cfg0 = (1 << 15) | ((bw->pll_ratio & 0x3f) << 9) |
+			(bw->modulo << 7) | (bw->ADClkSrc << 6) | (bw->IO_CLK_en_core << 5) | (bw->bypclk_div << 2) | (bw->enable_refdiv << 1) | (0 << 0);
+
+		dib7000p_write_word(state, 900, clk_cfg0);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		/* P_pll_cfg */
 		dib7000p_write_word(state, 903, (bw->pll_prediv << 5) | (((bw->pll_ratio >> 6) & 0x3) << 3) | (bw->pll_range << 1) | bw->pll_reset);
 		clk_cfg0 = (bw->pll_bypass << 15) | (clk_cfg0 & 0x7fff);
@@ -2356,9 +2388,14 @@ struct dvb_frontend *dib7000p_attach(struct i2c_adapter *i2c_adap, u8 i2c_addr, 
 	st->version = dib7000p_read_word(st, 897);
 
 	/* FIXME: make sure the dev.parent field is initialized, or else
+<<<<<<< HEAD
 	   request_firmware() will hit an OOPS (this should be moved somewhere
 	   more common) */
 	st->i2c_master.gated_tuner_i2c_adap.dev.parent = i2c_adap->dev.parent;
+=======
+		request_firmware() will hit an OOPS (this should be moved somewhere
+		more common) */
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	dibx000_init_i2c_master(&st->i2c_master, DIB7000P, st->i2c_adap, st->i2c_addr);
 

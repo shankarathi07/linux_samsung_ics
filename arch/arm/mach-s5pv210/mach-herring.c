@@ -377,10 +377,17 @@ static struct s3cfb_lcd r61408 = {
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_MFC0 (36864 * SZ_1K)
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_MFC1 (36864 * SZ_1K)
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMD (S5PV210_LCD_WIDTH * \
+<<<<<<< HEAD
 S5PV210_LCD_HEIGHT * 4 * \
 (CONFIG_FB_S3C_NR_BUFFERS + \
 (CONFIG_FB_S3C_NUM_OVLY_WIN * \
 CONFIG_FB_S3C_NUM_BUF_OVLY_WIN)))
+=======
+					     S5PV210_LCD_HEIGHT * 4 * \
+					     (CONFIG_FB_S3C_NR_BUFFERS + \
+						 (CONFIG_FB_S3C_NUM_OVLY_WIN * \
+						  CONFIG_FB_S3C_NUM_BUF_OVLY_WIN)))
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_JPEG (8192 * SZ_1K)
 
 static struct s5p_media_device herring_media_devs[] = {

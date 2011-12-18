@@ -137,7 +137,10 @@ struct ehci_hcd {			/* one per controller */
 	unsigned		fs_i_thresh:1;	/* Intel iso scheduling */
 	unsigned		use_dummy_qh:1;	/* AMD Frame List table quirk*/
 	unsigned		has_synopsys_hc_bug:1; /* Synopsys HC */
+<<<<<<< HEAD
 	unsigned		frame_index_bug:1; /* MosChip (AKA NetMos) */
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	/* required for usb32 quirk */
 	#define OHCI_CTRL_HCFS          (3 << 6)
@@ -754,6 +757,7 @@ static inline void ehci_sync_mem()
 }
 #endif
 
+<<<<<<< HEAD
 /*-------------------------------------------------------------------------*/
 
 #ifdef CONFIG_PCI
@@ -770,6 +774,8 @@ static inline unsigned ehci_read_frame_index(struct ehci_hcd *ehci)
 
 #endif
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 /*-------------------------------------------------------------------------*/
 
 #ifndef DEBUG

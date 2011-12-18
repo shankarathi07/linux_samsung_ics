@@ -148,8 +148,11 @@ struct uv_hub_info_s {
 	unsigned int		gnode_extra;
 	unsigned char		hub_revision;
 	unsigned char		apic_pnode_shift;
+<<<<<<< HEAD
 	unsigned char		m_shift;
 	unsigned char		n_lshift;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	unsigned long		gnode_upper;
 	unsigned long		lowmem_remap_top;
 	unsigned long		lowmem_remap_base;
@@ -186,6 +189,7 @@ static inline int is_uv2_hub(void)
 	return uv_hub_info->hub_revision >= UV2_HUB_REVISION_BASE;
 }
 
+<<<<<<< HEAD
 static inline int is_uv2_1_hub(void)
 {
 	return uv_hub_info->hub_revision == UV2_HUB_REVISION_BASE;
@@ -196,6 +200,8 @@ static inline int is_uv2_2_hub(void)
 	return uv_hub_info->hub_revision == UV2_HUB_REVISION_BASE + 1;
 }
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 union uvh_apicid {
     unsigned long       v;
     struct uvh_apicid_s {

@@ -1475,7 +1475,10 @@ static struct sock * tcp_v6_syn_recv_sock(struct sock *sk, struct sk_buff *skb,
 	   First: no IPv4 options.
 	 */
 	newinet->inet_opt = NULL;
+<<<<<<< HEAD
 	newnp->ipv6_ac_list = NULL;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	newnp->ipv6_fl_list = NULL;
 
 	/* Clone RX bits */
@@ -1872,6 +1875,7 @@ static struct inet_peer *tcp_v6_get_peer(struct sock *sk, bool *release_it)
 	}
 
 	return peer;
+<<<<<<< HEAD
 }
 
 static void *tcp_v6_tw_get_peer(struct sock *sk)
@@ -1885,6 +1889,21 @@ static void *tcp_v6_tw_get_peer(struct sock *sk)
 	return inet_getpeer_v6(&tw6->tw_v6_daddr, 1);
 }
 
+=======
+}
+
+static void *tcp_v6_tw_get_peer(struct sock *sk)
+{
+	struct inet6_timewait_sock *tw6 = inet6_twsk(sk);
+	struct inet_timewait_sock *tw = inet_twsk(sk);
+
+	if (tw->tw_family == AF_INET)
+		return tcp_v4_tw_get_peer(sk);
+
+	return inet_getpeer_v6(&tw6->tw_v6_daddr, 1);
+}
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 static struct timewait_sock_ops tcp6_timewait_sock_ops = {
 	.twsk_obj_size	= sizeof(struct tcp6_timewait_sock),
 	.twsk_unique	= tcp_twsk_unique,

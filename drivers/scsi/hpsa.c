@@ -3301,6 +3301,7 @@ static int hpsa_controller_hard_reset(struct pci_dev *pdev,
 		pmcsr &= ~PCI_PM_CTRL_STATE_MASK;
 		pmcsr |= PCI_D0;
 		pci_write_config_word(pdev, pos + PCI_PM_CTRL, pmcsr);
+<<<<<<< HEAD
 
 		/*
 		 * The P600 requires a small delay when changing states.
@@ -3324,6 +3325,24 @@ static __devinit int write_driver_ver_to_cfgtable(
 	char *driver_version;
 	int i, size = sizeof(cfgtable->driver_version);
 
+=======
+	}
+	return 0;
+}
+
+static __devinit void init_driver_version(char *driver_version, int len)
+{
+	memset(driver_version, 0, len);
+	strncpy(driver_version, "hpsa " HPSA_DRIVER_VERSION, len - 1);
+}
+
+static __devinit int write_driver_ver_to_cfgtable(
+	struct CfgTable __iomem *cfgtable)
+{
+	char *driver_version;
+	int i, size = sizeof(cfgtable->driver_version);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	driver_version = kmalloc(size, GFP_KERNEL);
 	if (!driver_version)
 		return -ENOMEM;
@@ -3409,6 +3428,7 @@ static __devinit int hpsa_kdump_hard_reset_controller(struct pci_dev *pdev)
 	pci_read_config_word(pdev, 4, &command_register);
 	/* Turn the board off.  This is so that later pci_restore_state()
 	 * won't turn the board on before the rest of config space is ready.
+<<<<<<< HEAD
 	 */
 	pci_disable_device(pdev);
 	pci_save_state(pdev);
@@ -3500,6 +3520,99 @@ static __devinit int hpsa_kdump_hard_reset_controller(struct pci_dev *pdev)
 		dev_info(&pdev->dev, "board ready after hard reset.\n");
 	}
 
+=======
+	 */
+	pci_disable_device(pdev);
+	pci_save_state(pdev);
+
+	/* find the first memory BAR, so we can find the cfg table */
+	rc = hpsa_pci_find_memory_BAR(pdev, &paddr);
+	if (rc)
+		return rc;
+	vaddr = remap_pci_mem(paddr, 0x250);
+	if (!vaddr)
+		return -ENOMEM;
+
+	/* find cfgtable in order to check if reset via doorbell is supported */
+	rc = hpsa_find_cfg_addrs(pdev, vaddr, &cfg_base_addr,
+					&cfg_base_addr_index, &cfg_offset);
+	if (rc)
+		goto unmap_vaddr;
+	cfgtable = remap_pci_mem(pci_resource_start(pdev,
+		       cfg_base_addr_index) + cfg_offset, sizeof(*cfgtable));
+	if (!cfgtable) {
+		rc = -ENOMEM;
+		goto unmap_vaddr;
+	}
+	rc = write_driver_ver_to_cfgtable(cfgtable);
+	if (rc)
+		goto unmap_vaddr;
+
+	/* If reset via doorbell register is supported, use that.
+	 * There are two such methods.  Favor the newest method.
+	 */
+	misc_fw_support = readl(&cfgtable->misc_fw_support);
+	use_doorbell = misc_fw_support & MISC_FW_DOORBELL_RESET2;
+	if (use_doorbell) {
+		use_doorbell = DOORBELL_CTLR_RESET2;
+	} else {
+		use_doorbell = misc_fw_support & MISC_FW_DOORBELL_RESET;
+		if (use_doorbell) {
+			dev_warn(&pdev->dev, "Controller claims that "
+				"'Bit 2 doorbell reset' is "
+				"supported, but not 'bit 5 doorbell reset'.  "
+				"Firmware update is recommended.\n");
+			rc = -ENOTSUPP; /* try soft reset */
+			goto unmap_cfgtable;
+		}
+	}
+
+	rc = hpsa_controller_hard_reset(pdev, vaddr, use_doorbell);
+	if (rc)
+		goto unmap_cfgtable;
+
+	pci_restore_state(pdev);
+	rc = pci_enable_device(pdev);
+	if (rc) {
+		dev_warn(&pdev->dev, "failed to enable device.\n");
+		goto unmap_cfgtable;
+	}
+	pci_write_config_word(pdev, 4, command_register);
+
+	/* Some devices (notably the HP Smart Array 5i Controller)
+	   need a little pause here */
+	msleep(HPSA_POST_RESET_PAUSE_MSECS);
+
+	/* Wait for board to become not ready, then ready. */
+	dev_info(&pdev->dev, "Waiting for board to reset.\n");
+	rc = hpsa_wait_for_board_state(pdev, vaddr, BOARD_NOT_READY);
+	if (rc) {
+		dev_warn(&pdev->dev,
+			"failed waiting for board to reset."
+			" Will try soft reset.\n");
+		rc = -ENOTSUPP; /* Not expected, but try soft reset later */
+		goto unmap_cfgtable;
+	}
+	rc = hpsa_wait_for_board_state(pdev, vaddr, BOARD_READY);
+	if (rc) {
+		dev_warn(&pdev->dev,
+			"failed waiting for board to become ready "
+			"after hard reset\n");
+		goto unmap_cfgtable;
+	}
+
+	rc = controller_reset_failed(vaddr);
+	if (rc < 0)
+		goto unmap_cfgtable;
+	if (rc) {
+		dev_warn(&pdev->dev, "Unable to successfully reset "
+			"controller. Will try soft reset.\n");
+		rc = -ENOTSUPP;
+	} else {
+		dev_info(&pdev->dev, "board ready after hard reset.\n");
+	}
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 unmap_cfgtable:
 	iounmap(cfgtable);
 
@@ -3721,6 +3834,7 @@ static int __devinit hpsa_find_cfg_addrs(struct pci_dev *pdev,
 	}
 	return 0;
 }
+<<<<<<< HEAD
 
 static int __devinit hpsa_find_cfgtables(struct ctlr_info *h)
 {
@@ -3730,6 +3844,17 @@ static int __devinit hpsa_find_cfgtables(struct ctlr_info *h)
 	u32 trans_offset;
 	int rc;
 
+=======
+
+static int __devinit hpsa_find_cfgtables(struct ctlr_info *h)
+{
+	u64 cfg_offset;
+	u32 cfg_base_addr;
+	u64 cfg_base_addr_index;
+	u32 trans_offset;
+	int rc;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	rc = hpsa_find_cfg_addrs(h->pdev, h->vaddr, &cfg_base_addr,
 		&cfg_base_addr_index, &cfg_offset);
 	if (rc)
@@ -3888,10 +4013,13 @@ static int __devinit hpsa_pci_init(struct ctlr_info *h)
 		dev_warn(&h->pdev->dev, "controller appears to be disabled\n");
 		return -ENODEV;
 	}
+<<<<<<< HEAD
 
 	pci_disable_link_state(h->pdev, PCIE_LINK_STATE_L0S |
 			       PCIE_LINK_STATE_L1 | PCIE_LINK_STATE_CLKPM);
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	err = pci_enable_device(h->pdev);
 	if (err) {
 		dev_warn(&h->pdev->dev, "unable to enable PCI device\n");
@@ -4182,6 +4310,7 @@ reinit_after_soft_reset:
 	h->scsi_host = NULL;
 	spin_lock_init(&h->devlock);
 	hpsa_put_ctlr_into_performant_mode(h);
+<<<<<<< HEAD
 
 	/* At this point, the controller is ready to take commands.
 	 * Now, if reset_devices and the hard reset didn't work, try
@@ -4208,6 +4337,34 @@ reinit_after_soft_reset:
 			goto clean4;
 		}
 
+=======
+
+	/* At this point, the controller is ready to take commands.
+	 * Now, if reset_devices and the hard reset didn't work, try
+	 * the soft reset and see if that works.
+	 */
+	if (try_soft_reset) {
+
+		/* This is kind of gross.  We may or may not get a completion
+		 * from the soft reset command, and if we do, then the value
+		 * from the fifo may or may not be valid.  So, we wait 10 secs
+		 * after the reset throwing away any completions we get during
+		 * that time.  Unregister the interrupt handler and register
+		 * fake ones to scoop up any residual completions.
+		 */
+		spin_lock_irqsave(&h->lock, flags);
+		h->access.set_intr_mask(h, HPSA_INTR_OFF);
+		spin_unlock_irqrestore(&h->lock, flags);
+		free_irq(h->intr[h->intr_mode], h);
+		rc = hpsa_request_irq(h, hpsa_msix_discard_completions,
+					hpsa_intx_discard_completions);
+		if (rc) {
+			dev_warn(&h->pdev->dev, "Failed to request_irq after "
+				"soft reset.\n");
+			goto clean4;
+		}
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		rc = hpsa_kdump_soft_reset(h);
 		if (rc)
 			/* Neither hard nor soft reset worked, we're hosed. */

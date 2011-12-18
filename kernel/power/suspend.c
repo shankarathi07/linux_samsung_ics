@@ -165,7 +165,11 @@ static int suspend_enter(suspend_state_t state)
     
 	arch_suspend_disable_irqs();
 	BUG_ON(!irqs_disabled());
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	error = syscore_suspend();
 	if (!error) {
 		if (!(suspend_test(TEST_CORE) || pm_wakeup_pending())) {
@@ -184,10 +188,17 @@ Enable_cpus:
 Platform_wake:
 	if (suspend_ops->wake)
 		suspend_ops->wake();
+<<<<<<< HEAD
     
 	dpm_resume_noirq(PMSG_RESUME);
     
 Platform_finish:
+=======
+
+	dpm_resume_noirq(PMSG_RESUME);
+
+ Platform_finish:
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (suspend_ops->finish)
 		suspend_ops->finish();
     
@@ -202,10 +213,17 @@ Platform_finish:
 int suspend_devices_and_enter(suspend_state_t state)
 {
 	int error;
+<<<<<<< HEAD
     
 	if (!suspend_ops)
 		return -ENOSYS;
     
+=======
+
+	if (!suspend_ops)
+		return -ENOSYS;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	trace_machine_suspend(state);
 	if (suspend_ops->begin) {
 		error = suspend_ops->begin(state);
@@ -222,10 +240,17 @@ int suspend_devices_and_enter(suspend_state_t state)
 	suspend_test_finish("suspend devices");
 	if (suspend_test(TEST_DEVICES))
 		goto Recover_platform;
+<<<<<<< HEAD
     
 	error = suspend_enter(state);
     
 Resume_devices:
+=======
+
+	error = suspend_enter(state);
+
+ Resume_devices:
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	suspend_test_start();
 	dpm_resume_end(PMSG_RESUME);
 	suspend_test_finish("resume devices");
@@ -292,8 +317,13 @@ int enter_state(suspend_state_t state)
 	pm_restrict_gfp_mask();
 	error = suspend_devices_and_enter(state);
 	pm_restore_gfp_mask();
+<<<<<<< HEAD
     
 Finish:
+=======
+
+ Finish:
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	pr_debug("PM: Finishing wakeup.\n");
 	suspend_finish();
 Unlock:

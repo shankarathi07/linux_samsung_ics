@@ -875,7 +875,10 @@ static void dp83640_remove(struct phy_device *phydev)
 	struct dp83640_clock *clock;
 	struct list_head *this, *next;
 	struct dp83640_private *tmp, *dp83640 = phydev->priv;
+<<<<<<< HEAD
 	struct sk_buff *skb;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	if (phydev->addr == BROADCAST_ADDR)
 		return;
@@ -883,12 +886,15 @@ static void dp83640_remove(struct phy_device *phydev)
 	enable_status_frames(phydev, false);
 	cancel_work_sync(&dp83640->ts_work);
 
+<<<<<<< HEAD
 	while ((skb = skb_dequeue(&dp83640->rx_queue)) != NULL)
 		kfree_skb(skb);
 
 	while ((skb = skb_dequeue(&dp83640->tx_queue)) != NULL)
 		skb_complete_tx_timestamp(skb, NULL);
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	clock = dp83640_clock_get(dp83640->clock);
 
 	if (dp83640 == clock->chosen) {
@@ -1067,7 +1073,11 @@ static void dp83640_txtstamp(struct phy_device *phydev,
 	struct dp83640_private *dp83640 = phydev->priv;
 
 	if (!dp83640->hwts_tx_en) {
+<<<<<<< HEAD
 		skb_complete_tx_timestamp(skb, NULL);
+=======
+		kfree_skb(skb);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		return;
 	}
 	skb_queue_tail(&dp83640->tx_queue, skb);

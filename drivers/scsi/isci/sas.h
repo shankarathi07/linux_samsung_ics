@@ -204,6 +204,11 @@ struct smp_req {
 	u8 req_data[0];
 }  __packed;
 
+<<<<<<< HEAD
+=======
+#define SMP_RESP_HDR_SZ	4
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 /*
  * struct sci_sas_address - This structure depicts how a SAS address is
  *    represented by SCI.

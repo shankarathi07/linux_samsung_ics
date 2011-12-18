@@ -1756,6 +1756,7 @@ static inline void __devinit w83627ehf_init_device(struct w83627ehf_data *data,
 		diode = 0x70;
 	}
 	for (i = 0; i < 3; i++) {
+<<<<<<< HEAD
 		const char *label = NULL;
 
 		if (data->temp_label)
@@ -1767,6 +1768,9 @@ static inline void __devinit w83627ehf_init_device(struct w83627ehf_data *data,
 		else if (label && strncmp(label, "AMD", 3) == 0)
 			data->temp_type[i] = 5;
 		else if ((tmp & (0x02 << i)))
+=======
+		if ((tmp & (0x02 << i)))
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			data->temp_type[i] = (diode & (0x10 << i)) ? 1 : 3;
 		else
 			data->temp_type[i] = 4; /* thermistor */

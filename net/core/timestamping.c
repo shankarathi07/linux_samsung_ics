@@ -57,6 +57,7 @@ void skb_clone_tx_timestamp(struct sk_buff *skb)
 	case PTP_CLASS_V2_VLAN:
 		phydev = skb->dev->phydev;
 		if (likely(phydev->drv->txtstamp)) {
+<<<<<<< HEAD
 			if (!atomic_inc_not_zero(&sk->sk_refcnt))
 				return;
 			clone = skb_clone(skb, GFP_ATOMIC);
@@ -64,6 +65,11 @@ void skb_clone_tx_timestamp(struct sk_buff *skb)
 				sock_put(sk);
 				return;
 			}
+=======
+			clone = skb_clone(skb, GFP_ATOMIC);
+			if (!clone)
+				return;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			clone->sk = sk;
 			phydev->drv->txtstamp(phydev, clone, type);
 		}
@@ -80,11 +86,16 @@ void skb_complete_tx_timestamp(struct sk_buff *skb,
 	struct sock_exterr_skb *serr;
 	int err;
 
+<<<<<<< HEAD
 	if (!hwtstamps) {
 		sock_put(sk);
 		kfree_skb(skb);
 		return;
 	}
+=======
+	if (!hwtstamps)
+		return;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	*skb_hwtstamps(skb) = *hwtstamps;
 	serr = SKB_EXT_ERR(skb);
@@ -93,7 +104,10 @@ void skb_complete_tx_timestamp(struct sk_buff *skb,
 	serr->ee.ee_origin = SO_EE_ORIGIN_TIMESTAMPING;
 	skb->sk = NULL;
 	err = sock_queue_err_skb(sk, skb);
+<<<<<<< HEAD
 	sock_put(sk);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (err)
 		kfree_skb(skb);
 }

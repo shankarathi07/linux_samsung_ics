@@ -50,13 +50,23 @@
 #ifdef CONFIG_SMP
 #define TO_PHYS_ID(cpu)		cpu_data(cpu).phys_proc_id
 #define TO_CORE_ID(cpu)		cpu_data(cpu).cpu_core_id
+<<<<<<< HEAD
+=======
+#define TO_ATTR_NO(cpu)		(TO_CORE_ID(cpu) + BASE_SYSFS_ATTR_NO)
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #define for_each_sibling(i, cpu)	for_each_cpu(i, cpu_sibling_mask(cpu))
 #else
 #define TO_PHYS_ID(cpu)		(cpu)
 #define TO_CORE_ID(cpu)		(cpu)
+<<<<<<< HEAD
 #define for_each_sibling(i, cpu)	for (i = 0; false; )
 #endif
 #define TO_ATTR_NO(cpu)		(TO_CORE_ID(cpu) + BASE_SYSFS_ATTR_NO)
+=======
+#define TO_ATTR_NO(cpu)		(cpu)
+#define for_each_sibling(i, cpu)	for (i = 0; false; )
+#endif
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 /*
  * Per-Core Temperature Data
@@ -539,8 +549,11 @@ static void coretemp_add_core(unsigned int cpu, int pkg_flag)
 		return;
 
 	pdata = platform_get_drvdata(pdev);
+<<<<<<< HEAD
 	if (!pdata)
 		return;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	err = create_core_data(pdata, pdev, cpu, pkg_flag);
 	if (err)

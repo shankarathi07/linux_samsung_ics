@@ -37,8 +37,13 @@ extern void __init palm27x_lcd_init(int power,
 static inline void palm27x_lcd_init(int power, struct pxafb_mode_info *mode) {}
 #endif
 
+<<<<<<< HEAD
 #if	defined(CONFIG_USB_PXA27X) || \
 	defined(CONFIG_USB_PXA27X_MODULE)
+=======
+#if	defined(CONFIG_USB_GADGET_PXA27X) || \
+	defined(CONFIG_USB_GADGET_PXA27X_MODULE)
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 extern void __init palm27x_udc_init(int vbus, int pullup,
 					int vbus_inverted);
 #else

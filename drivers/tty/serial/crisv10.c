@@ -4450,7 +4450,11 @@ static int __init rs_init(void)
 
 #if defined(CONFIG_ETRAX_RS485)
 #if defined(CONFIG_ETRAX_RS485_ON_PA)
+<<<<<<< HEAD
 	if (cris_io_interface_allocate_pins(if_serial_0, 'a', rs485_pa_bit,
+=======
+	if (cris_io_interface_allocate_pins(if_ser0, 'a', rs485_pa_bit,
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			rs485_pa_bit)) {
 		printk(KERN_CRIT "ETRAX100LX serial: Could not allocate "
 			"RS485 pin\n");
@@ -4459,7 +4463,11 @@ static int __init rs_init(void)
 	}
 #endif
 #if defined(CONFIG_ETRAX_RS485_ON_PORT_G)
+<<<<<<< HEAD
 	if (cris_io_interface_allocate_pins(if_serial_0, 'g', rs485_pa_bit,
+=======
+	if (cris_io_interface_allocate_pins(if_ser0, 'g', rs485_pa_bit,
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			rs485_port_g_bit)) {
 		printk(KERN_CRIT "ETRAX100LX serial: Could not allocate "
 			"RS485 pin\n");

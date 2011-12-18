@@ -304,7 +304,11 @@ static struct dmi_system_id __initdata reboot_dmi_table[] = {
 		},
 	},
 	{ /* Handle reboot issue on Acer Aspire one */
+<<<<<<< HEAD
 		.callback = set_kbd_reboot,
+=======
+		.callback = set_bios_reboot,
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		.ident = "Acer Aspire One A110",
 		.matches = {
 			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),

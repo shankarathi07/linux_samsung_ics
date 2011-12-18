@@ -29,7 +29,10 @@ Contents:
 2.4  Ondemand
 2.5  Conservative
 2.6  Interactive
+<<<<<<< HEAD
 2.7  SmartassV2
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 3.   The Governor Interface in the CPUfreq Core
 
@@ -232,6 +235,7 @@ is 85.
 timer_rate: Sample rate for reevaluating cpu load when the system is
 not idle.  Default is 30000 uS.
 
+<<<<<<< HEAD
 
 2.7 SmartassV2
 ---------------
@@ -265,6 +269,8 @@ Finally, smartass is a highly customizable governor with almost everything
 tweakable through the sysfs. For a detailed explaination of each tunable,
 please see the inline comments at the begging of the code (smartass2.c).
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 3. The Governor Interface in the CPUfreq Core
 =============================================
 

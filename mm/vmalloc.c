@@ -380,12 +380,21 @@ nocache:
 			goto nocache;
 		if (addr + size - 1 < addr)
 			goto overflow;
+<<<<<<< HEAD
 
 	} else {
 		addr = ALIGN(vstart, align);
 		if (addr + size - 1 < addr)
 			goto overflow;
 
+=======
+
+	} else {
+		addr = ALIGN(vstart, align);
+		if (addr + size - 1 < addr)
+			goto overflow;
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		n = vmap_area_root.rb_node;
 		first = NULL;
 
@@ -1641,8 +1650,13 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
 	if (!size || (size >> PAGE_SHIFT) > totalram_pages)
 		return NULL;
 
+<<<<<<< HEAD
 	area = __get_vm_area_node(size, align, VM_ALLOC | VM_UNLIST,
 				  start, end, node, gfp_mask, caller);
+=======
+	area = __get_vm_area_node(size, align, VM_ALLOC, start, end, node,
+				  gfp_mask, caller);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	if (!area)
 		return NULL;

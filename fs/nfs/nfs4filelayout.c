@@ -428,6 +428,7 @@ filelayout_check_layout(struct pnfs_layout_hdr *lo,
 
 	dprintk("--> %s\n", __func__);
 
+<<<<<<< HEAD
 	/* FIXME: remove this check when layout segment support is added */
 	if (lgr->range.offset != 0 ||
 	    lgr->range.length != NFS4_MAX_UINT64) {
@@ -436,6 +437,8 @@ filelayout_check_layout(struct pnfs_layout_hdr *lo,
 		goto out;
 	}
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (fl->pattern_offset > lgr->range.offset) {
 		dprintk("%s pattern_offset %lld too large\n",
 				__func__, fl->pattern_offset);

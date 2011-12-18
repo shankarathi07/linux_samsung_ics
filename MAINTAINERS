@@ -1221,7 +1221,11 @@ F:	Documentation/aoe/
 F:	drivers/block/aoe/
 
 ATHEROS ATH GENERIC UTILITIES
+<<<<<<< HEAD
 M:	"Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>
+=======
+M:	"Luis R. Rodriguez" <lrodriguez@atheros.com>
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 L:	linux-wireless@vger.kernel.org
 S:	Supported
 F:	drivers/net/wireless/ath/*
@@ -1238,10 +1242,17 @@ S:	Maintained
 F:	drivers/net/wireless/ath/ath5k/
 
 ATHEROS ATH9K WIRELESS DRIVER
+<<<<<<< HEAD
 M:	"Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>
 M:	Jouni Malinen <jouni@qca.qualcomm.com>
 M:	Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>
 M:	Senthil Balasubramanian <senthilb@qca.qualcomm.com>
+=======
+M:	"Luis R. Rodriguez" <lrodriguez@atheros.com>
+M:	Jouni Malinen <jmalinen@atheros.com>
+M:	Vasanthakumar Thiagarajan <vasanth@atheros.com>
+M:	Senthil Balasubramanian <senthilkumar@atheros.com>
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 L:	linux-wireless@vger.kernel.org
 L:	ath9k-devel@lists.ath9k.org
 W:	http://wireless.kernel.org/en/users/Drivers/ath9k
@@ -1269,7 +1280,11 @@ F:	drivers/input/misc/ati_remote2.c
 ATLX ETHERNET DRIVERS
 M:	Jay Cliburn <jcliburn@gmail.com>
 M:	Chris Snook <chris.snook@gmail.com>
+<<<<<<< HEAD
 M:	Jie Yang <yangjie@qca.qualcomm.com>
+=======
+M:	Jie Yang <jie.yang@atheros.com>
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 L:	netdev@vger.kernel.org
 W:	http://sourceforge.net/projects/atl1
 W:	http://atl1.sourceforge.net

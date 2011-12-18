@@ -283,7 +283,11 @@ int radeon_dp_i2c_aux_ch(struct i2c_adapter *adapter, int mode,
 		}
 	}
 
+<<<<<<< HEAD
 	DRM_DEBUG_KMS("aux i2c too many retries, giving up\n");
+=======
+	DRM_ERROR("aux i2c too many retries, giving up\n");
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return -EREMOTEIO;
 }
 
@@ -553,7 +557,10 @@ static void radeon_dp_set_panel_mode(struct drm_encoder *encoder,
 {
 	struct drm_device *dev = encoder->dev;
 	struct radeon_device *rdev = dev->dev_private;
+<<<<<<< HEAD
 	struct radeon_connector *radeon_connector = to_radeon_connector(connector);
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	int panel_mode = DP_PANEL_MODE_EXTERNAL_DP_MODE;
 
 	if (!ASIC_IS_DCE4(rdev))
@@ -561,20 +568,26 @@ static void radeon_dp_set_panel_mode(struct drm_encoder *encoder,
 
 	if (radeon_connector_encoder_is_dp_bridge(connector))
 		panel_mode = DP_PANEL_MODE_INTERNAL_DP1_MODE;
+<<<<<<< HEAD
 	else if (connector->connector_type == DRM_MODE_CONNECTOR_eDP) {
 		u8 tmp = radeon_read_dpcd_reg(radeon_connector, DP_EDP_CONFIGURATION_CAP);
 		if (tmp & 1)
 			panel_mode = DP_PANEL_MODE_INTERNAL_DP2_MODE;
 	}
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	atombios_dig_encoder_setup(encoder,
 				   ATOM_ENCODER_CMD_SETUP_PANEL_MODE,
 				   panel_mode);
+<<<<<<< HEAD
 
 	if ((connector->connector_type == DRM_MODE_CONNECTOR_eDP) &&
 	    (panel_mode == DP_PANEL_MODE_INTERNAL_DP2_MODE)) {
 		radeon_write_dpcd_reg(radeon_connector, DP_EDP_CONFIGURATION_SET, 1);
 	}
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 void radeon_dp_set_link_config(struct drm_connector *connector,
@@ -606,10 +619,17 @@ int radeon_dp_mode_valid_helper(struct drm_connector *connector,
 	if (!radeon_connector->con_priv)
 		return MODE_CLOCK_HIGH;
 	dig_connector = radeon_connector->con_priv;
+<<<<<<< HEAD
 
 	dp_clock =
 		radeon_dp_get_dp_link_clock(connector, dig_connector->dpcd, mode->clock);
 
+=======
+
+	dp_clock =
+		radeon_dp_get_dp_link_clock(connector, dig_connector->dpcd, mode->clock);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if ((dp_clock == 540000) &&
 	    (!radeon_connector_is_dp12_capable(connector)))
 		return MODE_CLOCK_HIGH;
@@ -751,10 +771,17 @@ static int radeon_dp_link_train_init(struct radeon_dp_link_train_info *dp_info)
 	radeon_write_dpcd_reg(dp_info->radeon_connector,
 			      DP_TRAINING_PATTERN_SET,
 			      DP_TRAINING_PATTERN_DISABLE);
+<<<<<<< HEAD
 
 	return 0;
 }
 
+=======
+
+	return 0;
+}
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 static int radeon_dp_link_train_finish(struct radeon_dp_link_train_info *dp_info)
 {
 	udelay(400);

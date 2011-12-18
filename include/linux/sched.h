@@ -1235,6 +1235,7 @@ struct task_struct {
 	unsigned int flags;	/* per process flags, defined below */
 	unsigned int ptrace;
 
+<<<<<<< HEAD
 #if defined(CONFIG_SMP) || defined(CONFIG_SCHED_BFS)
    	
     bool on_cpu;
@@ -1248,6 +1249,13 @@ struct task_struct {
     bool on_rq;
     	
     #endif
+=======
+#ifdef CONFIG_SMP
+	struct task_struct *wake_entry;
+	int on_cpu;
+#endif
+	int on_rq;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	int prio, static_prio, normal_prio;
 	unsigned int rt_priority;

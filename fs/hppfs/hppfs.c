@@ -16,7 +16,10 @@
 #include <linux/statfs.h>
 #include <linux/types.h>
 #include <linux/pid_namespace.h>
+<<<<<<< HEAD
 #include <linux/namei.h>
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #include <asm/uaccess.h>
 #include "os.h"
 

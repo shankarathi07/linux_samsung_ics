@@ -2105,6 +2105,7 @@ static int nand_write_page(struct mtd_info *mtd, struct nand_chip *chip,
 static uint8_t *nand_fill_oob(struct mtd_info *mtd, uint8_t *oob, size_t len,
 			      struct mtd_oob_ops *ops)
 {
+<<<<<<< HEAD
 	struct nand_chip *chip = mtd->priv;
 
 	/*
@@ -2113,6 +2114,8 @@ static uint8_t *nand_fill_oob(struct mtd_info *mtd, uint8_t *oob, size_t len,
 	 */
 	memset(chip->oob_poi, 0xff, mtd->oobsize);
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	switch (ops->mode) {
 
 	case MTD_OOB_PLACE:

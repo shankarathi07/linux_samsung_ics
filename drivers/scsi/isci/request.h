@@ -174,6 +174,12 @@ struct isci_request {
 			};
 		} ssp;
 		struct {
+<<<<<<< HEAD
+=======
+			struct smp_resp rsp;
+		} smp;
+		struct {
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			struct isci_stp_request req;
 			struct host_to_dev_fis cmd;
 			struct dev_to_host_fis rsp;

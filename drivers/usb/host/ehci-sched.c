@@ -1433,7 +1433,11 @@ iso_stream_schedule (
 		goto fail;
 	}
 
+<<<<<<< HEAD
 	now = ehci_read_frame_index(ehci) & (mod - 1);
+=======
+	now = ehci_readl(ehci, &ehci->regs->frame_index) & (mod - 1);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	/* Typical case: reuse current schedule, stream is still active.
 	 * Hopefully there are no gaps from the host falling behind
@@ -1479,11 +1483,15 @@ iso_stream_schedule (
 	 * jump until after the queue is primed.
 	 */
 	else {
+<<<<<<< HEAD
 		int done = 0;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		start = SCHEDULE_SLOP + (now & ~0x07);
 
 		/* NOTE:  assumes URB_ISO_ASAP, to limit complexity/bugs */
 
+<<<<<<< HEAD
 		/* find a uframe slot with enough bandwidth.
 		 * Early uframes are more precious because full-speed
 		 * iso IN transfers can't use late uframes,
@@ -1493,22 +1501,41 @@ iso_stream_schedule (
 		start += period;
 		do {
 			start--;
+=======
+		/* find a uframe slot with enough bandwidth */
+		next = start + period;
+		for (; start < next; start++) {
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			/* check schedule: enough space? */
 			if (stream->highspeed) {
 				if (itd_slot_ok(ehci, mod, start,
 						stream->usecs, period))
+<<<<<<< HEAD
 					done = 1;
+=======
+					break;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			} else {
 				if ((start % 8) >= 6)
 					continue;
 				if (sitd_slot_ok(ehci, mod, stream,
 						start, sched, period))
+<<<<<<< HEAD
 					done = 1;
 			}
 		} while (start > next && !done);
 
 		/* no room in the schedule */
 		if (!done) {
+=======
+					break;
+			}
+		}
+
+		/* no room in the schedule */
+		if (start == next) {
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			ehci_dbg(ehci, "iso resched full %p (now %d max %d)\n",
 				urb, now, now + mod);
 			status = -ENOSPC;
@@ -2306,7 +2333,11 @@ scan_periodic (struct ehci_hcd *ehci)
 	 */
 	now_uframe = ehci->next_uframe;
 	if (HC_IS_RUNNING(ehci_to_hcd(ehci)->state)) {
+<<<<<<< HEAD
 		clock = ehci_read_frame_index(ehci);
+=======
+		clock = ehci_readl(ehci, &ehci->regs->frame_index);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		clock_frame = (clock >> 3) & (ehci->periodic_size - 1);
 	} else  {
 		clock = now_uframe + mod - 1;
@@ -2485,7 +2516,12 @@ restart:
 					|| ehci->periodic_sched == 0)
 				break;
 			ehci->next_uframe = now_uframe;
+<<<<<<< HEAD
 			now = ehci_read_frame_index(ehci) & (mod - 1);
+=======
+			now = ehci_readl(ehci, &ehci->regs->frame_index) &
+					(mod - 1);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			if (now_uframe == now)
 				break;
 

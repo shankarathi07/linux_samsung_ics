@@ -256,6 +256,7 @@ static int __init oprofile_init(void)
 		if (err)
 			return err;
 	}
+<<<<<<< HEAD
 
 	err = oprofilefs_register();
 	if (!err)
@@ -268,6 +269,9 @@ static int __init oprofile_init(void)
 		oprofile_arch_exit();
 
 	return err;
+=======
+	return oprofilefs_register();
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 

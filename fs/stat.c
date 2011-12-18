@@ -301,7 +301,11 @@ SYSCALL_DEFINE4(readlinkat, int, dfd, const char __user *, pathname,
 	if (bufsiz <= 0)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	error = user_path_at_empty(dfd, pathname, LOOKUP_EMPTY, &path, &empty);
+=======
+	error = user_path_at(dfd, pathname, LOOKUP_EMPTY, &path);
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!error) {
 		struct inode *inode = path.dentry->d_inode;
 

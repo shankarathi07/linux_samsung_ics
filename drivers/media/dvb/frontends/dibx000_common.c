@@ -11,6 +11,7 @@ MODULE_PARM_DESC(debug, "turn on debugging (default: 0)");
 
 static int dibx000_write_word(struct dibx000_i2c_master *mst, u16 reg, u16 val)
 {
+<<<<<<< HEAD
 	int ret;
 
 	if (mutex_lock_interruptible(&mst->i2c_buffer_lock) < 0) {
@@ -18,6 +19,8 @@ static int dibx000_write_word(struct dibx000_i2c_master *mst, u16 reg, u16 val)
 		return -EINVAL;
 	}
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	mst->i2c_write_buffer[0] = (reg >> 8) & 0xff;
 	mst->i2c_write_buffer[1] = reg & 0xff;
 	mst->i2c_write_buffer[2] = (val >> 8) & 0xff;
@@ -29,14 +32,19 @@ static int dibx000_write_word(struct dibx000_i2c_master *mst, u16 reg, u16 val)
 	mst->msg[0].buf = mst->i2c_write_buffer;
 	mst->msg[0].len = 4;
 
+<<<<<<< HEAD
 	ret = i2c_transfer(mst->i2c_adap, mst->msg, 1) != 1 ? -EREMOTEIO : 0;
 	mutex_unlock(&mst->i2c_buffer_lock);
 
 	return ret;
+=======
+	return i2c_transfer(mst->i2c_adap, mst->msg, 1) != 1 ? -EREMOTEIO : 0;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static u16 dibx000_read_word(struct dibx000_i2c_master *mst, u16 reg)
 {
+<<<<<<< HEAD
 	u16 ret;
 
 	if (mutex_lock_interruptible(&mst->i2c_buffer_lock) < 0) {
@@ -44,6 +52,8 @@ static u16 dibx000_read_word(struct dibx000_i2c_master *mst, u16 reg)
 		return 0;
 	}
 
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	mst->i2c_write_buffer[0] = reg >> 8;
 	mst->i2c_write_buffer[1] = reg & 0xff;
 
@@ -60,10 +70,14 @@ static u16 dibx000_read_word(struct dibx000_i2c_master *mst, u16 reg)
 	if (i2c_transfer(mst->i2c_adap, mst->msg, 2) != 2)
 		dprintk("i2c read error on %d", reg);
 
+<<<<<<< HEAD
 	ret = (mst->i2c_read_buffer[0] << 8) | mst->i2c_read_buffer[1];
 	mutex_unlock(&mst->i2c_buffer_lock);
 
 	return ret;
+=======
+	return (mst->i2c_read_buffer[0] << 8) | mst->i2c_read_buffer[1];
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static int dibx000_is_i2c_done(struct dibx000_i2c_master *mst)
@@ -278,7 +292,10 @@ static int dibx000_i2c_gated_gpio67_xfer(struct i2c_adapter *i2c_adap,
 					struct i2c_msg msg[], int num)
 {
 	struct dibx000_i2c_master *mst = i2c_get_adapdata(i2c_adap);
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	if (num > 32) {
 		dprintk("%s: too much I2C message to be transmitted (%i).\
@@ -286,6 +303,7 @@ static int dibx000_i2c_gated_gpio67_xfer(struct i2c_adapter *i2c_adap,
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	dibx000_i2c_select_interface(mst, DIBX000_I2C_INTERFACE_GPIO_6_7);
 
 	if (mutex_lock_interruptible(&mst->i2c_buffer_lock) < 0) {
@@ -295,6 +313,12 @@ static int dibx000_i2c_gated_gpio67_xfer(struct i2c_adapter *i2c_adap,
 
 	memset(mst->msg, 0, sizeof(struct i2c_msg) * (2 + num));
 
+=======
+	memset(mst->msg, 0, sizeof(struct i2c_msg) * (2 + num));
+
+	dibx000_i2c_select_interface(mst, DIBX000_I2C_INTERFACE_GPIO_6_7);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/* open the gate */
 	dibx000_i2c_gate_ctrl(mst, &mst->i2c_write_buffer[0], msg[0].addr, 1);
 	mst->msg[0].addr = mst->i2c_addr;
@@ -309,11 +333,15 @@ static int dibx000_i2c_gated_gpio67_xfer(struct i2c_adapter *i2c_adap,
 	mst->msg[num + 1].buf = &mst->i2c_write_buffer[4];
 	mst->msg[num + 1].len = 4;
 
+<<<<<<< HEAD
 	ret = (i2c_transfer(mst->i2c_adap, mst->msg, 2 + num) == 2 + num ?
 			num : -EIO);
 
 	mutex_unlock(&mst->i2c_buffer_lock);
 	return ret;
+=======
+	return i2c_transfer(mst->i2c_adap, mst->msg, 2 + num) == 2 + num ? num : -EIO;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static struct i2c_algorithm dibx000_i2c_gated_gpio67_algo = {
@@ -325,13 +353,17 @@ static int dibx000_i2c_gated_tuner_xfer(struct i2c_adapter *i2c_adap,
 					struct i2c_msg msg[], int num)
 {
 	struct dibx000_i2c_master *mst = i2c_get_adapdata(i2c_adap);
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	if (num > 32) {
 		dprintk("%s: too much I2C message to be transmitted (%i).\
 				Maximum is 32", __func__, num);
 		return -ENOMEM;
 	}
+<<<<<<< HEAD
 
 	dibx000_i2c_select_interface(mst, DIBX000_I2C_INTERFACE_TUNER);
 
@@ -341,6 +373,13 @@ static int dibx000_i2c_gated_tuner_xfer(struct i2c_adapter *i2c_adap,
 	}
 	memset(mst->msg, 0, sizeof(struct i2c_msg) * (2 + num));
 
+=======
+
+	memset(mst->msg, 0, sizeof(struct i2c_msg) * (2 + num));
+
+	dibx000_i2c_select_interface(mst, DIBX000_I2C_INTERFACE_TUNER);
+
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/* open the gate */
 	dibx000_i2c_gate_ctrl(mst, &mst->i2c_write_buffer[0], msg[0].addr, 1);
 	mst->msg[0].addr = mst->i2c_addr;
@@ -355,10 +394,14 @@ static int dibx000_i2c_gated_tuner_xfer(struct i2c_adapter *i2c_adap,
 	mst->msg[num + 1].buf = &mst->i2c_write_buffer[4];
 	mst->msg[num + 1].len = 4;
 
+<<<<<<< HEAD
 	ret = (i2c_transfer(mst->i2c_adap, mst->msg, 2 + num) == 2 + num ?
 			num : -EIO);
 	mutex_unlock(&mst->i2c_buffer_lock);
 	return ret;
+=======
+	return i2c_transfer(mst->i2c_adap, mst->msg, 2 + num) == 2 + num ? num : -EIO;
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static struct i2c_algorithm dibx000_i2c_gated_tuner_algo = {
@@ -452,6 +495,7 @@ int dibx000_init_i2c_master(struct dibx000_i2c_master *mst, u16 device_rev,
 		mst->base_reg = 768;
 
 	mst->gated_tuner_i2c_adap.dev.parent = mst->i2c_adap->dev.parent;
+<<<<<<< HEAD
 	if (i2c_adapter_init
 			(&mst->gated_tuner_i2c_adap, &dibx000_i2c_gated_tuner_algo,
 			 "DiBX000 tuner I2C bus", mst) != 0)
@@ -477,6 +521,33 @@ int dibx000_init_i2c_master(struct dibx000_i2c_master *mst, u16 device_rev,
 			(&mst->master_i2c_adap_gpio67, &dibx000_i2c_gated_gpio67_algo,
 			 "DiBX000 master GPIO67 I2C bus", mst) != 0)
 		printk(KERN_ERR
+=======
+	if (i2c_adapter_init
+			(&mst->gated_tuner_i2c_adap, &dibx000_i2c_gated_tuner_algo,
+			 "DiBX000 tuner I2C bus", mst) != 0)
+		printk(KERN_ERR
+				"DiBX000: could not initialize the tuner i2c_adapter\n");
+
+	mst->master_i2c_adap_gpio12.dev.parent = mst->i2c_adap->dev.parent;
+	if (i2c_adapter_init
+			(&mst->master_i2c_adap_gpio12, &dibx000_i2c_master_gpio12_xfer_algo,
+			 "DiBX000 master GPIO12 I2C bus", mst) != 0)
+		printk(KERN_ERR
+				"DiBX000: could not initialize the master i2c_adapter\n");
+
+	mst->master_i2c_adap_gpio34.dev.parent = mst->i2c_adap->dev.parent;
+	if (i2c_adapter_init
+			(&mst->master_i2c_adap_gpio34, &dibx000_i2c_master_gpio34_xfer_algo,
+			 "DiBX000 master GPIO34 I2C bus", mst) != 0)
+		printk(KERN_ERR
+				"DiBX000: could not initialize the master i2c_adapter\n");
+
+	mst->master_i2c_adap_gpio67.dev.parent = mst->i2c_adap->dev.parent;
+	if (i2c_adapter_init
+			(&mst->master_i2c_adap_gpio67, &dibx000_i2c_gated_gpio67_algo,
+			 "DiBX000 master GPIO67 I2C bus", mst) != 0)
+		printk(KERN_ERR
+>>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 				"DiBX000: could not initialize the master i2c_adapter\n");
 
 	/* initialize the i2c-master by closing the gate */
