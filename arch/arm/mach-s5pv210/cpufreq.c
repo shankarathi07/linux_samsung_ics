@@ -418,29 +418,28 @@ static int s5pv210_target(struct cpufreq_policy *policy,
         switch ( index ) {
             case L0:
                 /* APLL FOUT becomes 1460 Mhz */
-                __raw_writel(PLL45XX_APLL_VAL_1460, S5P_APLL_CON);
+                __raw_writel(APLL_VAL_1460, S5P_APLL_CON);
                 break;
                 
             case L1:
                 /* APLL FOUT becomes 1300 Mhz */
-                __raw_writel(PLL45XX_APLL_VAL_1300, S5P_APLL_CON);
+                __raw_writel(APLL_VAL_1300, S5P_APLL_CON);
                 break;
             case L2:
                 /* APLL FOUT becomes 1200 Mhz */
-                __raw_writel(PLL45XX_APLL_VAL_1200, S5P_APLL_CON);
+                __raw_writel(APLL_VAL_1200, S5P_APLL_CON);
                 break;
             case L3:
                 /* APLL FOUT becomes 1000 Mhz */
-                __raw_writel(PLL45XX_APLL_VAL_1000, S5P_APLL_CON);
+                __raw_writel(APLL_VAL_1000, S5P_APLL_CON);
                 break;  
                 
             default:
                 /* APLL FOUT becomes 800 Mhz */
-                __raw_writel(PLL45XX_APLL_VAL_800, S5P_APLL_CON); 
+                __raw_writel(APLL_VAL_800, S5P_APLL_CON); 
                 break;
         }
         
-#endif 
         /* 2-2. Wait until the PLL is locked */
         do {
             reg = __raw_readl(S5P_APLL_CON);

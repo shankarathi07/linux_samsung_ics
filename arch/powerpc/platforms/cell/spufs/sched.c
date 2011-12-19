@@ -63,6 +63,8 @@ static struct task_struct *spusched_task;
 static struct timer_list spusched_timer;
 static struct timer_list spuloadavg_timer;
 
+
+
 /*
  * Frequency of the spu scheduler tick.  By default we do one SPU scheduler
  * tick for every 10 CPU scheduler ticks.

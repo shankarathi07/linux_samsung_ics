@@ -339,6 +339,8 @@ alloc_ordered_workqueue(const char *name, unsigned int flags)
 
 #define create_workqueue(name)					\
 	alloc_workqueue((name), WQ_MEM_RECLAIM, 1)
+#define create_rt_workqueue(name)					\
+alloc_workqueue((name), WQ_MEM_RECLAIM, 1)
 #define create_freezable_workqueue(name)			\
 	alloc_workqueue((name), WQ_FREEZABLE | WQ_UNBOUND | WQ_MEM_RECLAIM, 1)
 #define create_singlethread_workqueue(name)			\

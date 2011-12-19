@@ -39,13 +39,18 @@
 #define SCHED_BATCH		3
 /* SCHED_ISO: Implemented on BFS only */
 #define SCHED_IDLE		5
-#ifdef CONFIG_SCHED_BFS
-#define SCHED_ISO		4
-#define SCHED_IDLEPRIO		SCHED_IDLE
-#define SCHED_MAX		(SCHED_IDLEPRIO)
-#define SCHED_RANGE(policy)	((policy) <= SCHED_MAX)
-#endif
 
+#ifdef CONFIG_SCHED_BFS
+	
+#define SCHED_ISO    4
+	
+#define SCHED_IDLEPRIO    SCHED_IDLE
+	
+#define SCHED_MAX    (SCHED_IDLEPRIO)
+
+#define SCHED_RANGE(policy)  ((policy) <= SCHED_MAX)
+
+#endif
 /* Can be ORed in to make sure the process is reverted back to SCHED_NORMAL on fork */
 #define SCHED_RESET_ON_FORK     0x40000000
 
@@ -274,6 +279,7 @@ extern void sched_init_smp(void);
 extern asmlinkage void schedule_tail(struct task_struct *prev);
 extern void init_idle(struct task_struct *idle, int cpu);
 extern void init_idle_bootup_task(struct task_struct *idle);
+
 
 extern cpumask_var_t nohz_cpu_mask;
 #if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ)
@@ -1229,14 +1235,19 @@ struct task_struct {
 	unsigned int flags;	/* per process flags, defined below */
 	unsigned int ptrace;
 
-#ifdef CONFIG_SMP
-	struct task_struct *wake_entry;
-#endif
 #if defined(CONFIG_SMP) || defined(CONFIG_SCHED_BFS)
-	int on_cpu;
-#endif
-#endif
-	int on_rq;
+   	
+    bool on_cpu;
+   	
+    #endif
+    	
+    #endif
+   	
+    #ifndef CONFIG_SCHED_BFS
+    	
+    bool on_rq;
+    	
+    #endif
 
 	int prio, static_prio, normal_prio;
 	unsigned int rt_priority;
@@ -1247,7 +1258,7 @@ struct task_struct {
 	u64 last_ran;
 	u64 sched_time; /* sched_clock time spent running */
 #ifdef CONFIG_SMP
-	int sticky; /* Soft affined flag */
+	bool sticky; /* Soft affined flag */
 #endif
 	unsigned long rt_timeout;
 #else /* CONFIG_SCHED_BFS */
@@ -1364,9 +1375,12 @@ struct task_struct {
 	int __user *clear_child_tid;		/* CLONE_CHILD_CLEARTID */
 
 	cputime_t utime, stime, utimescaled, stimescaled;
-#ifdef CONFIG_SCHED_BFS
-	unsigned long utime_pc, stime_pc;
-#endif
+    
+    #ifdef CONFIG_SCHED_BFS
+ 
+    unsigned long utime_pc, stime_pc;
+    	
+    #endif
 	cputime_t gtime;
 #ifndef CONFIG_VIRT_CPU_ACCOUNTING
 	cputime_t prev_utime, prev_stime;
@@ -1596,7 +1610,7 @@ struct task_struct {
 };
 
 #ifdef CONFIG_SCHED_BFS
-extern int grunqueue_is_locked(void);
+extern bool grunqueue_is_locked(void);
 extern void grq_unlock_wait(void);
 extern void cpu_scaling(int cpu);
 extern void cpu_nonscaling(int cpu);
@@ -1611,14 +1625,14 @@ static inline void tsk_cpus_current(struct task_struct *p)
 
 static inline void print_scheduler_version(void)
 {
-	printk(KERN_INFO"BFS CPU scheduler v0.406 by Con Kolivas.\n");
+	printk(KERN_INFO"BFS CPU scheduler v0.413 by Con Kolivas.\n");
 }
 
-static inline int iso_task(struct task_struct *p)
+static inline bool iso_task(struct task_struct *p)
 {
 	return (p->policy == SCHED_ISO);
 }
-extern void remove_cpu(unsigned long cpu);
+extern void remove_cpu(int cpu);
 #else /* CFS */
 extern int runqueue_is_locked(int cpu);
 static inline void cpu_scaling(int cpu)
@@ -1641,12 +1655,12 @@ static inline void print_scheduler_version(void)
 	printk(KERN_INFO"CFS CPU scheduler.\n");
 }
 
-static inline int iso_task(struct task_struct *p)
+static inline bool iso_task(struct task_struct *p)
 {
-	return 0;
+	return false;
 }
 
-static inline void remove_cpu(unsigned long cpu)
+static inline void remove_cpu(int cpu)
 {
 }
 #endif /* CONFIG_SCHED_BFS */
@@ -2660,21 +2674,21 @@ extern void signal_wake_up(struct task_struct *t, int resume_stopped);
  */
 #ifdef CONFIG_SMP
 
-static inline unsigned int task_cpu(const struct task_struct *p)
+static inline int task_cpu(const struct task_struct *p)
 {
 	return task_thread_info(p)->cpu;
 }
 
-extern void set_task_cpu(struct task_struct *p, unsigned int cpu);
+extern void set_task_cpu(struct task_struct *p, int cpu);
 
 #else
 
-static inline unsigned int task_cpu(const struct task_struct *p)
+static inline int task_cpu(const struct task_struct *p)
 {
 	return 0;
 }
 
-static inline void set_task_cpu(struct task_struct *p, unsigned int cpu)
+static inline void set_task_cpu(struct task_struct *p, int cpu)
 {
 }
 
@@ -2788,3 +2802,4 @@ static inline unsigned long rlimit_max(unsigned int limit)
 }
 
 #endif /* __KERNEL__ */
+

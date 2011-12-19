@@ -580,4 +580,3 @@ parity/ECC error get propogated.
 A small number of systems do generate NMI's for bizarre random reasons such as
 power management so the default is off. That sysctl works like the existing
 panic controls already in that directory.
-
