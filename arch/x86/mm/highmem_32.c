@@ -89,10 +89,7 @@ void __kunmap_atomic(void *kvaddr)
 		 */
 		kpte_clear_flush(kmap_pte-idx, vaddr);
 		kmap_atomic_idx_pop();
-<<<<<<< HEAD
 		arch_flush_lazy_mmu_mode();
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 #ifdef CONFIG_DEBUG_HIGHMEM
 	else {

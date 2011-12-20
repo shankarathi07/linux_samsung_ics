@@ -1378,7 +1378,6 @@ static void really_cleanup_stream(struct hda_codec *codec,
 	snd_hda_codec_write(codec, nid, 0, AC_VERB_SET_STREAM_FORMAT, 0);
 	memset(q, 0, sizeof(*q));
 	q->nid = nid;
-<<<<<<< HEAD
 }
 
 /* clean up the all conflicting obsolete streams */
@@ -1409,38 +1408,6 @@ static void hda_cleanup_all_streams(struct hda_codec *codec)
 			really_cleanup_stream(codec, p);
 	}
 }
-=======
-}
-
-/* clean up the all conflicting obsolete streams */
-static void purify_inactive_streams(struct hda_codec *codec)
-{
-	struct hda_codec *c;
-	int i;
-
-	list_for_each_entry(c, &codec->bus->codec_list, list) {
-		for (i = 0; i < c->cvt_setups.used; i++) {
-			struct hda_cvt_setup *p;
-			p = snd_array_elem(&c->cvt_setups, i);
-			if (p->dirty)
-				really_cleanup_stream(c, p);
-		}
-	}
-}
-
-#ifdef SND_HDA_NEEDS_RESUME
-/* clean up all streams; called from suspend */
-static void hda_cleanup_all_streams(struct hda_codec *codec)
-{
-	int i;
-
-	for (i = 0; i < codec->cvt_setups.used; i++) {
-		struct hda_cvt_setup *p = snd_array_elem(&codec->cvt_setups, i);
-		if (p->stream_tag)
-			really_cleanup_stream(codec, p);
-	}
-}
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #endif
 
 /*
@@ -2273,10 +2240,6 @@ int snd_hda_add_vmaster(struct hda_codec *codec, char *name,
 			unsigned int *tlv, const char * const *slaves)
 {
 	struct snd_kcontrol *kctl;
-<<<<<<< HEAD
-=======
-	const char * const *s;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	int err;
 
 	err = map_slaves(codec, slaves, check_slave_present, NULL);

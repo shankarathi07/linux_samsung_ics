@@ -136,13 +136,8 @@ int use_cop(unsigned long acop, struct mm_struct *mm)
 	if (!mm || !acop)
 		return -EINVAL;
 
-<<<<<<< HEAD
 	/* The page_table_lock ensures mm_users won't change under us */
 	spin_lock(&mm->page_table_lock);
-=======
-	/* We need to make sure mm_users doesn't change */
-	down_read(&mm->mmap_sem);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spin_lock(mm->context.cop_lockp);
 
 	if (mm->context.cop_pid == COP_PID_NONE) {
@@ -169,11 +164,7 @@ int use_cop(unsigned long acop, struct mm_struct *mm)
 
 out:
 	spin_unlock(mm->context.cop_lockp);
-<<<<<<< HEAD
 	spin_unlock(&mm->page_table_lock);
-=======
-	up_read(&mm->mmap_sem);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	return ret;
 }
@@ -194,13 +185,8 @@ void drop_cop(unsigned long acop, struct mm_struct *mm)
 	if (WARN_ON_ONCE(!mm))
 		return;
 
-<<<<<<< HEAD
 	/* The page_table_lock ensures mm_users won't change under us */
 	spin_lock(&mm->page_table_lock);
-=======
-	/* We need to make sure mm_users doesn't change */
-	down_read(&mm->mmap_sem);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spin_lock(mm->context.cop_lockp);
 
 	mm->context.acop &= ~acop;
@@ -227,11 +213,7 @@ void drop_cop(unsigned long acop, struct mm_struct *mm)
 	}
 
 	spin_unlock(mm->context.cop_lockp);
-<<<<<<< HEAD
 	spin_unlock(&mm->page_table_lock);
-=======
-	up_read(&mm->mmap_sem);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 EXPORT_SYMBOL_GPL(drop_cop);
 

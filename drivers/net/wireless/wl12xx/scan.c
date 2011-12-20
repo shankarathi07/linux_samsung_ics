@@ -83,15 +83,10 @@ static int wl1271_get_scan_channels(struct wl1271 *wl,
 	for (i = 0, j = 0;
 	     i < req->n_channels && j < WL1271_SCAN_MAX_CHANNELS;
 	     i++) {
-<<<<<<< HEAD
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		flags = req->channels[i]->flags;
 
 		if (!test_bit(i, wl->scan.scanned_ch) &&
 		    !(flags & IEEE80211_CHAN_DISABLED) &&
-<<<<<<< HEAD
 		    (req->channels[i]->band == band) &&
 		    /*
 		     * In passive scans, we scan all remaining
@@ -100,11 +95,6 @@ static int wl1271_get_scan_channels(struct wl1271 *wl,
 		     * marked as passive.
 		     */
 		    (passive || !(flags & IEEE80211_CHAN_PASSIVE_SCAN))) {
-=======
-		    ((!!(flags & IEEE80211_CHAN_PASSIVE_SCAN)) == passive) &&
-		    (req->channels[i]->band == band)) {
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			wl1271_debug(DEBUG_SCAN, "band %d, center_freq %d ",
 				     req->channels[i]->band,
 				     req->channels[i]->center_freq);
@@ -156,13 +146,10 @@ static int wl1271_scan_send(struct wl1271 *wl, enum ieee80211_band band,
 	int ret;
 	u16 scan_options = 0;
 
-<<<<<<< HEAD
 	/* skip active scans if we don't have SSIDs */
 	if (!passive && wl->scan.req->n_ssids == 0)
 		return WL1271_NOTHING_TO_SCAN;
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
 	trigger = kzalloc(sizeof(*trigger), GFP_KERNEL);
 	if (!cmd || !trigger) {
@@ -173,12 +160,7 @@ static int wl1271_scan_send(struct wl1271 *wl, enum ieee80211_band band,
 	/* We always use high priority scans */
 	scan_options = WL1271_SCAN_OPT_PRIORITY_HIGH;
 
-<<<<<<< HEAD
 	if (passive)
-=======
-	/* No SSIDs means that we have a forced passive scan */
-	if (passive || wl->scan.req->n_ssids == 0)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		scan_options |= WL1271_SCAN_OPT_PASSIVE;
 
 	cmd->params.scan_options = cpu_to_le16(scan_options);

@@ -1996,7 +1996,6 @@ static inline bool skb_defer_rx_timestamp(struct sk_buff *skb)
 /**
  * skb_complete_tx_timestamp() - deliver cloned skb with tx timestamps
  *
-<<<<<<< HEAD
  * PHY drivers may accept clones of transmitted packets for
  * timestamping via their phy_driver.txtstamp method. These drivers
  * must call this function to return the skb back to the stack, with
@@ -2004,10 +2003,6 @@ static inline bool skb_defer_rx_timestamp(struct sk_buff *skb)
  *
  * @skb: clone of the the original outgoing packet
  * @hwtstamps: hardware time stamps, may be NULL if not available
-=======
- * @skb: clone of the the original outgoing packet
- * @hwtstamps: hardware time stamps
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
  *
  */
 void skb_complete_tx_timestamp(struct sk_buff *skb,

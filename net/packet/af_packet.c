@@ -2406,17 +2406,10 @@ static inline char *alloc_one_pg_vec_page(unsigned long order)
 	 * __get_free_pages failed, fall back to vmalloc
 	 */
 	buffer = vzalloc((1 << order) * PAGE_SIZE);
-<<<<<<< HEAD
 
 	if (buffer)
 		return buffer;
 
-=======
-
-	if (buffer)
-		return buffer;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/*
 	 * vmalloc failed, lets dig into swap here
 	 */

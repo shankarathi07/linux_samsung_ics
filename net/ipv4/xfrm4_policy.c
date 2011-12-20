@@ -79,7 +79,6 @@ static int xfrm4_fill_dst(struct xfrm_dst *xdst, struct net_device *dev,
 	struct rtable *rt = (struct rtable *)xdst->route;
 	const struct flowi4 *fl4 = &fl->u.ip4;
 
-<<<<<<< HEAD
 	xdst->u.rt.rt_key_dst = fl4->daddr;
 	xdst->u.rt.rt_key_src = fl4->saddr;
 	xdst->u.rt.rt_key_tos = fl4->flowi4_tos;
@@ -87,15 +86,6 @@ static int xfrm4_fill_dst(struct xfrm_dst *xdst, struct net_device *dev,
 	xdst->u.rt.rt_iif = fl4->flowi4_iif;
 	xdst->u.rt.rt_oif = fl4->flowi4_oif;
 	xdst->u.rt.rt_mark = fl4->flowi4_mark;
-=======
-	rt->rt_key_dst = fl4->daddr;
-	rt->rt_key_src = fl4->saddr;
-	rt->rt_key_tos = fl4->flowi4_tos;
-	rt->rt_route_iif = fl4->flowi4_iif;
-	rt->rt_iif = fl4->flowi4_iif;
-	rt->rt_oif = fl4->flowi4_oif;
-	rt->rt_mark = fl4->flowi4_mark;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	xdst->u.dst.dev = dev;
 	dev_hold(dev);

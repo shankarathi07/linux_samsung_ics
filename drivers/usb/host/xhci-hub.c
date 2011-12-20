@@ -221,7 +221,6 @@ u32 xhci_port_state_to_neutral(u32 state)
  */
 int xhci_find_slot_id_by_port(struct usb_hcd *hcd, struct xhci_hcd *xhci,
 		u16 port)
-<<<<<<< HEAD
 {
 	int slot_id;
 	int i;
@@ -317,103 +316,6 @@ void xhci_ring_device(struct xhci_hcd *xhci, int slot_id)
 static void xhci_disable_port(struct usb_hcd *hcd, struct xhci_hcd *xhci,
 		u16 wIndex, __le32 __iomem *addr, u32 port_status)
 {
-=======
-{
-	int slot_id;
-	int i;
-	enum usb_device_speed speed;
-
-	slot_id = 0;
-	for (i = 0; i < MAX_HC_SLOTS; i++) {
-		if (!xhci->devs[i])
-			continue;
-		speed = xhci->devs[i]->udev->speed;
-		if (((speed == USB_SPEED_SUPER) == (hcd->speed == HCD_USB3))
-				&& xhci->devs[i]->port == port) {
-			slot_id = i;
-			break;
-		}
-	}
-
-	return slot_id;
-}
-
-/*
- * Stop device
- * It issues stop endpoint command for EP 0 to 30. And wait the last command
- * to complete.
- * suspend will set to 1, if suspend bit need to set in command.
- */
-static int xhci_stop_device(struct xhci_hcd *xhci, int slot_id, int suspend)
-{
-	struct xhci_virt_device *virt_dev;
-	struct xhci_command *cmd;
-	unsigned long flags;
-	int timeleft;
-	int ret;
-	int i;
-
-	ret = 0;
-	virt_dev = xhci->devs[slot_id];
-	cmd = xhci_alloc_command(xhci, false, true, GFP_NOIO);
-	if (!cmd) {
-		xhci_dbg(xhci, "Couldn't allocate command structure.\n");
-		return -ENOMEM;
-	}
-
-	spin_lock_irqsave(&xhci->lock, flags);
-	for (i = LAST_EP_INDEX; i > 0; i--) {
-		if (virt_dev->eps[i].ring && virt_dev->eps[i].ring->dequeue)
-			xhci_queue_stop_endpoint(xhci, slot_id, i, suspend);
-	}
-	cmd->command_trb = xhci->cmd_ring->enqueue;
-	list_add_tail(&cmd->cmd_list, &virt_dev->cmd_list);
-	xhci_queue_stop_endpoint(xhci, slot_id, 0, suspend);
-	xhci_ring_cmd_db(xhci);
-	spin_unlock_irqrestore(&xhci->lock, flags);
-
-	/* Wait for last stop endpoint command to finish */
-	timeleft = wait_for_completion_interruptible_timeout(
-			cmd->completion,
-			USB_CTRL_SET_TIMEOUT);
-	if (timeleft <= 0) {
-		xhci_warn(xhci, "%s while waiting for stop endpoint command\n",
-				timeleft == 0 ? "Timeout" : "Signal");
-		spin_lock_irqsave(&xhci->lock, flags);
-		/* The timeout might have raced with the event ring handler, so
-		 * only delete from the list if the item isn't poisoned.
-		 */
-		if (cmd->cmd_list.next != LIST_POISON1)
-			list_del(&cmd->cmd_list);
-		spin_unlock_irqrestore(&xhci->lock, flags);
-		ret = -ETIME;
-		goto command_cleanup;
-	}
-
-command_cleanup:
-	xhci_free_command(xhci, cmd);
-	return ret;
-}
-
-/*
- * Ring device, it rings the all doorbells unconditionally.
- */
-void xhci_ring_device(struct xhci_hcd *xhci, int slot_id)
-{
-	int i;
-
-	for (i = 0; i < LAST_EP_INDEX + 1; i++)
-		if (xhci->devs[slot_id]->eps[i].ring &&
-		    xhci->devs[slot_id]->eps[i].ring->dequeue)
-			xhci_ring_ep_doorbell(xhci, slot_id, i, 0);
-
-	return;
-}
-
-static void xhci_disable_port(struct usb_hcd *hcd, struct xhci_hcd *xhci,
-		u16 wIndex, __le32 __iomem *addr, u32 port_status)
-{
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/* Don't allow the USB core to disable SuperSpeed ports. */
 	if (hcd->speed == HCD_USB3) {
 		xhci_dbg(xhci, "Ignoring request to disable "
@@ -490,7 +392,6 @@ static int xhci_get_ports(struct usb_hcd *hcd, __le32 __iomem ***port_array)
 	return max_ports;
 }
 
-<<<<<<< HEAD
 /* Test and clear port RWC bit */
 void xhci_test_and_clear_bit(struct xhci_hcd *xhci, __le32 __iomem **port_array,
 				int port_id, u32 port_bit)
@@ -505,8 +406,6 @@ void xhci_test_and_clear_bit(struct xhci_hcd *xhci, __le32 __iomem **port_array,
 	}
 }
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
 		u16 wIndex, char *buf, u16 wLength)
 {
@@ -1053,17 +952,8 @@ int xhci_bus_resume(struct usb_hcd *hcd)
 			spin_lock_irqsave(&xhci->lock, flags);
 
 			/* Clear PLC */
-<<<<<<< HEAD
 			xhci_test_and_clear_bit(xhci, port_array, port_index,
 						PORT_PLC);
-=======
-			temp = xhci_readl(xhci, port_array[port_index]);
-			if (temp & PORT_PLC) {
-				temp = xhci_port_state_to_neutral(temp);
-				temp |= PORT_PLC;
-				xhci_writel(xhci, temp, port_array[port_index]);
-			}
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 			slot_id = xhci_find_slot_id_by_port(hcd,
 					xhci, port_index + 1);

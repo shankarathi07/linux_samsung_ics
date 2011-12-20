@@ -197,10 +197,7 @@ struct dib0090_state {
 	struct i2c_msg msg[2];
 	u8 i2c_write_buffer[3];
 	u8 i2c_read_buffer[2];
-<<<<<<< HEAD
 	struct mutex i2c_buffer_lock;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 };
 
 struct dib0090_fw_state {
@@ -213,15 +210,11 @@ struct dib0090_fw_state {
 	struct i2c_msg msg;
 	u8 i2c_write_buffer[2];
 	u8 i2c_read_buffer[2];
-<<<<<<< HEAD
 	struct mutex i2c_buffer_lock;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 };
 
 static u16 dib0090_read_reg(struct dib0090_state *state, u8 reg)
 {
-<<<<<<< HEAD
 	u16 ret;
 
 	if (mutex_lock_interruptible(&state->i2c_buffer_lock) < 0) {
@@ -250,31 +243,10 @@ static u16 dib0090_read_reg(struct dib0090_state *state, u8 reg)
 
 	mutex_unlock(&state->i2c_buffer_lock);
 	return ret;
-=======
-	state->i2c_write_buffer[0] = reg;
-
-	memset(state->msg, 0, 2 * sizeof(struct i2c_msg));
-	state->msg[0].addr = state->config->i2c_address;
-	state->msg[0].flags = 0;
-	state->msg[0].buf = state->i2c_write_buffer;
-	state->msg[0].len = 1;
-	state->msg[1].addr = state->config->i2c_address;
-	state->msg[1].flags = I2C_M_RD;
-	state->msg[1].buf = state->i2c_read_buffer;
-	state->msg[1].len = 2;
-
-	if (i2c_transfer(state->i2c, state->msg, 2) != 2) {
-		printk(KERN_WARNING "DiB0090 I2C read failed\n");
-		return 0;
-	}
-
-	return (state->i2c_read_buffer[0] << 8) | state->i2c_read_buffer[1];
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static int dib0090_write_reg(struct dib0090_state *state, u32 reg, u16 val)
 {
-<<<<<<< HEAD
 	int ret;
 
 	if (mutex_lock_interruptible(&state->i2c_buffer_lock) < 0) {
@@ -282,8 +254,6 @@ static int dib0090_write_reg(struct dib0090_state *state, u32 reg, u16 val)
 		return -EINVAL;
 	}
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	state->i2c_write_buffer[0] = reg & 0xff;
 	state->i2c_write_buffer[1] = val >> 8;
 	state->i2c_write_buffer[2] = val & 0xff;
@@ -295,42 +265,6 @@ static int dib0090_write_reg(struct dib0090_state *state, u32 reg, u16 val)
 	state->msg[0].len = 3;
 
 	if (i2c_transfer(state->i2c, state->msg, 1) != 1) {
-<<<<<<< HEAD
-=======
-		printk(KERN_WARNING "DiB0090 I2C write failed\n");
-		return -EREMOTEIO;
-	}
-	return 0;
-}
-
-static u16 dib0090_fw_read_reg(struct dib0090_fw_state *state, u8 reg)
-{
-	state->i2c_write_buffer[0] = reg;
-
-	memset(&state->msg, 0, sizeof(struct i2c_msg));
-	state->msg.addr = reg;
-	state->msg.flags = I2C_M_RD;
-	state->msg.buf = state->i2c_read_buffer;
-	state->msg.len = 2;
-	if (i2c_transfer(state->i2c, &state->msg, 1) != 1) {
-		printk(KERN_WARNING "DiB0090 I2C read failed\n");
-		return 0;
-	}
-	return (state->i2c_read_buffer[0] << 8) | state->i2c_read_buffer[1];
-}
-
-static int dib0090_fw_write_reg(struct dib0090_fw_state *state, u8 reg, u16 val)
-{
-	state->i2c_write_buffer[0] = val >> 8;
-	state->i2c_write_buffer[1] = val & 0xff;
-
-	memset(&state->msg, 0, sizeof(struct i2c_msg));
-	state->msg.addr = reg;
-	state->msg.flags = 0;
-	state->msg.buf = state->i2c_write_buffer;
-	state->msg.len = 2;
-	if (i2c_transfer(state->i2c, &state->msg, 1) != 1) {
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		printk(KERN_WARNING "DiB0090 I2C write failed\n");
 		ret = -EREMOTEIO;
 	} else
@@ -680,7 +614,6 @@ static int dib0090_fw_reset_digital(struct dvb_frontend *fe, const struct dib009
 
 	v |= 2 << 10;
 	dib0090_fw_write_reg(state, 0x23, v);
-<<<<<<< HEAD
 
 	/* Read Pll current config * */
 	PllCfg = dib0090_fw_read_reg(state, 0x21);
@@ -692,19 +625,6 @@ static int dib0090_fw_reset_digital(struct dvb_frontend *fe, const struct dib009
 		PllCfg |= (1 << 15);
 		dib0090_fw_write_reg(state, 0x21, PllCfg);
 
-=======
-
-	/* Read Pll current config * */
-	PllCfg = dib0090_fw_read_reg(state, 0x21);
-
-	/** Reconfigure PLL if current setting is different from default setting **/
-	if ((PllCfg & 0x1FFF) != ((cfg->io.pll_range << 12) | (cfg->io.pll_loopdiv << 6) | (cfg->io.pll_prediv)) && !cfg->io.pll_bypass) {
-
-		/* Set Bypass mode */
-		PllCfg |= (1 << 15);
-		dib0090_fw_write_reg(state, 0x21, PllCfg);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		/* Set Reset Pll */
 		PllCfg &= ~(1 << 13);
 		dib0090_fw_write_reg(state, 0x21, PllCfg);
@@ -1802,15 +1722,9 @@ static int dib0090_wbd_calibration(struct dib0090_state *state, enum frontend_tu
 			state->calibrate &= ~WBD_CAL;
 			return 0;
 		}
-<<<<<<< HEAD
 
 		dib0090_write_reg(state, 0x10, 0x1b81 | (1 << 10) | (wbd_gain << 13) | (1 << 3));
 
-=======
-
-		dib0090_write_reg(state, 0x10, 0x1b81 | (1 << 10) | (wbd_gain << 13) | (1 << 3));
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		dib0090_write_reg(state, 0x24, ((EN_UHF & 0x0fff) | (1 << 1)));
 		*tune_state = CT_TUNER_STEP_0;
 		state->wbd_calibration_gain = wbd_gain;
@@ -2265,7 +2179,6 @@ static int dib0090_tune(struct dvb_frontend *fe)
 					LUT_offset++;
 				}
 			}
-<<<<<<< HEAD
 
 			if (found_offset == 0)
 				state->rf_request += 400;
@@ -2319,61 +2232,6 @@ static int dib0090_tune(struct dvb_frontend *fe)
 			state->current_tune_table_index = tune;
 			state->current_pll_table_index = pll;
 
-=======
-
-			if (found_offset == 0)
-				state->rf_request += 400;
-		}
-		if (state->current_rf != state->rf_request || (state->current_standard != state->fe->dtv_property_cache.delivery_system)) {
-			state->tuner_is_tuned = 0;
-			state->current_rf = 0;
-			state->current_standard = 0;
-
-			tune = dib0090_tuning_table;
-			if (state->identity.p1g)
-				tune = dib0090_p1g_tuning_table;
-
-			tmp = (state->identity.version >> 5) & 0x7;
-
-			if (state->identity.in_soc) {
-				if (state->config->force_cband_input) {	/* Use the CBAND input for all band */
-					if (state->current_band & BAND_CBAND || state->current_band & BAND_FM || state->current_band & BAND_VHF
-							|| state->current_band & BAND_UHF) {
-						state->current_band = BAND_CBAND;
-						tune = dib0090_tuning_table_cband_7090;
-					}
-				} else {	/* Use the CBAND input for all band under UHF */
-					if (state->current_band & BAND_CBAND || state->current_band & BAND_FM || state->current_band & BAND_VHF) {
-						state->current_band = BAND_CBAND;
-						tune = dib0090_tuning_table_cband_7090;
-					}
-				}
-			} else
-			 if (tmp == 0x4 || tmp == 0x7) {
-				/* CBAND tuner version for VHF */
-				if (state->current_band == BAND_FM || state->current_band == BAND_CBAND || state->current_band == BAND_VHF) {
-					state->current_band = BAND_CBAND;	/* Force CBAND */
-
-					tune = dib0090_tuning_table_fm_vhf_on_cband;
-					if (state->identity.p1g)
-						tune = dib0090_p1g_tuning_table_fm_vhf_on_cband;
-				}
-			}
-
-			pll = dib0090_pll_table;
-			if (state->identity.p1g)
-				pll = dib0090_p1g_pll_table;
-
-			/* Look for the interval */
-			while (state->rf_request > tune->max_freq)
-				tune++;
-			while (state->rf_request > pll->max_freq)
-				pll++;
-
-			state->current_tune_table_index = tune;
-			state->current_pll_table_index = pll;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			dib0090_write_reg(state, 0x0b, 0xb800 | (tune->switch_trim));
 
 			VCOF_kHz = (pll->hfdiv * state->rf_request) * 2;
@@ -2473,7 +2331,6 @@ static int dib0090_tune(struct dvb_frontend *fe)
 		ret = 20;
 		state->calibrate = CAPTRIM_CAL;	/* captrim serach now */
 	}
-<<<<<<< HEAD
 
 	else if (*tune_state == CT_TUNER_STEP_0) {	/* Warning : because of captrim cal, if you change this step, change it also in _cal.c file because it is the step following captrim cal state machine */
 		const struct dib0090_wbd_slope *wbd = state->current_wbd_table;
@@ -2481,15 +2338,6 @@ static int dib0090_tune(struct dvb_frontend *fe)
 		while (state->current_rf / 1000 > wbd->max_freq)
 			wbd++;
 
-=======
-
-	else if (*tune_state == CT_TUNER_STEP_0) {	/* Warning : because of captrim cal, if you change this step, change it also in _cal.c file because it is the step following captrim cal state machine */
-		const struct dib0090_wbd_slope *wbd = state->current_wbd_table;
-
-		while (state->current_rf / 1000 > wbd->max_freq)
-			wbd++;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		dib0090_write_reg(state, 0x1e, 0x07ff);
 		dprintk("Final Captrim: %d", (u32) state->fcaptrim);
 		dprintk("HFDIV code: %d", (u32) pll->hfdiv_code);
@@ -2668,10 +2516,7 @@ struct dvb_frontend *dib0090_fw_register(struct dvb_frontend *fe, struct i2c_ada
 	st->config = config;
 	st->i2c = i2c;
 	st->fe = fe;
-<<<<<<< HEAD
 	mutex_init(&st->i2c_buffer_lock);
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	fe->tuner_priv = st;
 
 	if (dib0090_fw_reset_digital(fe, st->config) != 0)

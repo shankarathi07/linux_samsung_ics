@@ -100,7 +100,6 @@ static inline void receive_chars(struct uart_pxa_port *up, int *status)
 	int max_count = 256;
 
 	do {
-<<<<<<< HEAD
 		/* work around Errata #20 according to
 		 * Intel(R) PXA27x Processor Family
 		 * Specification Update (May 2005)
@@ -111,8 +110,6 @@ static inline void receive_chars(struct uart_pxa_port *up, int *status)
 		up->ier &= ~UART_IER_RTOIE;
 		serial_out(up, UART_IER, up->ier);
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		ch = serial_in(up, UART_RX);
 		flag = TTY_NORMAL;
 		up->port.icount.rx++;
@@ -169,7 +166,6 @@ static inline void receive_chars(struct uart_pxa_port *up, int *status)
 		*status = serial_in(up, UART_LSR);
 	} while ((*status & UART_LSR_DR) && (max_count-- > 0));
 	tty_flip_buffer_push(tty);
-<<<<<<< HEAD
 
 	/* work around Errata #20 according to
 	 * Intel(R) PXA27x Processor Family
@@ -180,8 +176,6 @@ static inline void receive_chars(struct uart_pxa_port *up, int *status)
 	 */
 	up->ier |= UART_IER_RTOIE;
 	serial_out(up, UART_IER, up->ier);
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static void transmit_chars(struct uart_pxa_port *up)

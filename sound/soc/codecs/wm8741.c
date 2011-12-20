@@ -337,17 +337,10 @@ static int wm8741_set_dai_fmt(struct snd_soc_dai *codec_dai,
 		iface |= 0x0004;
 		break;
 	case SND_SOC_DAIFMT_DSP_A:
-<<<<<<< HEAD
 		iface |= 0x000C;
 		break;
 	case SND_SOC_DAIFMT_DSP_B:
 		iface |= 0x001C;
-=======
-		iface |= 0x0003;
-		break;
-	case SND_SOC_DAIFMT_DSP_B:
-		iface |= 0x0013;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		break;
 	default:
 		return -EINVAL;

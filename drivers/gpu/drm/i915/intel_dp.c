@@ -205,19 +205,11 @@ intel_dp_mode_valid(struct drm_connector *connector,
 	if (is_edp(intel_dp) && dev_priv->panel_fixed_mode) {
 		if (mode->hdisplay > dev_priv->panel_fixed_mode->hdisplay)
 			return MODE_PANEL;
-<<<<<<< HEAD
 
 		if (mode->vdisplay > dev_priv->panel_fixed_mode->vdisplay)
 			return MODE_PANEL;
 	}
 
-=======
-
-		if (mode->vdisplay > dev_priv->panel_fixed_mode->vdisplay)
-			return MODE_PANEL;
-	}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/* only refuse the mode on non eDP since we have seen some weird eDP panels
 	   which are outside spec tolerances but somehow work by magic */
 	if (!is_edp(intel_dp) &&
@@ -825,7 +817,6 @@ static void ironlake_edp_panel_vdd_off(struct intel_dp *intel_dp)
 	struct drm_device *dev = intel_dp->base.base.dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	u32 pp;
-<<<<<<< HEAD
 
 	pp = I915_READ(PCH_PP_CONTROL);
 	pp &= ~EDP_FORCE_VDD;
@@ -847,29 +838,6 @@ static bool ironlake_edp_panel_on (struct intel_dp *intel_dp)
 		return true;
 
 	pp = I915_READ(PCH_PP_CONTROL);
-=======
-
-	pp = I915_READ(PCH_PP_CONTROL);
-	pp &= ~EDP_FORCE_VDD;
-	I915_WRITE(PCH_PP_CONTROL, pp);
-	POSTING_READ(PCH_PP_CONTROL);
-
-	/* Make sure sequencer is idle before allowing subsequent activity */
-	msleep(dev_priv->panel_t12);
-}
-
-/* Returns true if the panel was already on when called */
-static bool ironlake_edp_panel_on (struct intel_dp *intel_dp)
-{
-	struct drm_device *dev = intel_dp->base.base.dev;
-	struct drm_i915_private *dev_priv = dev->dev_private;
-	u32 pp, idle_on_mask = PP_ON | PP_SEQUENCE_STATE_ON_IDLE;
-
-	if (I915_READ(PCH_PP_STATUS) & PP_ON)
-		return true;
-
-	pp = I915_READ(PCH_PP_CONTROL);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	/* ILK workaround: disable reset around power sequence */
 	pp &= ~PANEL_POWER_RESET;
@@ -1603,35 +1571,15 @@ static void
 intel_dp_check_link_status(struct intel_dp *intel_dp)
 {
 	int ret;
-<<<<<<< HEAD
 
 	if (!intel_dp->base.base.crtc)
 		return;
 
 	if (!intel_dp_get_link_status(intel_dp)) {
 		intel_dp_link_down(intel_dp);
-=======
-
-	if (!intel_dp->base.base.crtc)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		return;
 	}
 
-<<<<<<< HEAD
-	/* Try to read receiver status if the link appears to be up */
-	ret = intel_dp_aux_native_read(intel_dp,
-				       0x000, intel_dp->dpcd,
-				       sizeof (intel_dp->dpcd));
-	if (ret != sizeof(intel_dp->dpcd)) {
-=======
-	if (!intel_dp_get_link_status(intel_dp)) {
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
-		intel_dp_link_down(intel_dp);
-		return;
-	}
-
-<<<<<<< HEAD
-=======
 	/* Try to read receiver status if the link appears to be up */
 	ret = intel_dp_aux_native_read(intel_dp,
 				       0x000, intel_dp->dpcd,
@@ -1641,7 +1589,6 @@ intel_dp_check_link_status(struct intel_dp *intel_dp)
 		return;
 	}
 
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!intel_channel_eq_ok(intel_dp)) {
 		intel_dp_start_link_train(intel_dp);
 		intel_dp_complete_link_train(intel_dp);
@@ -1711,7 +1658,6 @@ g4x_dp_detect(struct intel_dp *intel_dp)
 	return status;
 }
 
-<<<<<<< HEAD
 static struct edid *
 intel_dp_get_edid(struct drm_connector *connector, struct i2c_adapter *adapter)
 {
@@ -1737,8 +1683,6 @@ intel_dp_get_edid_modes(struct drm_connector *connector, struct i2c_adapter *ada
 }
 
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 /**
  * Uses CRT_HOTPLUG_EN and CRT_HOTPLUG_STAT to detect DP connection.
  *
@@ -1765,11 +1709,7 @@ intel_dp_detect(struct drm_connector *connector, bool force)
 	if (intel_dp->force_audio) {
 		intel_dp->has_audio = intel_dp->force_audio > 0;
 	} else {
-<<<<<<< HEAD
 		edid = intel_dp_get_edid(connector, &intel_dp->adapter);
-=======
-		edid = drm_get_edid(connector, &intel_dp->adapter);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		if (edid) {
 			intel_dp->has_audio = drm_detect_monitor_audio(edid);
 			connector->display_info.raw_edid = NULL;
@@ -1790,11 +1730,7 @@ static int intel_dp_get_modes(struct drm_connector *connector)
 	/* We should parse the EDID data and find out if it has an audio sink
 	 */
 
-<<<<<<< HEAD
 	ret = intel_dp_get_edid_modes(connector, &intel_dp->adapter);
-=======
-	ret = intel_ddc_get_modes(connector, &intel_dp->adapter);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (ret) {
 		if (is_edp(intel_dp) && !dev_priv->panel_fixed_mode) {
 			struct drm_display_mode *newmode;
@@ -1830,11 +1766,7 @@ intel_dp_detect_audio(struct drm_connector *connector)
 	struct edid *edid;
 	bool has_audio = false;
 
-<<<<<<< HEAD
 	edid = intel_dp_get_edid(connector, &intel_dp->adapter);
-=======
-	edid = drm_get_edid(connector, &intel_dp->adapter);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (edid) {
 		has_audio = drm_detect_monitor_audio(edid);
 
@@ -2023,19 +1955,11 @@ intel_dp_init(struct drm_device *dev, int output_reg)
 		return;
 	}
 	intel_encoder = &intel_dp->base;
-<<<<<<< HEAD
 
 	if (HAS_PCH_SPLIT(dev) && output_reg == PCH_DP_D)
 		if (intel_dpd_is_edp(dev))
 			intel_dp->is_pch_edp = true;
 
-=======
-
-	if (HAS_PCH_SPLIT(dev) && output_reg == PCH_DP_D)
-		if (intel_dpd_is_edp(dev))
-			intel_dp->is_pch_edp = true;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (output_reg == DP_A || is_pch_edp(intel_dp)) {
 		type = DRM_MODE_CONNECTOR_eDP;
 		intel_encoder->type = INTEL_OUTPUT_EDP;

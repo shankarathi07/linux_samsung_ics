@@ -5112,33 +5112,6 @@ mpt2sas_device_remove(struct MPT2SAS_ADAPTER *ioc, u64 sas_address)
 	_scsih_remove_device(ioc, sas_device);
 }
 
-/**
- * mpt2sas_device_remove - removing device object
- * @ioc: per adapter object
- * @sas_address: expander sas_address
- *
- * Return nothing.
- */
-void
-mpt2sas_device_remove(struct MPT2SAS_ADAPTER *ioc, u64 sas_address)
-{
-	struct _sas_device *sas_device;
-	unsigned long flags;
-
-	if (ioc->shost_recovery)
-		return;
-
-	spin_lock_irqsave(&ioc->sas_device_lock, flags);
-	sas_device = mpt2sas_scsih_sas_device_find_by_sas_address(ioc,
-	    sas_address);
-	if (!sas_device) {
-		spin_unlock_irqrestore(&ioc->sas_device_lock, flags);
-		return;
-	}
-	spin_unlock_irqrestore(&ioc->sas_device_lock, flags);
-	_scsih_remove_device(ioc, sas_device);
-}
-
 #ifdef CONFIG_SCSI_MPT2SAS_LOGGING
 /**
  * _scsih_sas_topology_change_event_debug - debug for topology event
@@ -6922,7 +6895,6 @@ mpt2sas_scsih_event_callback(struct MPT2SAS_ADAPTER *ioc, u8 msix_index,
 		log_entry = (Mpi2EventDataLogEntryAdded_t *)
 		    mpi_reply->EventData;
 		log_code = (u32 *)log_entry->LogData;
-<<<<<<< HEAD
 
 		if (le16_to_cpu(log_entry->LogEntryQualifier)
 		    != MPT2_WARPDRIVE_LOGENTRY)
@@ -6957,42 +6929,6 @@ mpt2sas_scsih_event_callback(struct MPT2SAS_ADAPTER *ioc, u8 msix_index,
 			break;
 		}
 
-=======
-
-		if (le16_to_cpu(log_entry->LogEntryQualifier)
-		    != MPT2_WARPDRIVE_LOGENTRY)
-			break;
-
-		switch (le32_to_cpu(*log_code)) {
-		case MPT2_WARPDRIVE_LC_SSDT:
-			printk(MPT2SAS_WARN_FMT "WarpDrive Warning: "
-			    "IO Throttling has occurred in the WarpDrive "
-			    "subsystem. Check WarpDrive documentation for "
-			    "additional details.\n", ioc->name);
-			break;
-		case MPT2_WARPDRIVE_LC_SSDLW:
-			printk(MPT2SAS_WARN_FMT "WarpDrive Warning: "
-			    "Program/Erase Cycles for the WarpDrive subsystem "
-			    "in degraded range. Check WarpDrive documentation "
-			    "for additional details.\n", ioc->name);
-			break;
-		case MPT2_WARPDRIVE_LC_SSDLF:
-			printk(MPT2SAS_ERR_FMT "WarpDrive Fatal Error: "
-			    "There are no Program/Erase Cycles for the "
-			    "WarpDrive subsystem. The storage device will be "
-			    "in read-only mode. Check WarpDrive documentation "
-			    "for additional details.\n", ioc->name);
-			break;
-		case MPT2_WARPDRIVE_LC_BRMF:
-			printk(MPT2SAS_ERR_FMT "WarpDrive Fatal Error: "
-			    "The Backup Rail Monitor has failed on the "
-			    "WarpDrive subsystem. Check WarpDrive "
-			    "documentation for additional details.\n",
-			    ioc->name);
-			break;
-		}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		break;
 	}
 	case MPI2_EVENT_SAS_DEVICE_STATUS_CHANGE:
@@ -7382,9 +7318,6 @@ _scsih_probe_sas(struct MPT2SAS_ADAPTER *ioc)
 	/* SAS Device List */
 	list_for_each_entry_safe(sas_device, next, &ioc->sas_device_init_list,
 	    list) {
-
-		if (ioc->hide_drives)
-			continue;
 
 		if (ioc->hide_drives)
 			continue;

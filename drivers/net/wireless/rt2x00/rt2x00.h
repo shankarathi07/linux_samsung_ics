@@ -922,10 +922,7 @@ struct rt2x00_dev {
 	 * Powersaving work
 	 */
 	struct delayed_work autowakeup_work;
-<<<<<<< HEAD
 	struct work_struct sleep_work;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	/*
 	 * Data queue arrays for RX, TX, Beacon and ATIM.

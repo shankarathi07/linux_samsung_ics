@@ -399,18 +399,12 @@ static ssize_t store_fbstate(struct device *device,
 
 	state = simple_strtoul(buf, &last, 0);
 
-<<<<<<< HEAD
 	if (!lock_fb_info(fb_info))
 		return -ENODEV;
 	console_lock();
 	fb_set_suspend(fb_info, (int)state);
 	console_unlock();
 	unlock_fb_info(fb_info);
-=======
-	console_lock();
-	fb_set_suspend(fb_info, (int)state);
-	console_unlock();
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	return count;
 }

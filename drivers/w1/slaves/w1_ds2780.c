@@ -26,7 +26,6 @@
 #include "../w1_family.h"
 #include "w1_ds2780.h"
 
-<<<<<<< HEAD
 static int w1_ds2780_do_io(struct device *dev, char *buf, int addr,
 			size_t count, int io)
 {
@@ -35,22 +34,6 @@ static int w1_ds2780_do_io(struct device *dev, char *buf, int addr,
 	if (addr > DS2780_DATA_SIZE || addr < 0)
 		return 0;
 
-=======
-int w1_ds2780_io(struct device *dev, char *buf, int addr, size_t count,
-			int io)
-{
-	struct w1_slave *sl = container_of(dev, struct w1_slave, dev);
-
-	if (!dev)
-		return -ENODEV;
-
-	mutex_lock(&sl->master->mutex);
-
-	if (addr > DS2780_DATA_SIZE || addr < 0) {
-		count = 0;
-		goto out;
-	}
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	count = min_t(int, count, DS2780_DATA_SIZE - addr);
 
 	if (w1_reset_select_slave(sl) == 0) {
@@ -58,10 +41,6 @@ int w1_ds2780_io(struct device *dev, char *buf, int addr, size_t count,
 			w1_write_8(sl->master, W1_DS2780_WRITE_DATA);
 			w1_write_8(sl->master, addr);
 			w1_write_block(sl->master, buf, count);
-<<<<<<< HEAD
-=======
-			/* XXX w1_write_block returns void, not n_written */
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		} else {
 			w1_write_8(sl->master, W1_DS2780_READ_DATA);
 			w1_write_8(sl->master, addr);
@@ -69,7 +48,6 @@ int w1_ds2780_io(struct device *dev, char *buf, int addr, size_t count,
 		}
 	}
 
-<<<<<<< HEAD
 	return count;
 }
 
@@ -106,15 +84,6 @@ int w1_ds2780_io_nolock(struct device *dev, char *buf, int addr, size_t count,
 }
 EXPORT_SYMBOL(w1_ds2780_io_nolock);
 
-=======
-out:
-	mutex_unlock(&sl->master->mutex);
-
-	return count;
-}
-EXPORT_SYMBOL(w1_ds2780_io);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 int w1_ds2780_eeprom_cmd(struct device *dev, int addr, int cmd)
 {
 	struct w1_slave *sl = container_of(dev, struct w1_slave, dev);

@@ -8954,17 +8954,10 @@ cpu_cgroup_allow_attach(struct cgroup *cgrp, struct task_struct *tsk)
 	if ((current != tsk) && !capable(CAP_SYS_NICE) &&
 	    cred->euid != tcred->uid && cred->euid != tcred->suid)
 		return -EACCES;
-<<<<<<< HEAD
 
 	return 0;
 }
 
-=======
-
-	return 0;
-}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 static int
 cpu_cgroup_can_attach_task(struct cgroup *cgrp, struct task_struct *tsk)
 {
@@ -9425,8 +9418,4 @@ struct cgroup_subsys cpuacct_subsys = {
 	.subsys_id = cpuacct_subsys_id,
 };
 #endif	/* CONFIG_CGROUP_CPUACCT */
-<<<<<<< HEAD
 #endif /* CONFIG_SCHED_BFS */
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo

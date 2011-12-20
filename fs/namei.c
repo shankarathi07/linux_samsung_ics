@@ -136,11 +136,7 @@ static int do_getname(const char __user *filename, char *page)
 	return retval;
 }
 
-<<<<<<< HEAD
 static char *getname_flags(const char __user *filename, int flags, int *empty)
-=======
-static char *getname_flags(const char __user * filename, int flags)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 {
 	char *tmp, *result;
 
@@ -151,11 +147,8 @@ static char *getname_flags(const char __user * filename, int flags)
 
 		result = tmp;
 		if (retval < 0) {
-<<<<<<< HEAD
 			if (retval == -ENOENT && empty)
 				*empty = 1;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			if (retval != -ENOENT || !(flags & LOOKUP_EMPTY)) {
 				__putname(tmp);
 				result = ERR_PTR(retval);
@@ -168,11 +161,7 @@ static char *getname_flags(const char __user * filename, int flags)
 
 char *getname(const char __user * filename)
 {
-<<<<<<< HEAD
 	return getname_flags(filename, 0, 0);
-=======
-	return getname_flags(filename, 0);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 #ifdef CONFIG_AUDITSYSCALL
@@ -498,7 +487,6 @@ void release_open_intent(struct nameidata *nd)
 		else
 			fput(file);
 	}
-<<<<<<< HEAD
 }
 
 static inline int d_revalidate(struct dentry *dentry, struct nameidata *nd)
@@ -506,15 +494,6 @@ static inline int d_revalidate(struct dentry *dentry, struct nameidata *nd)
 	return dentry->d_op->d_revalidate(dentry, nd);
 }
 
-=======
-}
-
-static inline int d_revalidate(struct dentry *dentry, struct nameidata *nd)
-{
-	return dentry->d_op->d_revalidate(dentry, nd);
-}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 static struct dentry *
 do_revalidate(struct dentry *dentry, struct nameidata *nd)
 {
@@ -702,7 +681,6 @@ follow_link(struct path *link, struct nameidata *nd, void **p)
 {
 	int error;
 	struct dentry *dentry = link->dentry;
-<<<<<<< HEAD
 
 	BUG_ON(nd->flags & LOOKUP_RCU);
 
@@ -717,22 +695,6 @@ follow_link(struct path *link, struct nameidata *nd, void **p)
 	cond_resched();
 	current->total_link_count++;
 
-=======
-
-	BUG_ON(nd->flags & LOOKUP_RCU);
-
-	if (link->mnt == nd->path.mnt)
-		mntget(link->mnt);
-
-	if (unlikely(current->total_link_count >= 40)) {
-		*p = ERR_PTR(-ELOOP); /* no ->put_link(), please */
-		path_put(&nd->path);
-		return -ELOOP;
-	}
-	cond_resched();
-	current->total_link_count++;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	touch_atime(link->mnt, dentry);
 	nd_set_link(nd, NULL);
 
@@ -819,7 +781,6 @@ static int follow_automount(struct path *path, unsigned flags,
 	if ((flags & LOOKUP_NO_AUTOMOUNT) && !(flags & LOOKUP_CONTINUE))
 		return -EISDIR; /* we actually want to stop here */
 
-<<<<<<< HEAD
 	/* We don't want to mount if someone's just doing a stat -
 	 * unless they're stat'ing a directory and appended a '/' to
 	 * the name.
@@ -834,19 +795,6 @@ static int follow_automount(struct path *path, unsigned flags,
 	if (!(flags & (LOOKUP_CONTINUE | LOOKUP_DIRECTORY |
 		     LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_AUTOMOUNT)) &&
 	    path->dentry->d_inode)
-=======
-	/* We want to mount if someone is trying to open/create a file of any
-	 * type under the mountpoint, wants to traverse through the mountpoint
-	 * or wants to open the mounted directory.
-	 *
-	 * We don't want to mount if someone's just doing a stat and they've
-	 * set AT_SYMLINK_NOFOLLOW - unless they're stat'ing a directory and
-	 * appended a '/' to the name.
-	 */
-	if (!(flags & LOOKUP_FOLLOW) &&
-	    !(flags & (LOOKUP_CONTINUE | LOOKUP_DIRECTORY |
-		       LOOKUP_OPEN | LOOKUP_CREATE)))
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		return -EISDIR;
 
 	current->total_link_count++;
@@ -962,11 +910,7 @@ static int follow_managed(struct path *path, unsigned flags)
 		mntput(path->mnt);
 	if (ret == -EISDIR)
 		ret = 0;
-<<<<<<< HEAD
 	return ret < 0 ? ret : need_mntput;
-=======
-	return ret;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 int follow_down_one(struct path *path)
@@ -1014,10 +958,7 @@ static bool __follow_mount_rcu(struct nameidata *nd, struct path *path,
 			break;
 		path->mnt = mounted;
 		path->dentry = mounted->mnt_root;
-<<<<<<< HEAD
 		nd->flags |= LOOKUP_JUMPED;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		nd->seq = read_seqcount_begin(&path->dentry->d_seq);
 		/*
 		 * Update the inode too. We don't need to re-check the
@@ -1025,7 +966,6 @@ static bool __follow_mount_rcu(struct nameidata *nd, struct path *path,
 		 * because a mount-point is always pinned.
 		 */
 		*inode = path->dentry->d_inode;
-<<<<<<< HEAD
 	}
 	return true;
 }
@@ -1081,63 +1021,6 @@ failed:
 	return -ECHILD;
 }
 
-=======
-	}
-	return true;
-}
-
-static void follow_mount_rcu(struct nameidata *nd)
-{
-	while (d_mountpoint(nd->path.dentry)) {
-		struct vfsmount *mounted;
-		mounted = __lookup_mnt(nd->path.mnt, nd->path.dentry, 1);
-		if (!mounted)
-			break;
-		nd->path.mnt = mounted;
-		nd->path.dentry = mounted->mnt_root;
-		nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
-	}
-}
-
-static int follow_dotdot_rcu(struct nameidata *nd)
-{
-	set_root_rcu(nd);
-
-	while (1) {
-		if (nd->path.dentry == nd->root.dentry &&
-		    nd->path.mnt == nd->root.mnt) {
-			break;
-		}
-		if (nd->path.dentry != nd->path.mnt->mnt_root) {
-			struct dentry *old = nd->path.dentry;
-			struct dentry *parent = old->d_parent;
-			unsigned seq;
-
-			seq = read_seqcount_begin(&parent->d_seq);
-			if (read_seqcount_retry(&old->d_seq, nd->seq))
-				goto failed;
-			nd->path.dentry = parent;
-			nd->seq = seq;
-			break;
-		}
-		if (!follow_up_rcu(&nd->path))
-			break;
-		nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
-	}
-	follow_mount_rcu(nd);
-	nd->inode = nd->path.dentry->d_inode;
-	return 0;
-
-failed:
-	nd->flags &= ~LOOKUP_RCU;
-	if (!(nd->flags & LOOKUP_ROOT))
-		nd->root.mnt = NULL;
-	rcu_read_unlock();
-	br_read_unlock(vfsmount_lock);
-	return -ECHILD;
-}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 /*
  * Follow down to the covering mount currently visible to userspace.  At each
  * point, the filesystem owning that dentry may be queried as to whether the
@@ -1225,8 +1108,6 @@ static void follow_dotdot(struct nameidata *nd)
 	}
 	follow_mount(&nd->path);
 	nd->inode = nd->path.dentry->d_inode;
-<<<<<<< HEAD
-=======
 }
 
 /*
@@ -1235,37 +1116,6 @@ static void follow_dotdot(struct nameidata *nd)
  * on error. parent->d_inode->i_mutex must be held. d_lookup must
  * have verified that no child exists while under i_mutex.
  */
-static struct dentry *d_alloc_and_lookup(struct dentry *parent,
-				struct qstr *name, struct nameidata *nd)
-{
-	struct inode *inode = parent->d_inode;
-	struct dentry *dentry;
-	struct dentry *old;
-
-	/* Don't create child dentry for a dead directory. */
-	if (unlikely(IS_DEADDIR(inode)))
-		return ERR_PTR(-ENOENT);
-
-	dentry = d_alloc(parent, name);
-	if (unlikely(!dentry))
-		return ERR_PTR(-ENOMEM);
-
-	old = inode->i_op->lookup(inode, dentry, nd);
-	if (unlikely(old)) {
-		dput(dentry);
-		dentry = old;
-	}
-	return dentry;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
-}
-
-/*
- * Allocate a dentry with name and parent, and perform a parent
- * directory ->lookup on it. Returns the new dentry, or ERR_PTR
- * on error. parent->d_inode->i_mutex must be held. d_lookup must
- * have verified that no child exists while under i_mutex.
- */
-<<<<<<< HEAD
 static struct dentry *d_alloc_and_lookup(struct dentry *parent,
 				struct qstr *name, struct nameidata *nd)
 {
@@ -1297,11 +1147,6 @@ static struct dentry *d_alloc_and_lookup(struct dentry *parent,
 static int do_lookup(struct nameidata *nd, struct qstr *name,
 			struct path *path, struct inode **inode)
 {
-=======
-static int do_lookup(struct nameidata *nd, struct qstr *name,
-			struct path *path, struct inode **inode)
-{
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	struct vfsmount *mnt = nd->path.mnt;
 	struct dentry *dentry, *parent = nd->path.dentry;
 	int need_reval = 1;
@@ -1388,11 +1233,8 @@ retry:
 		path_put_conditional(path, nd);
 		return err;
 	}
-<<<<<<< HEAD
 	if (err)
 		nd->flags |= LOOKUP_JUMPED;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	*inode = path->dentry->d_inode;
 	return 0;
 }
@@ -1917,11 +1759,7 @@ int user_path_at_empty(int dfd, const char __user *name, unsigned flags,
 		 struct path *path, int *empty)
 {
 	struct nameidata nd;
-<<<<<<< HEAD
 	char *tmp = getname_flags(name, flags, empty);
-=======
-	char *tmp = getname_flags(name, flags);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	int err = PTR_ERR(tmp);
 	if (!IS_ERR(tmp)) {
 
@@ -2283,13 +2121,10 @@ static struct file *do_last(struct nameidata *nd, struct path *path,
 	}
 
 	/* create side of things */
-<<<<<<< HEAD
 	/*
 	 * This will *only* deal with leaving RCU mode - LOOKUP_JUMPED has been
 	 * cleared when we got to the last component we are about to look up
 	 */
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	error = complete_walk(nd);
 	if (error)
 		return ERR_PTR(error);
@@ -2357,12 +2192,9 @@ static struct file *do_last(struct nameidata *nd, struct path *path,
 	error = follow_managed(path, nd->flags);
 	if (error < 0)
 		goto exit_dput;
-<<<<<<< HEAD
 
 	if (error)
 		nd->flags |= LOOKUP_JUMPED;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	error = -ENOENT;
 	if (!path->dentry->d_inode)
@@ -2373,13 +2205,10 @@ static struct file *do_last(struct nameidata *nd, struct path *path,
 
 	path_to_nameidata(path, nd);
 	nd->inode = path->dentry->d_inode;
-<<<<<<< HEAD
 	/* Why this, you ask?  _Now_ we might have grown LOOKUP_JUMPED... */
 	error = complete_walk(nd);
 	if (error)
 		goto exit;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	error = -EISDIR;
 	if (S_ISDIR(nd->inode->i_mode))
 		goto exit;

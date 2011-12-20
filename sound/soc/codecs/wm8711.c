@@ -150,11 +150,7 @@ static int wm8711_hw_params(struct snd_pcm_substream *substream,
 {
 	struct snd_soc_codec *codec = dai->codec;
 	struct wm8711_priv *wm8711 =  snd_soc_codec_get_drvdata(codec);
-<<<<<<< HEAD
 	u16 iface = snd_soc_read(codec, WM8711_IFACE) & 0xfff3;
-=======
-	u16 iface = snd_soc_read(codec, WM8711_IFACE) & 0xfffc;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	int i = get_coeff(wm8711->sysclk, params_rate(params));
 	u16 srate = (coeff_div[i].sr << 2) |
 		(coeff_div[i].bosr << 1) | coeff_div[i].usb;

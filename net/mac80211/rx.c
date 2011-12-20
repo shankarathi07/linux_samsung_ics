@@ -142,10 +142,7 @@ ieee80211_add_rx_radiotap_header(struct ieee80211_local *local,
 	/* IEEE80211_RADIOTAP_RATE */
 	if (!rate || status->flag & RX_FLAG_HT) {
 		/*
-<<<<<<< HEAD
 		 * Without rate information don't add it. If we have,
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		 * MCS information is a separate field in radiotap,
 		 * added below. The byte here is needed as padding
 		 * for the channel though, so initialise it to 0.
@@ -2515,15 +2512,9 @@ static void ieee80211_rx_handlers(struct ieee80211_rx_data *rx)
 	spin_lock(&rx->local->rx_skb_queue.lock);
 	if (rx->local->running_rx_handler)
 		goto unlock;
-<<<<<<< HEAD
 
 	rx->local->running_rx_handler = true;
 
-=======
-
-	rx->local->running_rx_handler = true;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	while ((skb = __skb_dequeue(&rx->local->rx_skb_queue))) {
 		spin_unlock(&rx->local->rx_skb_queue.lock);
 

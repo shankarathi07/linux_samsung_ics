@@ -135,11 +135,7 @@ static int add_grefs(struct ioctl_gntalloc_alloc_gref *op,
 		/* Grant foreign access to the page. */
 		gref->gref_id = gnttab_grant_foreign_access(op->domid,
 			pfn_to_mfn(page_to_pfn(gref->page)), readonly);
-<<<<<<< HEAD
 		if ((int)gref->gref_id < 0) {
-=======
-		if (gref->gref_id < 0) {
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			rc = gref->gref_id;
 			goto undo;
 		}
@@ -284,11 +280,7 @@ static long gntalloc_ioctl_alloc(struct gntalloc_file_private_data *priv,
 		goto out;
 	}
 
-<<<<<<< HEAD
 	gref_ids = kcalloc(op.count, sizeof(gref_ids[0]), GFP_TEMPORARY);
-=======
-	gref_ids = kzalloc(sizeof(gref_ids[0]) * op.count, GFP_TEMPORARY);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!gref_ids) {
 		rc = -ENOMEM;
 		goto out;

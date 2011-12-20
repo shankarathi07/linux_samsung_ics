@@ -127,7 +127,6 @@ static ssize_t node_read_meminfo(struct sys_device * dev,
 		       nid, K(node_page_state(nid, NR_WRITEBACK)),
 		       nid, K(node_page_state(nid, NR_FILE_PAGES)),
 		       nid, K(node_page_state(nid, NR_FILE_MAPPED)),
-<<<<<<< HEAD
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE
 		       nid, K(node_page_state(nid, NR_ANON_PAGES)
 			+ node_page_state(nid, NR_ANON_TRANSPARENT_HUGEPAGES) *
@@ -135,14 +134,6 @@ static ssize_t node_read_meminfo(struct sys_device * dev,
 #else
 		       nid, K(node_page_state(nid, NR_ANON_PAGES)),
 #endif
-=======
-		       nid, K(node_page_state(nid, NR_ANON_PAGES)
-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-			+ node_page_state(nid, NR_ANON_TRANSPARENT_HUGEPAGES) *
-			HPAGE_PMD_NR
-#endif
-		       ),
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		       nid, K(node_page_state(nid, NR_SHMEM)),
 		       nid, node_page_state(nid, NR_KERNEL_STACK) *
 				THREAD_SIZE / 1024,
@@ -153,7 +144,6 @@ static ssize_t node_read_meminfo(struct sys_device * dev,
 		       nid, K(node_page_state(nid, NR_SLAB_RECLAIMABLE) +
 				node_page_state(nid, NR_SLAB_UNRECLAIMABLE)),
 		       nid, K(node_page_state(nid, NR_SLAB_RECLAIMABLE)),
-<<<<<<< HEAD
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE
 		       nid, K(node_page_state(nid, NR_SLAB_UNRECLAIMABLE))
 			, nid,
@@ -162,15 +152,6 @@ static ssize_t node_read_meminfo(struct sys_device * dev,
 #else
 		       nid, K(node_page_state(nid, NR_SLAB_UNRECLAIMABLE)));
 #endif
-=======
-		       nid, K(node_page_state(nid, NR_SLAB_UNRECLAIMABLE))
-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-			, nid,
-			K(node_page_state(nid, NR_ANON_TRANSPARENT_HUGEPAGES) *
-			HPAGE_PMD_NR)
-#endif
-		       );
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	n += hugetlb_report_node_meminfo(nid, buf + n);
 	return n;
 }

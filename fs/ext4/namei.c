@@ -1615,11 +1615,7 @@ static int ext4_dx_add_entry(handle_t *handle, struct dentry *dentry,
 			if (err)
 				goto journal_error;
 		}
-<<<<<<< HEAD
 		err = ext4_handle_dirty_metadata(handle, dir, frames[0].bh);
-=======
-		err = ext4_handle_dirty_metadata(handle, inode, frames[0].bh);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		if (err) {
 			ext4_std_error(inode->i_sb, err);
 			goto cleanup;
@@ -1870,11 +1866,7 @@ retry:
 	ext4_set_de_type(dir->i_sb, de, S_IFDIR);
 	inode->i_nlink = 2;
 	BUFFER_TRACE(dir_block, "call ext4_handle_dirty_metadata");
-<<<<<<< HEAD
 	err = ext4_handle_dirty_metadata(handle, inode, dir_block);
-=======
-	err = ext4_handle_dirty_metadata(handle, dir, dir_block);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (err)
 		goto out_clear_inode;
 	err = ext4_mark_inode_dirty(handle, inode);
@@ -2548,11 +2540,7 @@ static int ext4_rename(struct inode *old_dir, struct dentry *old_dentry,
 		PARENT_INO(dir_bh->b_data, new_dir->i_sb->s_blocksize) =
 						cpu_to_le32(new_dir->i_ino);
 		BUFFER_TRACE(dir_bh, "call ext4_handle_dirty_metadata");
-<<<<<<< HEAD
 		retval = ext4_handle_dirty_metadata(handle, old_inode, dir_bh);
-=======
-		retval = ext4_handle_dirty_metadata(handle, old_dir, dir_bh);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		if (retval) {
 			ext4_std_error(old_dir->i_sb, retval);
 			goto end_rename;

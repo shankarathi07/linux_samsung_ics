@@ -131,10 +131,6 @@ static void kvm_patch_ins_b(u32 *inst, int addr)
 	/* On relocatable kernels interrupts handlers and our code
 	   can be in different regions, so we don't patch them */
 
-<<<<<<< HEAD
-=======
-	extern u32 __end_interrupts;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if ((ulong)inst < (ulong)&__end_interrupts)
 		return;
 #endif

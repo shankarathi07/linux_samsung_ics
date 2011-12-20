@@ -255,7 +255,6 @@ static struct apic apic_bigsmp = {
 	.x86_32_early_logical_apicid	= bigsmp_early_logical_apicid,
 };
 
-<<<<<<< HEAD
 void __init generic_bigsmp_probe(void)
 {
 	unsigned int cpu;
@@ -274,14 +273,6 @@ void __init generic_bigsmp_probe(void)
 	}
 
 	pr_info("Overriding APIC driver with %s\n", apic_bigsmp.name);
-=======
-struct apic * __init generic_bigsmp_probe(void)
-{
-	if (probe_bigsmp())
-		return &apic_bigsmp;
-
-	return NULL;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 apic_driver(apic_bigsmp);

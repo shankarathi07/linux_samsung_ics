@@ -235,7 +235,6 @@ static void mem_writes8(void __iomem *dst_base, u32 dst_offset,
 		__raw_writel(cpu_to_le32(*src), dst);
 	else
 		__raw_writel(*src, dst);
-<<<<<<< HEAD
 }
 
 /*
@@ -264,36 +263,6 @@ static void ptd_write(void __iomem *base, u32 ptd_offset, u32 slot,
 							sizeof(ptd->dw0));
 }
 
-=======
-}
-
-/*
- * Read and write ptds. 'ptd_offset' should be one of ISO_PTD_OFFSET,
- * INT_PTD_OFFSET, and ATL_PTD_OFFSET. 'slot' should be less than 32.
- */
-static void ptd_read(void __iomem *base, u32 ptd_offset, u32 slot,
-								struct ptd *ptd)
-{
-	reg_write32(base, HC_MEMORY_REG,
-				ISP_BANK(0) + ptd_offset + slot*sizeof(*ptd));
-	ndelay(90);
-	bank_reads8(base, ptd_offset + slot*sizeof(*ptd), ISP_BANK(0),
-						(void *) ptd, sizeof(*ptd));
-}
-
-static void ptd_write(void __iomem *base, u32 ptd_offset, u32 slot,
-								struct ptd *ptd)
-{
-	mem_writes8(base, ptd_offset + slot*sizeof(*ptd) + sizeof(ptd->dw0),
-						&ptd->dw1, 7*sizeof(ptd->dw1));
-	/* Make sure dw0 gets written last (after other dw's and after payload)
-	   since it contains the enable bit */
-	wmb();
-	mem_writes8(base, ptd_offset + slot*sizeof(*ptd), &ptd->dw0,
-							sizeof(ptd->dw0));
-}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 /* memory management of the 60kb on the chip from 0x1000 to 0xffff */
 static void init_memory(struct isp1760_hcd *priv)
@@ -673,21 +642,12 @@ static void create_ptd_atl(struct isp1760_qh *qh,
 	ptd->dw1 = usb_pipeendpoint(qtd->urb->pipe) >> 1;
 	ptd->dw1 |= TO_DW1_DEVICE_ADDR(usb_pipedevice(qtd->urb->pipe));
 	ptd->dw1 |= TO_DW1_PID_TOKEN(qtd->packet_type);
-<<<<<<< HEAD
 
 	if (usb_pipebulk(qtd->urb->pipe))
 		ptd->dw1 |= DW1_TRANS_BULK;
 	else if  (usb_pipeint(qtd->urb->pipe))
 		ptd->dw1 |= DW1_TRANS_INT;
 
-=======
-
-	if (usb_pipebulk(qtd->urb->pipe))
-		ptd->dw1 |= DW1_TRANS_BULK;
-	else if  (usb_pipeint(qtd->urb->pipe))
-		ptd->dw1 |= DW1_TRANS_INT;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (qtd->urb->dev->speed != USB_SPEED_HIGH) {
 		/* split transaction */
 
@@ -839,193 +799,6 @@ static void qtd_free(struct isp1760_qtd *qtd)
 	WARN_ON(qtd->payload_addr);
 	kmem_cache_free(qtd_cachep, qtd);
 }
-<<<<<<< HEAD
-
-static void start_bus_transfer(struct usb_hcd *hcd, u32 ptd_offset, int slot,
-				struct slotinfo *slots, struct isp1760_qtd *qtd,
-				struct isp1760_qh *qh, struct ptd *ptd)
-{
-	struct isp1760_hcd *priv = hcd_to_priv(hcd);
-	int skip_map;
-
-	WARN_ON((slot < 0) || (slot > 31));
-	WARN_ON(qtd->length && !qtd->payload_addr);
-	WARN_ON(slots[slot].qtd);
-	WARN_ON(slots[slot].qh);
-	WARN_ON(qtd->status != QTD_PAYLOAD_ALLOC);
-
-	slots[slot].qtd = qtd;
-	slots[slot].qh = qh;
-	qh->slot = slot;
-	qtd->status = QTD_XFER_STARTED; /* Set this before writing ptd, since
-		interrupt routine may preempt and expects this value. */
-	ptd_write(hcd->regs, ptd_offset, slot, ptd);
-	priv->active_ptds++;
-
-	/* Make sure done map has not triggered from some unlinked transfer */
-	if (ptd_offset == ATL_PTD_OFFSET) {
-		priv->atl_done_map |= reg_read32(hcd->regs,
-						HC_ATL_PTD_DONEMAP_REG);
-		priv->atl_done_map &= ~(1 << qh->slot);
-
-		skip_map = reg_read32(hcd->regs, HC_ATL_PTD_SKIPMAP_REG);
-		skip_map &= ~(1 << qh->slot);
-		reg_write32(hcd->regs, HC_ATL_PTD_SKIPMAP_REG, skip_map);
-	} else {
-		priv->int_done_map |= reg_read32(hcd->regs,
-						HC_INT_PTD_DONEMAP_REG);
-		priv->int_done_map &= ~(1 << qh->slot);
-
-		skip_map = reg_read32(hcd->regs, HC_INT_PTD_SKIPMAP_REG);
-		skip_map &= ~(1 << qh->slot);
-		reg_write32(hcd->regs, HC_INT_PTD_SKIPMAP_REG, skip_map);
-	}
-}
-
-static int is_short_bulk(struct isp1760_qtd *qtd)
-{
-	return (usb_pipebulk(qtd->urb->pipe) &&
-					(qtd->actual_length < qtd->length));
-}
-
-static void collect_qtds(struct usb_hcd *hcd, struct isp1760_qh *qh,
-						struct list_head *urb_list)
-{
-	int last_qtd;
-	struct isp1760_qtd *qtd, *qtd_next;
-	struct urb_listitem *urb_listitem;
-
-	list_for_each_entry_safe(qtd, qtd_next, &qh->qtd_list, qtd_list) {
-		if (qtd->status < QTD_XFER_COMPLETE)
-			break;
-
-		if (list_is_last(&qtd->qtd_list, &qh->qtd_list))
-			last_qtd = 1;
-		else
-			last_qtd = qtd->urb != qtd_next->urb;
-
-		if ((!last_qtd) && (qtd->status == QTD_RETIRE))
-			qtd_next->status = QTD_RETIRE;
-
-		if (qtd->status == QTD_XFER_COMPLETE) {
-			if (qtd->actual_length) {
-				switch (qtd->packet_type) {
-				case IN_PID:
-					mem_reads8(hcd->regs, qtd->payload_addr,
-							qtd->data_buffer,
-							qtd->actual_length);
-					/* Fall through (?) */
-				case OUT_PID:
-					qtd->urb->actual_length +=
-							qtd->actual_length;
-					/* Fall through ... */
-				case SETUP_PID:
-					break;
-				}
-			}
-
-			if (is_short_bulk(qtd)) {
-				if (qtd->urb->transfer_flags & URB_SHORT_NOT_OK)
-					qtd->urb->status = -EREMOTEIO;
-				if (!last_qtd)
-					qtd_next->status = QTD_RETIRE;
-			}
-		}
-
-		if (qtd->payload_addr)
-			free_mem(hcd, qtd);
-
-		if (last_qtd) {
-			if ((qtd->status == QTD_RETIRE) &&
-					(qtd->urb->status == -EINPROGRESS))
-				qtd->urb->status = -EPIPE;
-			/* Defer calling of urb_done() since it releases lock */
-			urb_listitem = kmem_cache_zalloc(urb_listitem_cachep,
-								GFP_ATOMIC);
-			if (unlikely(!urb_listitem))
-				break;
-			urb_listitem->urb = qtd->urb;
-			list_add_tail(&urb_listitem->urb_list, urb_list);
-		}
-
-		list_del(&qtd->qtd_list);
-		qtd_free(qtd);
-	}
-}
-
-#define ENQUEUE_DEPTH	2
-static void enqueue_qtds(struct usb_hcd *hcd, struct isp1760_qh *qh)
-{
-	struct isp1760_hcd *priv = hcd_to_priv(hcd);
-	int ptd_offset;
-	struct slotinfo *slots;
-	int curr_slot, free_slot;
-	int n;
-	struct ptd ptd;
-	struct isp1760_qtd *qtd;
-
-	if (unlikely(list_empty(&qh->qtd_list))) {
-		WARN_ON(1);
-		return;
-	}
-
-	if (usb_pipeint(list_entry(qh->qtd_list.next, struct isp1760_qtd,
-							qtd_list)->urb->pipe)) {
-		ptd_offset = INT_PTD_OFFSET;
-		slots = priv->int_slots;
-	} else {
-		ptd_offset = ATL_PTD_OFFSET;
-		slots = priv->atl_slots;
-	}
-
-	free_slot = -1;
-	for (curr_slot = 0; curr_slot < 32; curr_slot++) {
-		if ((free_slot == -1) && (slots[curr_slot].qtd == NULL))
-			free_slot = curr_slot;
-		if (slots[curr_slot].qh == qh)
-			break;
-	}
-
-	n = 0;
-	list_for_each_entry(qtd, &qh->qtd_list, qtd_list) {
-		if (qtd->status == QTD_ENQUEUED) {
-			WARN_ON(qtd->payload_addr);
-			alloc_mem(hcd, qtd);
-			if ((qtd->length) && (!qtd->payload_addr))
-				break;
-
-			if ((qtd->length) &&
-			    ((qtd->packet_type == SETUP_PID) ||
-			     (qtd->packet_type == OUT_PID))) {
-				mem_writes8(hcd->regs, qtd->payload_addr,
-						qtd->data_buffer, qtd->length);
-			}
-
-			qtd->status = QTD_PAYLOAD_ALLOC;
-		}
-
-		if (qtd->status == QTD_PAYLOAD_ALLOC) {
-/*
-			if ((curr_slot > 31) && (free_slot == -1))
-				dev_dbg(hcd->self.controller, "%s: No slot "
-					"available for transfer\n", __func__);
-*/
-			/* Start xfer for this endpoint if not already done */
-			if ((curr_slot > 31) && (free_slot > -1)) {
-				if (usb_pipeint(qtd->urb->pipe))
-					create_ptd_int(qh, qtd, &ptd);
-				else
-					create_ptd_atl(qh, qtd, &ptd);
-
-				start_bus_transfer(hcd, ptd_offset, free_slot,
-							slots, qtd, qh, &ptd);
-				curr_slot = free_slot;
-			}
-
-			n++;
-			if (n >= ENQUEUE_DEPTH)
-				break;
-=======
 
 static void start_bus_transfer(struct usb_hcd *hcd, u32 ptd_offset, int slot,
 				struct slotinfo *slots, struct isp1760_qtd *qtd,
@@ -1248,146 +1021,8 @@ void schedule_ptds(struct usb_hcd *hcd)
 					qh_free(qh);
 				}
 			}
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
-		}
-	}
-}
-
-<<<<<<< HEAD
-void schedule_ptds(struct usb_hcd *hcd)
-{
-	struct isp1760_hcd *priv;
-	struct isp1760_qh *qh, *qh_next;
-	struct list_head *ep_queue;
-	struct usb_host_endpoint *ep;
-	LIST_HEAD(urb_list);
-	struct urb_listitem *urb_listitem, *urb_listitem_next;
-
-	if (!hcd) {
-		WARN_ON(1);
-		return;
-	}
-
-	priv = hcd_to_priv(hcd);
-
-	/*
-	 * check finished/retired xfers, transfer payloads, call urb_done()
-	 */
-	ep_queue = &priv->interruptqhs;
-	while (ep_queue) {
-		list_for_each_entry_safe(qh, qh_next, ep_queue, qh_list) {
-			ep = list_entry(qh->qtd_list.next, struct isp1760_qtd,
-							qtd_list)->urb->ep;
-			collect_qtds(hcd, qh, &urb_list);
-			if (list_empty(&qh->qtd_list)) {
-				list_del(&qh->qh_list);
-				if (ep->hcpriv == NULL) {
-					/* Endpoint has been disabled, so we
-					can free the associated queue head. */
-					qh_free(qh);
-				}
-			}
 		}
 
-		if (ep_queue == &priv->interruptqhs)
-			ep_queue = &priv->controlqhs;
-		else if (ep_queue == &priv->controlqhs)
-			ep_queue = &priv->bulkqhs;
-		else
-			ep_queue = NULL;
-	}
-
-	list_for_each_entry_safe(urb_listitem, urb_listitem_next, &urb_list,
-								urb_list) {
-		isp1760_urb_done(hcd, urb_listitem->urb);
-		kmem_cache_free(urb_listitem_cachep, urb_listitem);
-	}
-
-	/*
-	 * Schedule packets for transfer.
-	 *
-	 * According to USB2.0 specification:
-	 *
-	 * 1st prio: interrupt xfers, up to 80 % of bandwidth
-	 * 2nd prio: control xfers
-	 * 3rd prio: bulk xfers
-	 *
-	 * ... but let's use a simpler scheme here (mostly because ISP1761 doc
-	 * is very unclear on how to prioritize traffic):
-	 *
-	 * 1) Enqueue any queued control transfers, as long as payload chip mem
-	 *    and PTD ATL slots are available.
-	 * 2) Enqueue any queued INT transfers, as long as payload chip mem
-	 *    and PTD INT slots are available.
-	 * 3) Enqueue any queued bulk transfers, as long as payload chip mem
-	 *    and PTD ATL slots are available.
-	 *
-	 * Use double buffering (ENQUEUE_DEPTH==2) as a compromise between
-	 * conservation of chip mem and performance.
-	 *
-	 * I'm sure this scheme could be improved upon!
-	 */
-	ep_queue = &priv->controlqhs;
-	while (ep_queue) {
-		list_for_each_entry_safe(qh, qh_next, ep_queue, qh_list)
-			enqueue_qtds(hcd, qh);
-
-		if (ep_queue == &priv->controlqhs)
-			ep_queue = &priv->interruptqhs;
-		else if (ep_queue == &priv->interruptqhs)
-			ep_queue = &priv->bulkqhs;
-		else
-			ep_queue = NULL;
-	}
-}
-
-#define PTD_STATE_QTD_DONE	1
-#define PTD_STATE_QTD_RELOAD	2
-#define PTD_STATE_URB_RETIRE	3
-
-static int check_int_transfer(struct usb_hcd *hcd, struct ptd *ptd,
-								struct urb *urb)
-{
-	__dw dw4;
-	int i;
-
-	dw4 = ptd->dw4;
-	dw4 >>= 8;
-
-	/* FIXME: ISP1761 datasheet does not say what to do with these. Do we
-	   need to handle these errors? Is it done in hardware? */
-
-	if (ptd->dw3 & DW3_HALT_BIT) {
-
-		urb->status = -EPROTO; /* Default unknown error */
-
-		for (i = 0; i < 8; i++) {
-			switch (dw4 & 0x7) {
-			case INT_UNDERRUN:
-				dev_dbg(hcd->self.controller, "%s: underrun "
-						"during uFrame %d\n",
-						__func__, i);
-				urb->status = -ECOMM; /* Could not write data */
-				break;
-			case INT_EXACT:
-				dev_dbg(hcd->self.controller, "%s: transaction "
-						"error during uFrame %d\n",
-						__func__, i);
-				urb->status = -EPROTO; /* timeout, bad CRC, PID
-							  error etc. */
-				break;
-			case INT_BABBLE:
-				dev_dbg(hcd->self.controller, "%s: babble "
-						"error during uFrame %d\n",
-						__func__, i);
-				urb->status = -EOVERFLOW;
-				break;
-			}
-			dw4 >>= 3;
-		}
-
-		return PTD_STATE_URB_RETIRE;
-=======
 		if (ep_queue == &priv->interruptqhs)
 			ep_queue = &priv->controlqhs;
 		else if (ep_queue == &priv->controlqhs)
@@ -1491,50 +1126,6 @@ static int check_int_transfer(struct usb_hcd *hcd, struct ptd *ptd,
 	return PTD_STATE_QTD_DONE;
 }
 
-static int check_atl_transfer(struct usb_hcd *hcd, struct ptd *ptd,
-								struct urb *urb)
-{
-	WARN_ON(!ptd);
-	if (ptd->dw3 & DW3_HALT_BIT) {
-		if (ptd->dw3 & DW3_BABBLE_BIT)
-			urb->status = -EOVERFLOW;
-		else if (FROM_DW3_CERR(ptd->dw3))
-			urb->status = -EPIPE;  /* Stall */
-		else if (ptd->dw3 & DW3_ERROR_BIT)
-			urb->status = -EPROTO; /* XactErr */
-		else
-			urb->status = -EPROTO; /* Unknown */
-/*
-		dev_dbg(hcd->self.controller, "%s: ptd error:\n"
-			"        dw0: %08x dw1: %08x dw2: %08x dw3: %08x\n"
-			"        dw4: %08x dw5: %08x dw6: %08x dw7: %08x\n",
-			__func__,
-			ptd->dw0, ptd->dw1, ptd->dw2, ptd->dw3,
-			ptd->dw4, ptd->dw5, ptd->dw6, ptd->dw7);
-*/
-		return PTD_STATE_URB_RETIRE;
-	}
-
-	if ((ptd->dw3 & DW3_ERROR_BIT) && (ptd->dw3 & DW3_ACTIVE_BIT)) {
-		/* Transfer Error, *but* active and no HALT -> reload */
-		dev_dbg(hcd->self.controller, "PID error; reloading ptd\n");
-		return PTD_STATE_QTD_RELOAD;
-	}
-
-	if (!FROM_DW3_NAKCOUNT(ptd->dw3) && (ptd->dw3 & DW3_ACTIVE_BIT)) {
-		/*
-		 * NAKs are handled in HW by the chip. Usually if the
-		 * device is not able to send data fast enough.
-		 * This happens mostly on slower hardware.
-		 */
-		return PTD_STATE_QTD_RELOAD;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
-	}
-
-	return PTD_STATE_QTD_DONE;
-}
-
-<<<<<<< HEAD
 static int check_atl_transfer(struct usb_hcd *hcd, struct ptd *ptd,
 								struct urb *urb)
 {
@@ -1759,190 +1350,6 @@ static void qtd_list_free(struct list_head *qtd_list)
 {
 	struct isp1760_qtd *qtd, *qtd_next;
 
-=======
-static irqreturn_t isp1760_irq(struct usb_hcd *hcd)
-{
-	struct isp1760_hcd *priv = hcd_to_priv(hcd);
-	u32 imask;
-	irqreturn_t irqret = IRQ_NONE;
-	struct ptd ptd;
-	struct isp1760_qh *qh;
-	int slot;
-	int state;
-	struct slotinfo *slots;
-	u32 ptd_offset;
-	struct isp1760_qtd *qtd;
-	int modified;
-	static int last_active_ptds;
-	int int_skip_map, atl_skip_map;
-
-	spin_lock(&priv->lock);
-
-	if (!(hcd->state & HC_STATE_RUNNING))
-		goto leave;
-
-	imask = reg_read32(hcd->regs, HC_INTERRUPT_REG);
-	if (unlikely(!imask))
-		goto leave;
-	reg_write32(hcd->regs, HC_INTERRUPT_REG, imask); /* Clear */
-
-	int_skip_map = reg_read32(hcd->regs, HC_INT_PTD_SKIPMAP_REG);
-	atl_skip_map = reg_read32(hcd->regs, HC_ATL_PTD_SKIPMAP_REG);
-	priv->int_done_map |= reg_read32(hcd->regs, HC_INT_PTD_DONEMAP_REG);
-	priv->atl_done_map |= reg_read32(hcd->regs, HC_ATL_PTD_DONEMAP_REG);
-	priv->int_done_map &= ~int_skip_map;
-	priv->atl_done_map &= ~atl_skip_map;
-
-	modified = priv->int_done_map | priv->atl_done_map;
-
-	while (priv->int_done_map || priv->atl_done_map) {
-		if (priv->int_done_map) {
-			/* INT ptd */
-			slot = __ffs(priv->int_done_map);
-			priv->int_done_map &= ~(1 << slot);
-			slots = priv->int_slots;
-			/* This should not trigger, and could be removed if
-			   noone have any problems with it triggering: */
-			if (!slots[slot].qh) {
-				WARN_ON(1);
-				continue;
-			}
-			ptd_offset = INT_PTD_OFFSET;
-			ptd_read(hcd->regs, INT_PTD_OFFSET, slot, &ptd);
-			state = check_int_transfer(hcd, &ptd,
-							slots[slot].qtd->urb);
-		} else {
-			/* ATL ptd */
-			slot = __ffs(priv->atl_done_map);
-			priv->atl_done_map &= ~(1 << slot);
-			slots = priv->atl_slots;
-			/* This should not trigger, and could be removed if
-			   noone have any problems with it triggering: */
-			if (!slots[slot].qh) {
-				WARN_ON(1);
-				continue;
-			}
-			ptd_offset = ATL_PTD_OFFSET;
-			ptd_read(hcd->regs, ATL_PTD_OFFSET, slot, &ptd);
-			state = check_atl_transfer(hcd, &ptd,
-							slots[slot].qtd->urb);
-		}
-
-		qtd = slots[slot].qtd;
-		slots[slot].qtd = NULL;
-		qh = slots[slot].qh;
-		slots[slot].qh = NULL;
-		priv->active_ptds--;
-		qh->slot = -1;
-
-		WARN_ON(qtd->status != QTD_XFER_STARTED);
-
-		switch (state) {
-		case PTD_STATE_QTD_DONE:
-			if ((usb_pipeint(qtd->urb->pipe)) &&
-				       (qtd->urb->dev->speed != USB_SPEED_HIGH))
-				qtd->actual_length =
-				       FROM_DW3_SCS_NRBYTESTRANSFERRED(ptd.dw3);
-			else
-				qtd->actual_length =
-					FROM_DW3_NRBYTESTRANSFERRED(ptd.dw3);
-
-			qtd->status = QTD_XFER_COMPLETE;
-			if (list_is_last(&qtd->qtd_list, &qh->qtd_list) ||
-							is_short_bulk(qtd))
-				qtd = NULL;
-			else
-				qtd = list_entry(qtd->qtd_list.next,
-							typeof(*qtd), qtd_list);
-
-			qh->toggle = FROM_DW3_DATA_TOGGLE(ptd.dw3);
-			qh->ping = FROM_DW3_PING(ptd.dw3);
-			break;
-
-		case PTD_STATE_QTD_RELOAD: /* QTD_RETRY, for atls only */
-			qtd->status = QTD_PAYLOAD_ALLOC;
-			ptd.dw0 |= DW0_VALID_BIT;
-			/* RL counter = ERR counter */
-			ptd.dw3 &= ~TO_DW3_NAKCOUNT(0xf);
-			ptd.dw3 |= TO_DW3_NAKCOUNT(FROM_DW2_RL(ptd.dw2));
-			ptd.dw3 &= ~TO_DW3_CERR(3);
-			ptd.dw3 |= TO_DW3_CERR(ERR_COUNTER);
-			qh->toggle = FROM_DW3_DATA_TOGGLE(ptd.dw3);
-			qh->ping = FROM_DW3_PING(ptd.dw3);
-			break;
-
-		case PTD_STATE_URB_RETIRE:
-			qtd->status = QTD_RETIRE;
-			qtd = NULL;
-			qh->toggle = 0;
-			qh->ping = 0;
-			break;
-
-		default:
-			WARN_ON(1);
-			continue;
-		}
-
-		if (qtd && (qtd->status == QTD_PAYLOAD_ALLOC)) {
-			if (slots == priv->int_slots) {
-				if (state == PTD_STATE_QTD_RELOAD)
-					dev_err(hcd->self.controller,
-						"%s: PTD_STATE_QTD_RELOAD on "
-						"interrupt packet\n", __func__);
-				if (state != PTD_STATE_QTD_RELOAD)
-					create_ptd_int(qh, qtd, &ptd);
-			} else {
-				if (state != PTD_STATE_QTD_RELOAD)
-					create_ptd_atl(qh, qtd, &ptd);
-			}
-
-			start_bus_transfer(hcd, ptd_offset, slot, slots, qtd,
-				qh, &ptd);
-		}
-	}
-
-	if (modified)
-		schedule_ptds(hcd);
-
-	/* ISP1760 Errata 2 explains that interrupts may be missed (or not
-	   happen?) if two USB devices are running simultaneously. Perhaps
-	   this happens when a PTD is finished during interrupt handling;
-	   enable SOF interrupts if PTDs are still scheduled when exiting this
-	   interrupt handler, just to be safe. */
-
-	if (priv->active_ptds != last_active_ptds) {
-		if (priv->active_ptds > 0)
-			reg_write32(hcd->regs, HC_INTERRUPT_ENABLE,
-						INTERRUPT_ENABLE_SOT_MASK);
-		else
-			reg_write32(hcd->regs, HC_INTERRUPT_ENABLE,
-						INTERRUPT_ENABLE_MASK);
-		last_active_ptds = priv->active_ptds;
-	}
-
-	irqret = IRQ_HANDLED;
-leave:
-	spin_unlock(&priv->lock);
-
-	return irqret;
-}
-
-static int qtd_fill(struct isp1760_qtd *qtd, void *databuffer, size_t len)
-{
-	qtd->data_buffer = databuffer;
-
-	if (len > MAX_PAYLOAD_SIZE)
-		len = MAX_PAYLOAD_SIZE;
-	qtd->length = len;
-
-	return qtd->length;
-}
-
-static void qtd_list_free(struct list_head *qtd_list)
-{
-	struct isp1760_qtd *qtd, *qtd_next;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	list_for_each_entry_safe(qtd, qtd_next, qtd_list, qtd_list) {
 		list_del(&qtd->qtd_list);
 		qtd_free(qtd);
@@ -2176,12 +1583,9 @@ static int isp1760_urb_dequeue(struct usb_hcd *hcd, struct urb *urb,
 	int retval = 0;
 
 	spin_lock_irqsave(&priv->lock, spinflags);
-<<<<<<< HEAD
 	retval = usb_hcd_check_unlink_urb(hcd, urb, status);
 	if (retval)
 		goto out;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	qh = urb->ep->hcpriv;
 	if (!qh) {

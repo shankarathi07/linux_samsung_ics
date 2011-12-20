@@ -1061,7 +1061,6 @@ static int enic_set_vf_port(struct net_device *netdev, int vf,
 	struct enic *enic = netdev_priv(netdev);
 	struct enic_port_profile prev_pp;
 	int err = 0, restore_pp = 1;
-<<<<<<< HEAD
 
 	/* don't support VFs, yet */
 	if (vf != PORT_SELF_VF)
@@ -1070,16 +1069,6 @@ static int enic_set_vf_port(struct net_device *netdev, int vf,
 	if (!port[IFLA_PORT_REQUEST])
 		return -EOPNOTSUPP;
 
-=======
-
-	/* don't support VFs, yet */
-	if (vf != PORT_SELF_VF)
-		return -EOPNOTSUPP;
-
-	if (!port[IFLA_PORT_REQUEST])
-		return -EOPNOTSUPP;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	memcpy(&prev_pp, &enic->pp, sizeof(enic->pp));
 	memset(&enic->pp, 0, sizeof(enic->pp));
 
@@ -1496,17 +1485,10 @@ static int enic_request_intr(struct enic *enic)
 			"%.11s-notify", netdev->name);
 		enic->msix[intr].isr = enic_isr_msix_notify;
 		enic->msix[intr].devid = enic;
-<<<<<<< HEAD
 
 		for (i = 0; i < ARRAY_SIZE(enic->msix); i++)
 			enic->msix[i].requested = 0;
 
-=======
-
-		for (i = 0; i < ARRAY_SIZE(enic->msix); i++)
-			enic->msix[i].requested = 0;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		for (i = 0; i < enic->intr_count; i++) {
 			err = request_irq(enic->msix_entry[i].vector,
 				enic->msix[i].isr, 0,
@@ -1736,17 +1718,12 @@ static void enic_poll_controller(struct net_device *netdev)
 			enic_isr_msix_rq(enic->msix_entry[intr].vector,
 				&enic->napi[i]);
 		}
-<<<<<<< HEAD
 
 		for (i = 0; i < enic->wq_count; i++) {
 			intr = enic_msix_wq_intr(enic, i);
 			enic_isr_msix_wq(enic->msix_entry[intr].vector, enic);
 		}
 
-=======
-		intr = enic_msix_wq_intr(enic, i);
-		enic_isr_msix_wq(enic->msix_entry[intr].vector, enic);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		break;
 	case VNIC_DEV_INTR_MODE_MSI:
 		enic_isr_msi(enic->pdev->irq, enic);

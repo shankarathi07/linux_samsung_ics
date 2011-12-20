@@ -291,14 +291,9 @@ void page_table_free_rcu(struct mmu_gather *tlb, unsigned long *table)
 
 void __tlb_remove_table(void *_table)
 {
-<<<<<<< HEAD
 	const unsigned long mask = (FRAG_MASK << 4) | FRAG_MASK;
 	void *table = (void *)((unsigned long) _table & ~mask);
 	unsigned type = (unsigned long) _table & mask;
-=======
-	void *table = (void *)((unsigned long) _table & PAGE_MASK);
-	unsigned type = (unsigned long) _table & ~PAGE_MASK;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	if (type)
 		__page_table_free_rcu(table, type);

@@ -1407,11 +1407,8 @@ static void scsi_kill_request(struct request *req, struct request_queue *q)
 
 	blk_start_request(req);
 
-<<<<<<< HEAD
 	scmd_printk(KERN_INFO, cmd, "killing request\n");
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	sdev = cmd->device;
 	starget = scsi_target(sdev);
 	shost = sdev->host;

@@ -69,11 +69,7 @@ config HID_ACRUX
 	Say Y here if you want to enable support for ACRUX game controllers.
 
 config HID_ACRUX_FF
-<<<<<<< HEAD
 	bool "ACRUX force feedback support"
-=======
-	tristate "ACRUX force feedback support"
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	depends on HID_ACRUX
 	select INPUT_FF_MEMLESS
 	---help---
@@ -318,10 +314,7 @@ config HID_MULTITOUCH
 	  - Hanvon dual touch panels
 	  - Ilitek dual touch panels
 	  - IrTouch Infrared USB panels
-<<<<<<< HEAD
 	  - LG Display panels (Dell ST2220Tc)
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	  - Lumio CrystalTouch panels
 	  - MosArt dual-touch panels
 	  - PenMount dual touch panels

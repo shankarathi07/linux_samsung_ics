@@ -162,15 +162,12 @@ int ___ieee80211_stop_tx_ba_session(struct sta_info *sta, u16 tid,
 		return -ENOENT;
 	}
 
-<<<<<<< HEAD
 	/* if we're already stopping ignore any new requests to stop */
 	if (test_bit(HT_AGG_STATE_STOPPING, &tid_tx->state)) {
 		spin_unlock_bh(&sta->lock);
 		return -EALREADY;
 	}
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (test_bit(HT_AGG_STATE_WANT_START, &tid_tx->state)) {
 		/* not even started yet! */
 		ieee80211_assign_tid_tx(sta, tid, NULL);
@@ -179,11 +176,8 @@ int ___ieee80211_stop_tx_ba_session(struct sta_info *sta, u16 tid,
 		return 0;
 	}
 
-<<<<<<< HEAD
 	set_bit(HT_AGG_STATE_STOPPING, &tid_tx->state);
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spin_unlock_bh(&sta->lock);
 
 #ifdef CONFIG_MAC80211_HT_DEBUG
@@ -191,7 +185,6 @@ int ___ieee80211_stop_tx_ba_session(struct sta_info *sta, u16 tid,
 	       sta->sta.addr, tid);
 #endif /* CONFIG_MAC80211_HT_DEBUG */
 
-<<<<<<< HEAD
 	del_timer_sync(&tid_tx->addba_resp_timer);
 
 	/*
@@ -215,19 +208,6 @@ int ___ieee80211_stop_tx_ba_session(struct sta_info *sta, u16 tid,
 	 */
 	synchronize_net();
 
-=======
-	set_bit(HT_AGG_STATE_STOPPING, &tid_tx->state);
-
-	del_timer_sync(&tid_tx->addba_resp_timer);
-
-	/*
-	 * After this packets are no longer handed right through
-	 * to the driver but are put onto tid_tx->pending instead,
-	 * with locking to ensure proper access.
-	 */
-	clear_bit(HT_AGG_STATE_OPERATIONAL, &tid_tx->state);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	tid_tx->stop_initiator = initiator;
 	tid_tx->tx_stop = tx;
 
@@ -501,7 +481,6 @@ ieee80211_agg_splice_packets(struct ieee80211_local *local,
 {
 	int queue = ieee80211_ac_from_tid(tid);
 	unsigned long flags;
-<<<<<<< HEAD
 
 	ieee80211_stop_queue_agg(local, tid);
 
@@ -509,15 +488,6 @@ ieee80211_agg_splice_packets(struct ieee80211_local *local,
 			  " from the pending queue\n", tid))
 		return;
 
-=======
-
-	ieee80211_stop_queue_agg(local, tid);
-
-	if (WARN(!tid_tx, "TID %d gone but expected when splicing aggregates"
-			  " from the pending queue\n", tid))
-		return;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!skb_queue_empty(&tid_tx->pending)) {
 		spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
 		/* copy over remaining packets */

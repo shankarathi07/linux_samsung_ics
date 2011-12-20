@@ -370,10 +370,7 @@ static void i915_save_modeset_reg(struct drm_device *dev)
 
 	/* Fences */
 	switch (INTEL_INFO(dev)->gen) {
-<<<<<<< HEAD
 	case 7:
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	case 6:
 		for (i = 0; i < 16; i++)
 			dev_priv->saveFENCE[i] = I915_READ64(FENCE_REG_SANDYBRIDGE_0 + (i * 8));
@@ -408,10 +405,7 @@ static void i915_restore_modeset_reg(struct drm_device *dev)
 
 	/* Fences */
 	switch (INTEL_INFO(dev)->gen) {
-<<<<<<< HEAD
 	case 7:
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	case 6:
 		for (i = 0; i < 16; i++)
 			I915_WRITE64(FENCE_REG_SANDYBRIDGE_0 + (i * 8), dev_priv->saveFENCE[i]);
@@ -822,10 +816,7 @@ int i915_save_state(struct drm_device *dev)
 		dev_priv->saveFDI_RXB_IMR = I915_READ(_FDI_RXB_IMR);
 		dev_priv->saveMCHBAR_RENDER_STANDBY =
 			I915_READ(RSTDBYCTL);
-<<<<<<< HEAD
 		dev_priv->savePCH_PORT_HOTPLUG = I915_READ(PCH_PORT_HOTPLUG);
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	} else {
 		dev_priv->saveIER = I915_READ(IER);
 		dev_priv->saveIMR = I915_READ(IMR);
@@ -877,10 +868,7 @@ int i915_restore_state(struct drm_device *dev)
 		I915_WRITE(GTIMR, dev_priv->saveGTIMR);
 		I915_WRITE(_FDI_RXA_IMR, dev_priv->saveFDI_RXA_IMR);
 		I915_WRITE(_FDI_RXB_IMR, dev_priv->saveFDI_RXB_IMR);
-<<<<<<< HEAD
 		I915_WRITE(PCH_PORT_HOTPLUG, dev_priv->savePCH_PORT_HOTPLUG);
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	} else {
 		I915_WRITE(IER, dev_priv->saveIER);
 		I915_WRITE(IMR, dev_priv->saveIMR);

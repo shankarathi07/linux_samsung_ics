@@ -875,10 +875,6 @@ int xhci_setup_addressable_virt_dev(struct xhci_hcd *xhci, struct usb_device *ud
 	struct xhci_virt_device *dev;
 	struct xhci_ep_ctx	*ep0_ctx;
 	struct xhci_slot_ctx    *slot_ctx;
-<<<<<<< HEAD
-=======
-	struct xhci_input_control_ctx *ctrl_ctx;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	u32			port_num;
 	struct usb_device *top_dev;
 
@@ -892,12 +888,6 @@ int xhci_setup_addressable_virt_dev(struct xhci_hcd *xhci, struct usb_device *ud
 	ep0_ctx = xhci_get_ep_ctx(xhci, dev->in_ctx, 0);
 	slot_ctx = xhci_get_slot_ctx(xhci, dev->in_ctx);
 
-<<<<<<< HEAD
-=======
-	/* 2) New slot context and endpoint 0 context are valid*/
-	ctrl_ctx->add_flags = cpu_to_le32(SLOT_FLAG | EP0_FLAG);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/* 3) Only the control endpoint is valid - one endpoint context */
 	slot_ctx->dev_info |= cpu_to_le32(LAST_CTX(1) | (u32) udev->route);
 	switch (udev->speed) {
@@ -1184,17 +1174,10 @@ int xhci_endpoint_init(struct xhci_hcd *xhci,
 	 */
 	if (usb_endpoint_xfer_isoc(&ep->desc))
 		virt_dev->eps[ep_index].new_ring =
-<<<<<<< HEAD
 			xhci_ring_alloc(xhci, 8, true, true, mem_flags);
 	else
 		virt_dev->eps[ep_index].new_ring =
 			xhci_ring_alloc(xhci, 1, true, false, mem_flags);
-=======
-			xhci_ring_alloc(xhci, 8, true, mem_flags);
-	else
-		virt_dev->eps[ep_index].new_ring =
-			xhci_ring_alloc(xhci, 1, true, mem_flags);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!virt_dev->eps[ep_index].new_ring) {
 		/* Attempt to use the ring cache */
 		if (virt_dev->num_rings_cached == 0)

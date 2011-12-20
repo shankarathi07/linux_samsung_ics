@@ -339,11 +339,8 @@ alloc_ordered_workqueue(const char *name, unsigned int flags)
 
 #define create_workqueue(name)					\
 	alloc_workqueue((name), WQ_MEM_RECLAIM, 1)
-<<<<<<< HEAD
 #define create_rt_workqueue(name)					\
 alloc_workqueue((name), WQ_MEM_RECLAIM, 1)
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #define create_freezable_workqueue(name)			\
 	alloc_workqueue((name), WQ_FREEZABLE | WQ_UNBOUND | WQ_MEM_RECLAIM, 1)
 #define create_singlethread_workqueue(name)			\

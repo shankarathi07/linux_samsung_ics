@@ -15278,11 +15278,7 @@ static void __devexit tg3_remove_one(struct pci_dev *pdev)
 
 		cancel_work_sync(&tp->reset_task);
 
-<<<<<<< HEAD
 		if (tg3_flag(tp, USE_PHYLIB)) {
-=======
-		if (!tg3_flag(tp, USE_PHYLIB)) {
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			tg3_phy_fini(tp);
 			tg3_mdio_fini(tp);
 		}

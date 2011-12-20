@@ -596,18 +596,10 @@ void menu_get_ext_help(struct menu *menu, struct gstr *help)
 	struct symbol *sym = menu->sym;
 
 	if (menu_has_help(menu)) {
-<<<<<<< HEAD
 		if (sym->name)
 			str_printf(help, "%s%s:\n\n", CONFIG_, sym->name);
 		str_append(help, _(menu_get_help(menu)));
 		str_append(help, "\n");
-=======
-		if (sym->name) {
-			str_printf(help, "%s%s:\n\n", CONFIG_, sym->name);
-			str_append(help, _(menu_get_help(menu)));
-			str_append(help, "\n");
-		}
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	} else {
 		str_append(help, nohelp_text);
 	}

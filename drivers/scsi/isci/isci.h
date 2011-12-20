@@ -97,11 +97,7 @@
 #define SCU_MAX_COMPLETION_QUEUE_SHIFT	  (ilog2(SCU_MAX_COMPLETION_QUEUE_ENTRIES))
 
 #define SCU_ABSOLUTE_MAX_UNSOLICITED_FRAMES (4096)
-<<<<<<< HEAD
 #define SCU_UNSOLICITED_FRAME_BUFFER_SIZE   (1024U)
-=======
-#define SCU_UNSOLICITED_FRAME_BUFFER_SIZE   (1024)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #define SCU_INVALID_FRAME_INDEX             (0xFFFF)
 
 #define SCU_IO_REQUEST_MAX_SGE_SIZE         (0x00FFFFFF)

@@ -145,15 +145,11 @@ static void ps3_chip_unmask(struct irq_data *d)
 static void ps3_chip_eoi(struct irq_data *d)
 {
 	const struct ps3_private *pd = irq_data_get_irq_chip_data(d);
-<<<<<<< HEAD
 
 	/* non-IPIs are EOIed here. */
 
 	if (!test_bit(63 - d->irq, &pd->ipi_mask))
 		lv1_end_of_interrupt_ext(pd->ppe_id, pd->thread_id, d->irq);
-=======
-	lv1_end_of_interrupt_ext(pd->ppe_id, pd->thread_id, d->irq);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 /**

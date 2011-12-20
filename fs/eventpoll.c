@@ -70,7 +70,6 @@
  * simultaneous inserts (A into B and B into A) from racing and
  * constructing a cycle without either insert observing that it is
  * going to.
-<<<<<<< HEAD
  * It is necessary to acquire multiple "ep->mtx"es at once in the
  * case when one epoll fd is added to another. In this case, we
  * always acquire the locks in the order of nesting (i.e. after
@@ -80,8 +79,6 @@
  * order to communicate this nesting to lockdep, when walking a tree
  * of epoll file descriptors, we use the current recursion depth as
  * the lockdep subkey.
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
  * It is possible to drop the "ep->mtx" and to use the global
  * mutex "epmutex" (together with "ep->lock") to have it working,
  * but having "ep->mtx" will make the interface more scalable.
@@ -1281,11 +1278,7 @@ static int ep_loop_check_proc(void *priv, void *cookie, int call_nests)
 	struct rb_node *rbp;
 	struct epitem *epi;
 
-<<<<<<< HEAD
 	mutex_lock_nested(&ep->mtx, call_nests + 1);
-=======
-	mutex_lock(&ep->mtx);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	for (rbp = rb_first(&ep->rbr); rbp; rbp = rb_next(rbp)) {
 		epi = rb_entry(rbp, struct epitem, rbn);
 		if (unlikely(is_file_epoll(epi->ffd.file))) {
@@ -1427,11 +1420,7 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
 	}
 
 
-<<<<<<< HEAD
 	mutex_lock_nested(&ep->mtx, 0);
-=======
-	mutex_lock(&ep->mtx);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	/*
 	 * Try to lookup the file inside our RB tree, Since we grabbed "mtx"

@@ -1163,12 +1163,8 @@
 /* USB-Nano-485*/
 #define FTDI_CTI_NANO_PID	0xF60B
 
-<<<<<<< HEAD
 /*
  * ZeitControl cardsystems GmbH rfid-readers http://zeitconrol.de
  */
 /* TagTracer MIFARE*/
 #define FTDI_ZEITCONTROL_TAGTRACE_MIFARE_PID	0xF7C0
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo

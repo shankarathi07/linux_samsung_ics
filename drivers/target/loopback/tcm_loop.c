@@ -127,7 +127,6 @@ static struct se_cmd *tcm_loop_allocate_core_cmd(
 		set_host_byte(sc, DID_NO_CONNECT);
 		return NULL;
 	}
-<<<<<<< HEAD
 	/*
 	 * Because some userspace code via scsi-generic do not memset their
 	 * associated read buffers, go ahead and do that here for type
@@ -146,8 +145,6 @@ static struct se_cmd *tcm_loop_allocate_core_cmd(
 			kunmap(sg_page(sg));
 		}
 	}
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	transport_device_setup_cmd(se_cmd);
 	return se_cmd;

@@ -60,7 +60,6 @@ int core_emulate_report_target_port_groups(struct se_cmd *cmd)
 	unsigned char *buf = (unsigned char *)T_TASK(cmd)->t_task_buf;
 	u32 rd_len = 0, off = 4; /* Skip over RESERVED area to first
 				    Target port group descriptor */
-<<<<<<< HEAD
 	/*
 	 * Need at least 4 bytes of response data or else we can't
 	 * even fit the return data length.
@@ -70,14 +69,11 @@ int core_emulate_report_target_port_groups(struct se_cmd *cmd)
 			" too small\n", cmd->data_length);
 		return -EINVAL;
 	}
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	spin_lock(&T10_ALUA(su_dev)->tg_pt_gps_lock);
 	list_for_each_entry(tg_pt_gp, &T10_ALUA(su_dev)->tg_pt_gps_list,
 			tg_pt_gp_list) {
 		/*
-<<<<<<< HEAD
 		 * Check if the Target port group and Target port descriptor list
 		 * based on tg_pt_gp_members count will fit into the response payload.
 		 * Otherwise, bump rd_len to let the initiator know we have exceeded
@@ -89,8 +85,6 @@ int core_emulate_report_target_port_groups(struct se_cmd *cmd)
 			continue;
 		}
 		/*
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		 * PREF: Preferred target port bit, determine if this
 		 * bit should be set for port group.
 		 */

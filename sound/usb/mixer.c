@@ -1177,56 +1177,6 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
 	 * to be sure. 384 is a resolution magic number found on Logitech
 	 * devices. It will definitively catch all buggy Logitech devices.
 	 */
-<<<<<<< HEAD
-	if (range > 384) {
-		snd_printk(KERN_WARNING "usb_audio: Warning! Unlikely big "
-			   "volume range (=%u), cval->res is probably wrong.",
-			   range);
-		snd_printk(KERN_WARNING "usb_audio: [%d] FU [%s] ch = %d, "
-			   "val = %d/%d/%d", cval->id,
-			   kctl->id.name, cval->channels,
-			   cval->min, cval->max, cval->res);
-=======
-		if (!strcmp(kctl->id.name, "PCM Playback Volume") &&
-		    cval->min == -15616) {
-			snd_printk(KERN_INFO
-				 "set volume quirk for UDA1321/N101 chip\n");
-			cval->max = -256;
-		}
-		break;
-
-	case USB_ID(0x046d, 0x09a4):
-		if (!strcmp(kctl->id.name, "Mic Capture Volume")) {
-			snd_printk(KERN_INFO
-				"set volume quirk for QuickCam E3500\n");
-			cval->min = 6080;
-			cval->max = 8768;
-			cval->res = 192;
-		}
-		break;
-
-	case USB_ID(0x046d, 0x0808):
-	case USB_ID(0x046d, 0x0809):
-	case USB_ID(0x046d, 0x0991):
-	/* Most audio usb devices lie about volume resolution.
-	 * Most Logitech webcams have res = 384.
-	 * Proboly there is some logitech magic behind this number --fishor
-	 */
-		if (!strcmp(kctl->id.name, "Mic Capture Volume")) {
-			snd_printk(KERN_INFO
-				"set resolution quirk: cval->res = 384\n");
-			cval->res = 384;
-		}
-		break;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
-	}
-
-	range = (cval->max - cval->min) / cval->res;
-	/* Are there devices with volume range more than 255? I use a bit more
-	 * to be sure. 384 is a resolution magic number found on Logitech
-	 * devices. It will definitively catch all buggy Logitech devices.
-	 */
 	if (range > 384) {
 		snd_printk(KERN_WARNING "usb_audio: Warning! Unlikely big "
 			   "volume range (=%u), cval->res is probably wrong.",

@@ -206,21 +206,12 @@ unx_validate(struct rpc_task *task, __be32 *p)
 }
 
 int __init rpc_init_authunix(void)
-<<<<<<< HEAD
 {
 	return rpcauth_init_credcache(&unix_auth);
 }
 
 void rpc_destroy_authunix(void)
 {
-=======
-{
-	return rpcauth_init_credcache(&unix_auth);
-}
-
-void rpc_destroy_authunix(void)
-{
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	rpcauth_destroy_credcache(&unix_auth);
 }
 

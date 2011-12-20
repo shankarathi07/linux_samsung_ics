@@ -643,14 +643,9 @@ static void ar9003_hw_detect_outlier(int *mp_coeff, int nmeasurement,
 			outlier_idx = max_idx;
 		else
 			outlier_idx = min_idx;
-<<<<<<< HEAD
 
 		mp_coeff[outlier_idx] = mp_avg;
 	}
-=======
-	}
-	mp_coeff[outlier_idx] = mp_avg;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static void ar9003_hw_tx_iqcal_load_avg_2_passes(struct ath_hw *ah,

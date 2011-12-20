@@ -370,26 +370,17 @@ static u8 read_brightness(void)
 				  &sretval);
 	if (!retval) {
 		user_brightness = sretval.retval[0];
-<<<<<<< HEAD
 		if (user_brightness > sabi_config->min_brightness)
 			user_brightness -= sabi_config->min_brightness;
 		else
 			user_brightness = 0;
-=======
-		if (user_brightness != 0)
-			user_brightness -= sabi_config->min_brightness;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 	return user_brightness;
 }
 
 static void set_brightness(u8 user_brightness)
 {
-<<<<<<< HEAD
 	u8 user_level = user_brightness + sabi_config->min_brightness;
-=======
-	u8 user_level = user_brightness - sabi_config->min_brightness;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	sabi_set_command(sabi_config->commands.set_brightness, user_level);
 }
@@ -642,7 +633,6 @@ static struct dmi_system_id __initdata samsung_dmi_table[] = {
 		.callback = dmi_check_cb,
 	},
 	{
-<<<<<<< HEAD
 		.ident = "R700",
 		.matches = {
 		      DMI_MATCH(DMI_SYS_VENDOR, "SAMSUNG ELECTRONICS CO., LTD."),
@@ -652,8 +642,6 @@ static struct dmi_system_id __initdata samsung_dmi_table[] = {
 		.callback = dmi_check_cb,
 	},
 	{
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		.ident = "R530/R730",
 		.matches = {
 		      DMI_MATCH(DMI_SYS_VENDOR, "SAMSUNG ELECTRONICS CO., LTD."),
@@ -699,7 +687,6 @@ static struct dmi_system_id __initdata samsung_dmi_table[] = {
 		},
 		.callback = dmi_check_cb,
 	},
-<<<<<<< HEAD
 		{
 		.ident = "X520",
 		.matches = {
@@ -718,8 +705,6 @@ static struct dmi_system_id __initdata samsung_dmi_table[] = {
 		},
 		.callback = dmi_check_cb,
 	},
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	{ },
 };
 MODULE_DEVICE_TABLE(dmi, samsung_dmi_table);
@@ -804,11 +789,7 @@ static int __init samsung_init(void)
 	sabi_iface = ioremap_nocache(ifaceP, 16);
 	if (!sabi_iface) {
 		pr_err("Can't remap %x\n", ifaceP);
-<<<<<<< HEAD
 		goto error_no_signature;
-=======
-		goto exit;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 	if (debug) {
 		printk(KERN_DEBUG "ifaceP = 0x%08x\n", ifaceP);
@@ -840,12 +821,8 @@ static int __init samsung_init(void)
 	/* create a backlight device to talk to this one */
 	memset(&props, 0, sizeof(struct backlight_properties));
 	props.type = BACKLIGHT_PLATFORM;
-<<<<<<< HEAD
 	props.max_brightness = sabi_config->max_brightness -
 				sabi_config->min_brightness;
-=======
-	props.max_brightness = sabi_config->max_brightness;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	backlight_device = backlight_device_register("samsung", &sdev->dev,
 						     NULL, &backlight_ops,
 						     &props);
@@ -864,10 +841,6 @@ static int __init samsung_init(void)
 	if (retval)
 		goto error_file_create;
 
-<<<<<<< HEAD
-=======
-exit:
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return 0;
 
 error_file_create:

@@ -80,7 +80,6 @@ static inline void ux500_cache_sync(void)
 static void ux500_l2x0_disable(void)
 {
 }
-<<<<<<< HEAD
 
 /*
  * This is only called when doing a kexec, just after turning off the L2
@@ -121,28 +120,6 @@ static int __init ux500_l2x0_unlock(void)
 }
 
 static int __init ux500_l2x0_init(void)
-=======
-
-/*
- * This is only called when doing a kexec, just after turning off the L2
- * and L1 cache, and it is surrounded by a spinlock in the generic version.
- * However, we're not really turning off the L2 cache right now and the
- * PL310 does not support exclusive accesses (used to implement the spinlock).
- * So, the invalidation needs to be done without the spinlock.
- */
-static void ux500_l2x0_inv_all(void)
-{
-	void __iomem *base = l2x0_base;
-	uint32_t l2x0_way_mask = (1<<16) - 1;	/* Bitmask of active ways */
-
-	/* invalidate all ways */
-	writel_relaxed(l2x0_way_mask, base + L2X0_INV_WAY);
-	ux500_cache_wait(base + L2X0_INV_WAY, l2x0_way_mask);
-	ux500_cache_sync();
-}
-
-static int ux500_l2x0_init(void)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 {
 	if (cpu_is_u5500())
 		l2x0_base = __io_address(U5500_L2CC_BASE);
@@ -150,12 +127,9 @@ static int ux500_l2x0_init(void)
 		l2x0_base = __io_address(U8500_L2CC_BASE);
 	else
 		ux500_unknown_soc();
-<<<<<<< HEAD
 
 	/* Unlock before init */
 	ux500_l2x0_unlock();
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	/* 64KB way size, 8 way associativity, force WA */
 	l2x0_init(l2x0_base, 0x3e060000, 0xc0000fff);

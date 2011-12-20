@@ -1,10 +1,6 @@
 VERSION = 3
 PATCHLEVEL = 0
-<<<<<<< HEAD
 SUBLEVEL = 13
-=======
-SUBLEVEL = 8
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 EXTRAVERSION =
 NAME = Sneaky Weasel
 

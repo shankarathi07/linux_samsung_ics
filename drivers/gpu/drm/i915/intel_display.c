@@ -2340,10 +2340,7 @@ static void ivb_manual_fdi_link_train(struct drm_crtc *crtc)
 	temp |= FDI_LINK_TRAIN_PATTERN_1_IVB;
 	temp &= ~FDI_LINK_TRAIN_VOL_EMP_MASK;
 	temp |= FDI_LINK_TRAIN_400MV_0DB_SNB_B;
-<<<<<<< HEAD
 	temp |= FDI_COMPOSITE_SYNC;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	I915_WRITE(reg, temp | FDI_TX_ENABLE);
 
 	reg = FDI_RX_CTL(pipe);
@@ -2351,10 +2348,7 @@ static void ivb_manual_fdi_link_train(struct drm_crtc *crtc)
 	temp &= ~FDI_LINK_TRAIN_AUTO;
 	temp &= ~FDI_LINK_TRAIN_PATTERN_MASK_CPT;
 	temp |= FDI_LINK_TRAIN_PATTERN_1_CPT;
-<<<<<<< HEAD
 	temp |= FDI_COMPOSITE_SYNC;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	I915_WRITE(reg, temp | FDI_RX_ENABLE);
 
 	POSTING_READ(reg);
@@ -3229,8 +3223,6 @@ static const struct intel_watermark_params i945_wm_info = {
 	I945_FIFO_SIZE,
 	I915_MAX_WM,
 	1,
-<<<<<<< HEAD
-=======
 	2,
 	I915_FIFO_LINE_SIZE
 };
@@ -3289,73 +3281,6 @@ static const struct intel_watermark_params sandybridge_display_wm_info = {
 	SNB_DISPLAY_FIFO,
 	SNB_DISPLAY_MAXWM,
 	SNB_DISPLAY_DFTWM,
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
-	2,
-	SNB_FIFO_LINE_SIZE
-};
-<<<<<<< HEAD
-static const struct intel_watermark_params i915_wm_info = {
-	I915_FIFO_SIZE,
-	I915_MAX_WM,
-	1,
-=======
-static const struct intel_watermark_params sandybridge_cursor_wm_info = {
-	SNB_CURSOR_FIFO,
-	SNB_CURSOR_MAXWM,
-	SNB_CURSOR_DFTWM,
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
-	2,
-	SNB_FIFO_LINE_SIZE
-};
-<<<<<<< HEAD
-static const struct intel_watermark_params i855_wm_info = {
-	I855GM_FIFO_SIZE,
-	I915_MAX_WM,
-	1,
-	2,
-	I830_FIFO_LINE_SIZE
-};
-static const struct intel_watermark_params i830_wm_info = {
-	I830_FIFO_SIZE,
-	I915_MAX_WM,
-	1,
-	2,
-	I830_FIFO_LINE_SIZE
-};
-
-static const struct intel_watermark_params ironlake_display_wm_info = {
-	ILK_DISPLAY_FIFO,
-	ILK_DISPLAY_MAXWM,
-	ILK_DISPLAY_DFTWM,
-	2,
-	ILK_FIFO_LINE_SIZE
-};
-static const struct intel_watermark_params ironlake_cursor_wm_info = {
-	ILK_CURSOR_FIFO,
-	ILK_CURSOR_MAXWM,
-	ILK_CURSOR_DFTWM,
-	2,
-	ILK_FIFO_LINE_SIZE
-};
-static const struct intel_watermark_params ironlake_display_srwm_info = {
-	ILK_DISPLAY_SR_FIFO,
-	ILK_DISPLAY_MAX_SRWM,
-	ILK_DISPLAY_DFT_SRWM,
-	2,
-	ILK_FIFO_LINE_SIZE
-};
-static const struct intel_watermark_params ironlake_cursor_srwm_info = {
-	ILK_CURSOR_SR_FIFO,
-	ILK_CURSOR_MAX_SRWM,
-	ILK_CURSOR_DFT_SRWM,
-	2,
-	ILK_FIFO_LINE_SIZE
-};
-
-static const struct intel_watermark_params sandybridge_display_wm_info = {
-	SNB_DISPLAY_FIFO,
-	SNB_DISPLAY_MAXWM,
-	SNB_DISPLAY_DFTWM,
 	2,
 	SNB_FIFO_LINE_SIZE
 };
@@ -3366,8 +3291,6 @@ static const struct intel_watermark_params sandybridge_cursor_wm_info = {
 	2,
 	SNB_FIFO_LINE_SIZE
 };
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 static const struct intel_watermark_params sandybridge_display_srwm_info = {
 	SNB_DISPLAY_SR_FIFO,
 	SNB_DISPLAY_MAX_SRWM,
@@ -3381,7 +3304,6 @@ static const struct intel_watermark_params sandybridge_cursor_srwm_info = {
 	SNB_CURSOR_DFT_SRWM,
 	2,
 	SNB_FIFO_LINE_SIZE
-<<<<<<< HEAD
 };
 
 
@@ -3680,306 +3602,6 @@ static void pineview_update_wm(struct drm_device *dev)
 	}
 }
 
-=======
-};
-
-
-/**
- * intel_calculate_wm - calculate watermark level
- * @clock_in_khz: pixel clock
- * @wm: chip FIFO params
- * @pixel_size: display pixel size
- * @latency_ns: memory latency for the platform
- *
- * Calculate the watermark level (the level at which the display plane will
- * start fetching from memory again).  Each chip has a different display
- * FIFO size and allocation, so the caller needs to figure that out and pass
- * in the correct intel_watermark_params structure.
- *
- * As the pixel clock runs, the FIFO will be drained at a rate that depends
- * on the pixel size.  When it reaches the watermark level, it'll start
- * fetching FIFO line sized based chunks from memory until the FIFO fills
- * past the watermark point.  If the FIFO drains completely, a FIFO underrun
- * will occur, and a display engine hang could result.
- */
-static unsigned long intel_calculate_wm(unsigned long clock_in_khz,
-					const struct intel_watermark_params *wm,
-					int fifo_size,
-					int pixel_size,
-					unsigned long latency_ns)
-{
-	long entries_required, wm_size;
-
-	/*
-	 * Note: we need to make sure we don't overflow for various clock &
-	 * latency values.
-	 * clocks go from a few thousand to several hundred thousand.
-	 * latency is usually a few thousand
-	 */
-	entries_required = ((clock_in_khz / 1000) * pixel_size * latency_ns) /
-		1000;
-	entries_required = DIV_ROUND_UP(entries_required, wm->cacheline_size);
-
-	DRM_DEBUG_KMS("FIFO entries required for mode: %ld\n", entries_required);
-
-	wm_size = fifo_size - (entries_required + wm->guard_size);
-
-	DRM_DEBUG_KMS("FIFO watermark level: %ld\n", wm_size);
-
-	/* Don't promote wm_size to unsigned... */
-	if (wm_size > (long)wm->max_wm)
-		wm_size = wm->max_wm;
-	if (wm_size <= 0)
-		wm_size = wm->default_wm;
-	return wm_size;
-}
-
-struct cxsr_latency {
-	int is_desktop;
-	int is_ddr3;
-	unsigned long fsb_freq;
-	unsigned long mem_freq;
-	unsigned long display_sr;
-	unsigned long display_hpll_disable;
-	unsigned long cursor_sr;
-	unsigned long cursor_hpll_disable;
-};
-
-static const struct cxsr_latency cxsr_latency_table[] = {
-	{1, 0, 800, 400, 3382, 33382, 3983, 33983},    /* DDR2-400 SC */
-	{1, 0, 800, 667, 3354, 33354, 3807, 33807},    /* DDR2-667 SC */
-	{1, 0, 800, 800, 3347, 33347, 3763, 33763},    /* DDR2-800 SC */
-	{1, 1, 800, 667, 6420, 36420, 6873, 36873},    /* DDR3-667 SC */
-	{1, 1, 800, 800, 5902, 35902, 6318, 36318},    /* DDR3-800 SC */
-
-	{1, 0, 667, 400, 3400, 33400, 4021, 34021},    /* DDR2-400 SC */
-	{1, 0, 667, 667, 3372, 33372, 3845, 33845},    /* DDR2-667 SC */
-	{1, 0, 667, 800, 3386, 33386, 3822, 33822},    /* DDR2-800 SC */
-	{1, 1, 667, 667, 6438, 36438, 6911, 36911},    /* DDR3-667 SC */
-	{1, 1, 667, 800, 5941, 35941, 6377, 36377},    /* DDR3-800 SC */
-
-	{1, 0, 400, 400, 3472, 33472, 4173, 34173},    /* DDR2-400 SC */
-	{1, 0, 400, 667, 3443, 33443, 3996, 33996},    /* DDR2-667 SC */
-	{1, 0, 400, 800, 3430, 33430, 3946, 33946},    /* DDR2-800 SC */
-	{1, 1, 400, 667, 6509, 36509, 7062, 37062},    /* DDR3-667 SC */
-	{1, 1, 400, 800, 5985, 35985, 6501, 36501},    /* DDR3-800 SC */
-
-	{0, 0, 800, 400, 3438, 33438, 4065, 34065},    /* DDR2-400 SC */
-	{0, 0, 800, 667, 3410, 33410, 3889, 33889},    /* DDR2-667 SC */
-	{0, 0, 800, 800, 3403, 33403, 3845, 33845},    /* DDR2-800 SC */
-	{0, 1, 800, 667, 6476, 36476, 6955, 36955},    /* DDR3-667 SC */
-	{0, 1, 800, 800, 5958, 35958, 6400, 36400},    /* DDR3-800 SC */
-
-	{0, 0, 667, 400, 3456, 33456, 4103, 34106},    /* DDR2-400 SC */
-	{0, 0, 667, 667, 3428, 33428, 3927, 33927},    /* DDR2-667 SC */
-	{0, 0, 667, 800, 3443, 33443, 3905, 33905},    /* DDR2-800 SC */
-	{0, 1, 667, 667, 6494, 36494, 6993, 36993},    /* DDR3-667 SC */
-	{0, 1, 667, 800, 5998, 35998, 6460, 36460},    /* DDR3-800 SC */
-
-	{0, 0, 400, 400, 3528, 33528, 4255, 34255},    /* DDR2-400 SC */
-	{0, 0, 400, 667, 3500, 33500, 4079, 34079},    /* DDR2-667 SC */
-	{0, 0, 400, 800, 3487, 33487, 4029, 34029},    /* DDR2-800 SC */
-	{0, 1, 400, 667, 6566, 36566, 7145, 37145},    /* DDR3-667 SC */
-	{0, 1, 400, 800, 6042, 36042, 6584, 36584},    /* DDR3-800 SC */
-};
-
-static const struct cxsr_latency *intel_get_cxsr_latency(int is_desktop,
-							 int is_ddr3,
-							 int fsb,
-							 int mem)
-{
-	const struct cxsr_latency *latency;
-	int i;
-
-	if (fsb == 0 || mem == 0)
-		return NULL;
-
-	for (i = 0; i < ARRAY_SIZE(cxsr_latency_table); i++) {
-		latency = &cxsr_latency_table[i];
-		if (is_desktop == latency->is_desktop &&
-		    is_ddr3 == latency->is_ddr3 &&
-		    fsb == latency->fsb_freq && mem == latency->mem_freq)
-			return latency;
-	}
-
-	DRM_DEBUG_KMS("Unknown FSB/MEM found, disable CxSR\n");
-
-	return NULL;
-}
-
-static void pineview_disable_cxsr(struct drm_device *dev)
-{
-	struct drm_i915_private *dev_priv = dev->dev_private;
-
-	/* deactivate cxsr */
-	I915_WRITE(DSPFW3, I915_READ(DSPFW3) & ~PINEVIEW_SELF_REFRESH_EN);
-}
-
-/*
- * Latency for FIFO fetches is dependent on several factors:
- *   - memory configuration (speed, channels)
- *   - chipset
- *   - current MCH state
- * It can be fairly high in some situations, so here we assume a fairly
- * pessimal value.  It's a tradeoff between extra memory fetches (if we
- * set this value too high, the FIFO will fetch frequently to stay full)
- * and power consumption (set it too low to save power and we might see
- * FIFO underruns and display "flicker").
- *
- * A value of 5us seems to be a good balance; safe for very low end
- * platforms but not overly aggressive on lower latency configs.
- */
-static const int latency_ns = 5000;
-
-static int i9xx_get_fifo_size(struct drm_device *dev, int plane)
-{
-	struct drm_i915_private *dev_priv = dev->dev_private;
-	uint32_t dsparb = I915_READ(DSPARB);
-	int size;
-
-	size = dsparb & 0x7f;
-	if (plane)
-		size = ((dsparb >> DSPARB_CSTART_SHIFT) & 0x7f) - size;
-
-	DRM_DEBUG_KMS("FIFO size - (0x%08x) %s: %d\n", dsparb,
-		      plane ? "B" : "A", size);
-
-	return size;
-}
-
-static int i85x_get_fifo_size(struct drm_device *dev, int plane)
-{
-	struct drm_i915_private *dev_priv = dev->dev_private;
-	uint32_t dsparb = I915_READ(DSPARB);
-	int size;
-
-	size = dsparb & 0x1ff;
-	if (plane)
-		size = ((dsparb >> DSPARB_BEND_SHIFT) & 0x1ff) - size;
-	size >>= 1; /* Convert to cachelines */
-
-	DRM_DEBUG_KMS("FIFO size - (0x%08x) %s: %d\n", dsparb,
-		      plane ? "B" : "A", size);
-
-	return size;
-}
-
-static int i845_get_fifo_size(struct drm_device *dev, int plane)
-{
-	struct drm_i915_private *dev_priv = dev->dev_private;
-	uint32_t dsparb = I915_READ(DSPARB);
-	int size;
-
-	size = dsparb & 0x7f;
-	size >>= 2; /* Convert to cachelines */
-
-	DRM_DEBUG_KMS("FIFO size - (0x%08x) %s: %d\n", dsparb,
-		      plane ? "B" : "A",
-		      size);
-
-	return size;
-}
-
-static int i830_get_fifo_size(struct drm_device *dev, int plane)
-{
-	struct drm_i915_private *dev_priv = dev->dev_private;
-	uint32_t dsparb = I915_READ(DSPARB);
-	int size;
-
-	size = dsparb & 0x7f;
-	size >>= 1; /* Convert to cachelines */
-
-	DRM_DEBUG_KMS("FIFO size - (0x%08x) %s: %d\n", dsparb,
-		      plane ? "B" : "A", size);
-
-	return size;
-}
-
-static struct drm_crtc *single_enabled_crtc(struct drm_device *dev)
-{
-	struct drm_crtc *crtc, *enabled = NULL;
-
-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
-		if (crtc->enabled && crtc->fb) {
-			if (enabled)
-				return NULL;
-			enabled = crtc;
-		}
-	}
-
-	return enabled;
-}
-
-static void pineview_update_wm(struct drm_device *dev)
-{
-	struct drm_i915_private *dev_priv = dev->dev_private;
-	struct drm_crtc *crtc;
-	const struct cxsr_latency *latency;
-	u32 reg;
-	unsigned long wm;
-
-	latency = intel_get_cxsr_latency(IS_PINEVIEW_G(dev), dev_priv->is_ddr3,
-					 dev_priv->fsb_freq, dev_priv->mem_freq);
-	if (!latency) {
-		DRM_DEBUG_KMS("Unknown FSB/MEM found, disable CxSR\n");
-		pineview_disable_cxsr(dev);
-		return;
-	}
-
-	crtc = single_enabled_crtc(dev);
-	if (crtc) {
-		int clock = crtc->mode.clock;
-		int pixel_size = crtc->fb->bits_per_pixel / 8;
-
-		/* Display SR */
-		wm = intel_calculate_wm(clock, &pineview_display_wm,
-					pineview_display_wm.fifo_size,
-					pixel_size, latency->display_sr);
-		reg = I915_READ(DSPFW1);
-		reg &= ~DSPFW_SR_MASK;
-		reg |= wm << DSPFW_SR_SHIFT;
-		I915_WRITE(DSPFW1, reg);
-		DRM_DEBUG_KMS("DSPFW1 register is %x\n", reg);
-
-		/* cursor SR */
-		wm = intel_calculate_wm(clock, &pineview_cursor_wm,
-					pineview_display_wm.fifo_size,
-					pixel_size, latency->cursor_sr);
-		reg = I915_READ(DSPFW3);
-		reg &= ~DSPFW_CURSOR_SR_MASK;
-		reg |= (wm & 0x3f) << DSPFW_CURSOR_SR_SHIFT;
-		I915_WRITE(DSPFW3, reg);
-
-		/* Display HPLL off SR */
-		wm = intel_calculate_wm(clock, &pineview_display_hplloff_wm,
-					pineview_display_hplloff_wm.fifo_size,
-					pixel_size, latency->display_hpll_disable);
-		reg = I915_READ(DSPFW3);
-		reg &= ~DSPFW_HPLL_SR_MASK;
-		reg |= wm & DSPFW_HPLL_SR_MASK;
-		I915_WRITE(DSPFW3, reg);
-
-		/* cursor HPLL off SR */
-		wm = intel_calculate_wm(clock, &pineview_cursor_hplloff_wm,
-					pineview_display_hplloff_wm.fifo_size,
-					pixel_size, latency->cursor_hpll_disable);
-		reg = I915_READ(DSPFW3);
-		reg &= ~DSPFW_HPLL_CURSOR_MASK;
-		reg |= (wm & 0x3f) << DSPFW_HPLL_CURSOR_SHIFT;
-		I915_WRITE(DSPFW3, reg);
-		DRM_DEBUG_KMS("DSPFW3 register is %x\n", reg);
-
-		/* activate cxsr */
-		I915_WRITE(DSPFW3,
-			   I915_READ(DSPFW3) | PINEVIEW_SELF_REFRESH_EN);
-		DRM_DEBUG_KMS("Self-refresh is enabled\n");
-	} else {
-		pineview_disable_cxsr(dev);
-		DRM_DEBUG_KMS("Self-refresh is disabled\n");
-	}
-}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 static bool g4x_compute_wm0(struct drm_device *dev,
 			    int plane,
 			    const struct intel_watermark_params *display,
@@ -4383,7 +4005,6 @@ static bool ironlake_check_srwm(struct drm_device *dev, int level,
 
 	DRM_DEBUG_KMS("watermark %d: display plane %d, fbc lines %d,"
 		      " cursor %d\n", level, display_wm, fbc_wm, cursor_wm);
-<<<<<<< HEAD
 
 	if (fbc_wm > SNB_FBC_MAX_SRWM) {
 		DRM_DEBUG_KMS("fbc watermark(%d) is too large(%d), disabling wm%d+\n",
@@ -4407,31 +4028,6 @@ static bool ironlake_check_srwm(struct drm_device *dev, int level,
 		return false;
 	}
 
-=======
-
-	if (fbc_wm > SNB_FBC_MAX_SRWM) {
-		DRM_DEBUG_KMS("fbc watermark(%d) is too large(%d), disabling wm%d+\n",
-			      fbc_wm, SNB_FBC_MAX_SRWM, level);
-
-		/* fbc has it's own way to disable FBC WM */
-		I915_WRITE(DISP_ARB_CTL,
-			   I915_READ(DISP_ARB_CTL) | DISP_FBC_WM_DIS);
-		return false;
-	}
-
-	if (display_wm > display->max_wm) {
-		DRM_DEBUG_KMS("display watermark(%d) is too large(%d), disabling wm%d+\n",
-			      display_wm, SNB_DISPLAY_MAX_SRWM, level);
-		return false;
-	}
-
-	if (cursor_wm > cursor->max_wm) {
-		DRM_DEBUG_KMS("cursor watermark(%d) is too large(%d), disabling wm%d+\n",
-			      cursor_wm, SNB_CURSOR_MAX_SRWM, level);
-		return false;
-	}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!(fbc_wm || display_wm || cursor_wm)) {
 		DRM_DEBUG_KMS("latency %d is 0, disabling wm%d+\n", level, level);
 		return false;
@@ -5376,11 +4972,7 @@ static int ironlake_crtc_mode_set(struct drm_crtc *crtc,
 	} else if (is_sdvo && is_tv)
 		factor = 20;
 
-<<<<<<< HEAD
 	if (clock.m < factor * clock.n)
-=======
-	if (clock.m1 < factor * clock.n)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		fp |= FP_CB_TUNE;
 
 	dpll = 0;
@@ -5744,7 +5336,6 @@ static void i9xx_update_cursor(struct drm_crtc *crtc, u32 base)
 	I915_WRITE(CURBASE(pipe), base);
 }
 
-<<<<<<< HEAD
 static void ivb_update_cursor(struct drm_crtc *crtc, u32 base)
 {
 	struct drm_device *dev = crtc->dev;
@@ -5770,8 +5361,6 @@ static void ivb_update_cursor(struct drm_crtc *crtc, u32 base)
 	I915_WRITE(CURBASE_IVB(pipe), base);
 }
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 /* If no-part of the cursor is visible on the framebuffer, then the GPU may hang... */
 static void intel_crtc_update_cursor(struct drm_crtc *crtc,
 				     bool on)
@@ -5819,7 +5408,6 @@ static void intel_crtc_update_cursor(struct drm_crtc *crtc,
 	if (!visible && !intel_crtc->cursor_visible)
 		return;
 
-<<<<<<< HEAD
 	if (IS_IVYBRIDGE(dev)) {
 		I915_WRITE(CURPOS_IVB(pipe), pos);
 		ivb_update_cursor(crtc, base);
@@ -5830,13 +5418,6 @@ static void intel_crtc_update_cursor(struct drm_crtc *crtc,
 		else
 			i9xx_update_cursor(crtc, base);
 	}
-=======
-	I915_WRITE(CURPOS(pipe), pos);
-	if (IS_845G(dev) || IS_I865G(dev))
-		i845_update_cursor(crtc, base);
-	else
-		i9xx_update_cursor(crtc, base);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	if (visible)
 		intel_mark_busy(dev, to_intel_framebuffer(crtc->fb)->obj);
@@ -5897,29 +5478,17 @@ static int intel_crtc_cursor_set(struct drm_crtc *crtc,
 		}
 
 		ret = i915_gem_object_set_to_gtt_domain(obj, 0);
-<<<<<<< HEAD
-=======
 		if (ret) {
 			DRM_ERROR("failed to move cursor bo into the GTT\n");
 			goto fail_unpin;
 		}
 
 		ret = i915_gem_object_put_fence(obj);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		if (ret) {
 			DRM_ERROR("failed to move cursor bo into the GTT\n");
 			goto fail_unpin;
 		}
 
-<<<<<<< HEAD
-		ret = i915_gem_object_put_fence(obj);
-		if (ret) {
-			DRM_ERROR("failed to move cursor bo into the GTT\n");
-			goto fail_unpin;
-		}
-
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		addr = obj->gtt_offset;
 	} else {
 		int align = IS_I830(dev) ? 16 * 1024 : 256;
@@ -6963,7 +6532,6 @@ static int intel_crtc_page_flip(struct drm_crtc *crtc,
 	/* Reference the objects for the scheduled work. */
 	drm_gem_object_reference(&work->old_fb_obj->base);
 	drm_gem_object_reference(&obj->base);
-<<<<<<< HEAD
 
 	crtc->fb = fb;
 
@@ -7012,56 +6580,6 @@ static void intel_sanitize_modesetting(struct drm_device *dev,
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	u32 reg, val;
 
-=======
-
-	crtc->fb = fb;
-
-	ret = drm_vblank_get(dev, intel_crtc->pipe);
-	if (ret)
-		goto cleanup_objs;
-
-	work->pending_flip_obj = obj;
-
-	work->enable_stall_check = true;
-
-	/* Block clients from rendering to the new back buffer until
-	 * the flip occurs and the object is no longer visible.
-	 */
-	atomic_add(1 << intel_crtc->plane, &work->old_fb_obj->pending_flip);
-
-	ret = dev_priv->display.queue_flip(dev, crtc, fb, obj);
-	if (ret)
-		goto cleanup_pending;
-
-	mutex_unlock(&dev->struct_mutex);
-
-	trace_i915_flip_request(intel_crtc->plane, obj);
-
-	return 0;
-
-cleanup_pending:
-	atomic_sub(1 << intel_crtc->plane, &work->old_fb_obj->pending_flip);
-cleanup_objs:
-	drm_gem_object_unreference(&work->old_fb_obj->base);
-	drm_gem_object_unreference(&obj->base);
-	mutex_unlock(&dev->struct_mutex);
-
-	spin_lock_irqsave(&dev->event_lock, flags);
-	intel_crtc->unpin_work = NULL;
-	spin_unlock_irqrestore(&dev->event_lock, flags);
-
-	kfree(work);
-
-	return ret;
-}
-
-static void intel_sanitize_modesetting(struct drm_device *dev,
-				       int pipe, int plane)
-{
-	struct drm_i915_private *dev_priv = dev->dev_private;
-	u32 reg, val;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (HAS_PCH_SPLIT(dev))
 		return;
 
@@ -7887,7 +7405,6 @@ static void gen6_init_clock_gating(struct drm_device *dev)
 	I915_WRITE(WM2_LP_ILK, 0);
 	I915_WRITE(WM1_LP_ILK, 0);
 
-<<<<<<< HEAD
 	/* According to the BSpec vol1g, bit 12 (RCPBUNIT) clock
 	 * gating disable must be set.  Failure to set it results in
 	 * flickering pixels due to Z write ordering failures after
@@ -7902,8 +7419,6 @@ static void gen6_init_clock_gating(struct drm_device *dev)
 		   GEN6_RCPBUNIT_CLOCK_GATE_DISABLE |
 		   GEN6_RCCUNIT_CLOCK_GATE_DISABLE);
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/*
 	 * According to the spec the following bits should be
 	 * set in order to enable memory self-refresh and fbc:
@@ -8474,11 +7989,7 @@ void intel_modeset_init(struct drm_device *dev)
 		intel_init_emon(dev);
 	}
 
-<<<<<<< HEAD
 	if (IS_GEN6(dev) || IS_GEN7(dev))
-=======
-	if (IS_GEN6(dev))
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		gen6_enable_rps(dev_priv);
 
 	INIT_WORK(&dev_priv->idle_work, intel_idle_update);
@@ -8520,11 +8031,7 @@ void intel_modeset_cleanup(struct drm_device *dev)
 
 	if (IS_IRONLAKE_M(dev))
 		ironlake_disable_drps(dev);
-<<<<<<< HEAD
 	if (IS_GEN6(dev) || IS_GEN7(dev))
-=======
-	if (IS_GEN6(dev))
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		gen6_disable_rps(dev);
 
 	if (IS_IRONLAKE_M(dev))

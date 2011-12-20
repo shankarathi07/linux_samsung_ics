@@ -553,11 +553,7 @@ ieee80211_offchannel_tx(struct ieee80211_work *wk)
 		/*
 		 * After this, offchan_tx.frame remains but now is no
 		 * longer a valid pointer -- we still need it as the
-<<<<<<< HEAD
 		 * cookie for canceling this work/status matching.
-=======
-		 * cookie for canceling this work.
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		 */
 		ieee80211_tx_skb(wk->sdata, wk->offchan_tx.frame);
 
@@ -1064,19 +1060,13 @@ static void ieee80211_work_work(struct work_struct *work)
 			continue;
 		if (wk->chan != local->tmp_channel)
 			continue;
-<<<<<<< HEAD
 		if (!ieee80211_work_ct_coexists(wk->chan_type,
 						local->tmp_channel_type))
-=======
-		if (ieee80211_work_ct_coexists(wk->chan_type,
-					       local->tmp_channel_type))
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			continue;
 		remain_off_channel = true;
 	}
 
 	if (!remain_off_channel && local->tmp_channel) {
-		bool on_oper_chan = ieee80211_cfg_on_oper_channel(local);
 		local->tmp_channel = NULL;
 		/* If tmp_channel wasn't operating channel, then
 		 * we need to go back on-channel.
@@ -1086,11 +1076,7 @@ static void ieee80211_work_work(struct work_struct *work)
 		 * we still need to do a hardware config.  Currently,
 		 * we cannot be here while scanning, however.
 		 */
-<<<<<<< HEAD
 		if (!ieee80211_cfg_on_oper_channel(local))
-=======
-		if (ieee80211_cfg_on_oper_channel(local) && !on_oper_chan)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			ieee80211_hw_config(local, 0);
 
 		/* At the least, we need to disable offchannel_ps,

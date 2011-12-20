@@ -85,7 +85,6 @@ static inline struct radeon_i2c_bus_rec radeon_lookup_i2c_gpio(struct radeon_dev
 		for (i = 0; i < num_indices; i++) {
 			gpio = &i2c_info->asGPIO_Info[i];
 
-<<<<<<< HEAD
 			/* r4xx mask is technically not used by the hw, so patch in the legacy mask bits */
 			if ((rdev->family == CHIP_R420) ||
 			    (rdev->family == CHIP_R423) ||
@@ -98,8 +97,6 @@ static inline struct radeon_i2c_bus_rec radeon_lookup_i2c_gpio(struct radeon_dev
 				}
 			}
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			/* some evergreen boards have bad data for this entry */
 			if (ASIC_IS_DCE4(rdev)) {
 				if ((i == 7) &&
@@ -184,7 +181,6 @@ void radeon_atombios_i2c_init(struct radeon_device *rdev)
 			gpio = &i2c_info->asGPIO_Info[i];
 			i2c.valid = false;
 
-<<<<<<< HEAD
 			/* r4xx mask is technically not used by the hw, so patch in the legacy mask bits */
 			if ((rdev->family == CHIP_R420) ||
 			    (rdev->family == CHIP_R423) ||
@@ -197,8 +193,6 @@ void radeon_atombios_i2c_init(struct radeon_device *rdev)
 				}
 			}
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			/* some evergreen boards have bad data for this entry */
 			if (ASIC_IS_DCE4(rdev)) {
 				if ((i == 7) &&

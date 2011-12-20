@@ -209,12 +209,7 @@ static int caif_device_notify(struct notifier_block *me, unsigned long what,
 	enum cfcnfg_phy_preference pref;
 	enum cfcnfg_phy_type phy_type;
 	struct cfcnfg *cfg;
-<<<<<<< HEAD
 	struct caif_device_entry_list *caifdevs;
-=======
-	struct caif_device_entry_list *caifdevs =
-	    caif_device_list(dev_net(dev));
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	if (dev->type != ARPHRD_CAIF)
 		return 0;
@@ -223,11 +218,8 @@ static int caif_device_notify(struct notifier_block *me, unsigned long what,
 	if (cfg == NULL)
 		return 0;
 
-<<<<<<< HEAD
 	caifdevs = caif_device_list(dev_net(dev));
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	switch (what) {
 	case NETDEV_REGISTER:
 		caifd = caif_device_alloc(dev);
@@ -258,17 +250,10 @@ static int caif_device_notify(struct notifier_block *me, unsigned long what,
 		strncpy(caifd->layer.name, dev->name,
 			sizeof(caifd->layer.name) - 1);
 		caifd->layer.name[sizeof(caifd->layer.name) - 1] = 0;
-<<<<<<< HEAD
 
 		mutex_lock(&caifdevs->lock);
 		list_add_rcu(&caifd->list, &caifdevs->list);
 
-=======
-
-		mutex_lock(&caifdevs->lock);
-		list_add_rcu(&caifd->list, &caifdevs->list);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		cfcnfg_add_phy_layer(cfg,
 				     phy_type,
 				     dev,

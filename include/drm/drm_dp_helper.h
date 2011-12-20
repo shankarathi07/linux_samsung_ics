@@ -72,10 +72,7 @@
 
 #define DP_MAIN_LINK_CHANNEL_CODING         0x006
 
-<<<<<<< HEAD
 #define DP_EDP_CONFIGURATION_CAP            0x00d
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #define DP_TRAINING_AUX_RD_INTERVAL         0x00e
 
 /* link configuration */

@@ -92,10 +92,6 @@ static int br_dev_open(struct net_device *dev)
 {
 	struct net_bridge *br = netdev_priv(dev);
 
-<<<<<<< HEAD
-=======
-	netif_carrier_off(dev);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	netdev_update_features(dev);
 	netif_start_queue(dev);
 	br_stp_enable_bridge(br);
@@ -111,8 +107,6 @@ static void br_dev_set_multicast_list(struct net_device *dev)
 static int br_dev_stop(struct net_device *dev)
 {
 	struct net_bridge *br = netdev_priv(dev);
-
-	netif_carrier_off(dev);
 
 	br_stp_disable_bridge(br);
 	br_multicast_stop(br);

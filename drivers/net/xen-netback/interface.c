@@ -327,20 +327,12 @@ int xenvif_connect(struct xenvif *vif, unsigned long tx_ring_ref,
 	xenvif_get(vif);
 
 	rtnl_lock();
-<<<<<<< HEAD
-=======
-	if (netif_running(vif->dev))
-		xenvif_up(vif);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!vif->can_sg && vif->dev->mtu > ETH_DATA_LEN)
 		dev_set_mtu(vif->dev, ETH_DATA_LEN);
 	netdev_update_features(vif->dev);
 	netif_carrier_on(vif->dev);
-<<<<<<< HEAD
 	if (netif_running(vif->dev))
 		xenvif_up(vif);
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	rtnl_unlock();
 
 	return 0;

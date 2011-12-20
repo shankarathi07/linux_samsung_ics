@@ -102,12 +102,8 @@ int user_update(struct key *key, const void *data, size_t datalen)
 		key->expiry = 0;
 	}
 
-<<<<<<< HEAD
 	if (zap)
 		kfree_rcu(zap, rcu);
-=======
-	kfree_rcu(zap, rcu);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 error:
 	return ret;

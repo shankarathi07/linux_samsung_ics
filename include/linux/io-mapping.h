@@ -140,10 +140,7 @@ static inline void __iomem *
 io_mapping_map_atomic_wc(struct io_mapping *mapping,
 			 unsigned long offset)
 {
-<<<<<<< HEAD
 	pagefault_disable();
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return ((char __force __iomem *) mapping) + offset;
 }
 

@@ -115,12 +115,6 @@ early_param("nobau", setup_nobau);
 
 /* base pnode in this partition */
 static int uv_base_pnode __read_mostly;
-<<<<<<< HEAD
-=======
-/* position of pnode (which is nasid>>1): */
-static int uv_nshift __read_mostly;
-static unsigned long uv_mmask __read_mostly;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 static DEFINE_PER_CPU(struct ptc_stats, ptcstats);
 static DEFINE_PER_CPU(struct bau_control, bau_control);
@@ -1429,11 +1423,7 @@ static void activation_descriptor_init(int node, int pnode, int base_pnode)
 {
 	int i;
 	int cpu;
-<<<<<<< HEAD
 	unsigned long gpa;
-=======
-	unsigned long pa;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	unsigned long m;
 	unsigned long n;
 	size_t dsize;
@@ -1449,15 +1439,9 @@ static void activation_descriptor_init(int node, int pnode, int base_pnode)
 	bau_desc = kmalloc_node(dsize, GFP_KERNEL, node);
 	BUG_ON(!bau_desc);
 
-<<<<<<< HEAD
 	gpa = uv_gpa(bau_desc);
 	n = uv_gpa_to_gnode(gpa);
 	m = uv_gpa_to_offset(gpa);
-=======
-	pa = uv_gpa(bau_desc); /* need the real nasid*/
-	n = pa >> uv_nshift;
-	m = pa & uv_mmask;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	/* the 14-bit pnode */
 	write_mmr_descriptor_base(pnode, (n << UV_DESC_PSHIFT | m));
@@ -1529,15 +1513,9 @@ static void pq_init(int node, int pnode)
 		bcp->queue_last		= pqp + (DEST_Q_SIZE - 1);
 	}
 	/*
-<<<<<<< HEAD
 	 * need the gnode of where the memory was really allocated
 	 */
 	pn = uv_gpa_to_gnode(uv_gpa(pqp));
-=======
-	 * need the pnode of where the memory was really allocated
-	 */
-	pn = uv_gpa(pqp) >> uv_nshift;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	first = uv_physnodeaddr(pqp);
 	pn_first = ((unsigned long)pn << UV_PAYLOADQ_PNODE_SHIFT) | first;
 	last = uv_physnodeaddr(pqp + (DEST_Q_SIZE - 1));
@@ -1831,11 +1809,6 @@ static int __init uv_bau_init(void)
 		zalloc_cpumask_var_node(mask, GFP_KERNEL, cpu_to_node(cur_cpu));
 	}
 
-<<<<<<< HEAD
-=======
-	uv_nshift = uv_hub_info->m_val;
-	uv_mmask = (1UL << uv_hub_info->m_val) - 1;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	nuvhubs = uv_num_possible_blades();
 	spin_lock_init(&disable_lock);
 	congested_cycles = usec_2_cycles(congested_respns_us);

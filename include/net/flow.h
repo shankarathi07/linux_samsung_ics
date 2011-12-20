@@ -69,11 +69,7 @@ struct flowi4 {
 #define fl4_ipsec_spi		uli.spi
 #define fl4_mh_type		uli.mht.type
 #define fl4_gre_key		uli.gre_key
-<<<<<<< HEAD
 } __attribute__((__aligned__(BITS_PER_LONG/8)));
-=======
-};
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 static inline void flowi4_init_output(struct flowi4 *fl4, int oif,
 				      __u32 mark, __u8 tos, __u8 scope,
@@ -117,11 +113,7 @@ struct flowi6 {
 #define fl6_ipsec_spi		uli.spi
 #define fl6_mh_type		uli.mht.type
 #define fl6_gre_key		uli.gre_key
-<<<<<<< HEAD
 } __attribute__((__aligned__(BITS_PER_LONG/8)));
-=======
-};
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 struct flowidn {
 	struct flowi_common	__fl_common;
@@ -136,11 +128,7 @@ struct flowidn {
 	union flowi_uli		uli;
 #define fld_sport		uli.ports.sport
 #define fld_dport		uli.ports.dport
-<<<<<<< HEAD
 } __attribute__((__aligned__(BITS_PER_LONG/8)));
-=======
-};
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 struct flowi {
 	union {
@@ -174,7 +162,6 @@ static inline struct flowi *flowidn_to_flowi(struct flowidn *fldn)
 	return container_of(fldn, struct flowi, u.dn);
 }
 
-<<<<<<< HEAD
 typedef unsigned long flow_compare_t;
 
 static inline size_t flow_key_size(u16 family)
@@ -193,8 +180,6 @@ static inline size_t flow_key_size(u16 family)
 	return 0;
 }
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #define FLOW_DIR_IN	0
 #define FLOW_DIR_OUT	1
 #define FLOW_DIR_FWD	2

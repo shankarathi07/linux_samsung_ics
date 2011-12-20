@@ -172,7 +172,6 @@ static void flow_new_hash_rnd(struct flow_cache *fc,
 
 static u32 flow_hash_code(struct flow_cache *fc,
 			  struct flow_cache_percpu *fcp,
-<<<<<<< HEAD
 			  const struct flowi *key,
 			  size_t keysize)
 {
@@ -183,42 +182,17 @@ static u32 flow_hash_code(struct flow_cache *fc,
 		& (flow_cache_hash_size(fc) - 1);
 }
 
-=======
-			  const struct flowi *key)
-{
-	const u32 *k = (const u32 *) key;
-
-	return jhash2(k, (sizeof(*key) / sizeof(u32)), fcp->hash_rnd)
-		& (flow_cache_hash_size(fc) - 1);
-}
-
-typedef unsigned long flow_compare_t;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 /* I hear what you're saying, use memcmp.  But memcmp cannot make
  * important assumptions that we can here, such as alignment.
  */
-<<<<<<< HEAD
 static int flow_key_compare(const struct flowi *key1, const struct flowi *key2,
 			    size_t keysize)
 {
 	const flow_compare_t *k1, *k1_lim, *k2;
-=======
-static int flow_key_compare(const struct flowi *key1, const struct flowi *key2)
-{
-	const flow_compare_t *k1, *k1_lim, *k2;
-	const int n_elem = sizeof(struct flowi) / sizeof(flow_compare_t);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	k1 = (const flow_compare_t *) key1;
 	k1_lim = k1 + keysize;
 
-<<<<<<< HEAD
-=======
-	k1 = (const flow_compare_t *) key1;
-	k1_lim = k1 + n_elem;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	k2 = (const flow_compare_t *) key2;
 
 	do {

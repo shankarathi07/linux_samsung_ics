@@ -742,7 +742,6 @@ radeon_vga_detect(struct drm_connector *connector, bool force)
 	} else {
 
 		/* if we aren't forcing don't do destructive polling */
-<<<<<<< HEAD
 		if (!force) {
 			/* only return the previous status if we last
 			 * detected a monitor via load.
@@ -752,10 +751,6 @@ radeon_vga_detect(struct drm_connector *connector, bool force)
 			else
 				return ret;
 		}
-=======
-		if (!force)
-			return connector->status;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 		if (radeon_connector->dac_load_detect && encoder) {
 			encoder_funcs = encoder->helper_private;
@@ -966,7 +961,6 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
 	if ((ret == connector_status_connected) && (radeon_connector->use_digital == true))
 		goto out;
 
-<<<<<<< HEAD
 	/* DVI-D and HDMI-A are digital only */
 	if ((connector->connector_type == DRM_MODE_CONNECTOR_DVID) ||
 	    (connector->connector_type == DRM_MODE_CONNECTOR_HDMIA))
@@ -979,10 +973,6 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
 		 */
 		if (radeon_connector->detected_by_load)
 			ret = connector->status;
-=======
-	if (!force) {
-		ret = connector->status;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		goto out;
 	}
 
@@ -1273,7 +1263,6 @@ bool radeon_connector_encoder_is_hbr2(struct drm_connector *connector)
 }
 
 bool radeon_connector_is_dp12_capable(struct drm_connector *connector)
-<<<<<<< HEAD
 {
 	struct drm_device *dev = connector->dev;
 	struct radeon_device *rdev = dev->dev_private;
@@ -1292,26 +1281,6 @@ radeon_dp_detect(struct drm_connector *connector, bool force)
 {
 	struct drm_device *dev = connector->dev;
 	struct radeon_device *rdev = dev->dev_private;
-=======
-{
-	struct drm_device *dev = connector->dev;
-	struct radeon_device *rdev = dev->dev_private;
-
-	if (ASIC_IS_DCE5(rdev) &&
-	    (rdev->clock.dp_extclk >= 53900) &&
-	    radeon_connector_encoder_is_hbr2(connector)) {
-		return true;
-	}
-
-	return false;
-}
-
-static enum drm_connector_status
-radeon_dp_detect(struct drm_connector *connector, bool force)
-{
-	struct drm_device *dev = connector->dev;
-	struct radeon_device *rdev = dev->dev_private;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	struct radeon_connector *radeon_connector = to_radeon_connector(connector);
 	enum drm_connector_status ret = connector_status_disconnected;
 	struct radeon_connector_atom_dig *radeon_dig_connector = radeon_connector->con_priv;

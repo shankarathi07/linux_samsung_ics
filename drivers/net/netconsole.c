@@ -307,14 +307,11 @@ static ssize_t store_enabled(struct netconsole_target *nt,
 		return err;
 	if (enabled < 0 || enabled > 1)
 		return -EINVAL;
-<<<<<<< HEAD
 	if (enabled == nt->enabled) {
 		printk(KERN_INFO "netconsole: network logging has already %s\n",
 				nt->enabled ? "started" : "stopped");
 		return -EINVAL;
 	}
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	if (enabled) {	/* 1 */
 

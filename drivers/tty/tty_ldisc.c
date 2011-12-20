@@ -36,10 +36,7 @@
 
 #include <linux/kmod.h>
 #include <linux/nsproxy.h>
-<<<<<<< HEAD
 #include <linux/ratelimit.h>
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 /*
  *	This guards the refcounted line discipline lists. The lock
@@ -552,27 +549,16 @@ static void tty_ldisc_flush_works(struct tty_struct *tty)
 /**
  *	tty_ldisc_wait_idle	-	wait for the ldisc to become idle
  *	@tty: tty to wait for
-<<<<<<< HEAD
  *	@timeout: for how long to wait at most
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
  *
  *	Wait for the line discipline to become idle. The discipline must
  *	have been halted for this to guarantee it remains idle.
  */
-<<<<<<< HEAD
 static int tty_ldisc_wait_idle(struct tty_struct *tty, long timeout)
 {
 	long ret;
 	ret = wait_event_timeout(tty_ldisc_idle,
 			atomic_read(&tty->ldisc->users) == 1, timeout);
-=======
-static int tty_ldisc_wait_idle(struct tty_struct *tty)
-{
-	int ret;
-	ret = wait_event_timeout(tty_ldisc_idle,
-			atomic_read(&tty->ldisc->users) == 1, 5 * HZ);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (ret < 0)
 		return ret;
 	return ret > 0 ? 0 : -EBUSY;
@@ -682,11 +668,7 @@ int tty_set_ldisc(struct tty_struct *tty, int ldisc)
 
 	tty_ldisc_flush_works(tty);
 
-<<<<<<< HEAD
 	retval = tty_ldisc_wait_idle(tty, 5 * HZ);
-=======
-	retval = tty_ldisc_wait_idle(tty);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	tty_lock();
 	mutex_lock(&tty->ldisc_mutex);
@@ -783,11 +765,6 @@ static int tty_ldisc_reinit(struct tty_struct *tty, int ldisc)
 	if (IS_ERR(ld))
 		return -1;
 
-<<<<<<< HEAD
-=======
-	WARN_ON_ONCE(tty_ldisc_wait_idle(tty));
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	tty_ldisc_close(tty, tty->ldisc);
 	tty_ldisc_put(tty->ldisc);
 	tty->ldisc = NULL;
@@ -862,11 +839,7 @@ void tty_ldisc_hangup(struct tty_struct *tty)
 	tty_unlock();
 	cancel_work_sync(&tty->buf.work);
 	mutex_unlock(&tty->ldisc_mutex);
-<<<<<<< HEAD
 retry:
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	tty_lock();
 	mutex_lock(&tty->ldisc_mutex);
 
@@ -875,7 +848,6 @@ retry:
 	   it means auditing a lot of other paths so this is
 	   a FIXME */
 	if (tty->ldisc) {	/* Not yet closed */
-<<<<<<< HEAD
 		if (atomic_read(&tty->ldisc->users) != 1) {
 			char cur_n[TASK_COMM_LEN], tty_n[64];
 			long timeout = 3 * HZ;
@@ -892,8 +864,6 @@ retry:
 			goto retry;
 		}
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		if (reset == 0) {
 
 			if (!tty_ldisc_reinit(tty, tty->termios->c_line))

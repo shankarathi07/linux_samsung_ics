@@ -620,13 +620,8 @@ static struct radeon_i2c_bus_rec combios_setup_i2c_bus(struct radeon_device *rde
 		i2c.y_data_mask = 0x80;
 	} else {
 		/* default masks for ddc pads */
-<<<<<<< HEAD
 		i2c.mask_clk_mask = RADEON_GPIO_MASK_1;
 		i2c.mask_data_mask = RADEON_GPIO_MASK_0;
-=======
-		i2c.mask_clk_mask = RADEON_GPIO_EN_1;
-		i2c.mask_data_mask = RADEON_GPIO_EN_0;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		i2c.a_clk_mask = RADEON_GPIO_A_1;
 		i2c.a_data_mask = RADEON_GPIO_A_0;
 		i2c.en_clk_mask = RADEON_GPIO_EN_1;

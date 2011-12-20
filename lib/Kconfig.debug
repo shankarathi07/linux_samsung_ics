@@ -174,19 +174,11 @@ config LOCKUP_DETECTOR
 	  for more than 60 seconds, without letting other interrupts have a
 	  chance to run.  The current stack trace is displayed upon detection
 	  and the system will stay locked up.
-<<<<<<< HEAD
 
 	  The overhead should be minimal.  A periodic hrtimer runs to
 	  generate interrupts and kick the watchdog task every 10-12 seconds.
 	  An NMI is generated every 60 seconds or so to check for hardlockups.
 
-=======
-
-	  The overhead should be minimal.  A periodic hrtimer runs to
-	  generate interrupts and kick the watchdog task every 10-12 seconds.
-	  An NMI is generated every 60 seconds or so to check for hardlockups.
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 config HARDLOCKUP_DETECTOR
 	def_bool LOCKUP_DETECTOR && PERF_EVENTS && HAVE_PERF_EVENTS_NMI && \
 		 !ARCH_HAS_NMI_WATCHDOG

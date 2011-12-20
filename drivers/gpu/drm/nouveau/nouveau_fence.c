@@ -542,11 +542,6 @@ nouveau_fence_channel_init(struct nouveau_channel *chan)
 			return ret;
 	}
 
-<<<<<<< HEAD
-=======
-	INIT_LIST_HEAD(&chan->fence.pending);
-	spin_lock_init(&chan->fence.lock);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	atomic_set(&chan->fence.last_sequence_irq, 0);
 	return 0;
 }

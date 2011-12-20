@@ -49,10 +49,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
 #define LOOKUP_FOLLOW		0x0001
 #define LOOKUP_DIRECTORY	0x0002
 #define LOOKUP_CONTINUE		0x0004
-<<<<<<< HEAD
 #define LOOKUP_AUTOMOUNT	0x0008
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 #define LOOKUP_PARENT		0x0010
 #define LOOKUP_REVAL		0x0020

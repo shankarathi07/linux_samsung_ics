@@ -128,12 +128,9 @@ static int xhci_pci_setup(struct usb_hcd *hcd)
 	if (pdev->vendor == PCI_VENDOR_ID_NEC)
 		xhci->quirks |= XHCI_NEC_HOST;
 
-<<<<<<< HEAD
 	if (pdev->vendor == PCI_VENDOR_ID_AMD && xhci->hci_version == 0x96)
 		xhci->quirks |= XHCI_AMD_0x96_HOST;
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/* AMD PLL quirk */
 	if (pdev->vendor == PCI_VENDOR_ID_AMD && usb_amd_find_chipset_info())
 		xhci->quirks |= XHCI_AMD_PLL_FIX;
@@ -187,7 +184,6 @@ static int xhci_pci_setup(struct usb_hcd *hcd)
 error:
 	kfree(xhci);
 	return retval;
-<<<<<<< HEAD
 }
 
 /*
@@ -255,75 +251,6 @@ static void xhci_pci_remove(struct pci_dev *dev)
 	kfree(xhci);
 }
 
-=======
-}
-
-/*
- * We need to register our own PCI probe function (instead of the USB core's
- * function) in order to create a second roothub under xHCI.
- */
-static int xhci_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
-{
-	int retval;
-	struct xhci_hcd *xhci;
-	struct hc_driver *driver;
-	struct usb_hcd *hcd;
-
-	driver = (struct hc_driver *)id->driver_data;
-	/* Register the USB 2.0 roothub.
-	 * FIXME: USB core must know to register the USB 2.0 roothub first.
-	 * This is sort of silly, because we could just set the HCD driver flags
-	 * to say USB 2.0, but I'm not sure what the implications would be in
-	 * the other parts of the HCD code.
-	 */
-	retval = usb_hcd_pci_probe(dev, id);
-
-	if (retval)
-		return retval;
-
-	/* USB 2.0 roothub is stored in the PCI device now. */
-	hcd = dev_get_drvdata(&dev->dev);
-	xhci = hcd_to_xhci(hcd);
-	xhci->shared_hcd = usb_create_shared_hcd(driver, &dev->dev,
-				pci_name(dev), hcd);
-	if (!xhci->shared_hcd) {
-		retval = -ENOMEM;
-		goto dealloc_usb2_hcd;
-	}
-
-	/* Set the xHCI pointer before xhci_pci_setup() (aka hcd_driver.reset)
-	 * is called by usb_add_hcd().
-	 */
-	*((struct xhci_hcd **) xhci->shared_hcd->hcd_priv) = xhci;
-
-	retval = usb_add_hcd(xhci->shared_hcd, dev->irq,
-			IRQF_DISABLED | IRQF_SHARED);
-	if (retval)
-		goto put_usb3_hcd;
-	/* Roothub already marked as USB 3.0 speed */
-	return 0;
-
-put_usb3_hcd:
-	usb_put_hcd(xhci->shared_hcd);
-dealloc_usb2_hcd:
-	usb_hcd_pci_remove(dev);
-	return retval;
-}
-
-static void xhci_pci_remove(struct pci_dev *dev)
-{
-	struct xhci_hcd *xhci;
-
-	xhci = hcd_to_xhci(pci_get_drvdata(dev));
-	if (xhci->shared_hcd) {
-		usb_remove_hcd(xhci->shared_hcd);
-		usb_put_hcd(xhci->shared_hcd);
-	}
-	usb_hcd_pci_remove(dev);
-	kfree(xhci);
-}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #ifdef CONFIG_PM
 static int xhci_pci_suspend(struct usb_hcd *hcd, bool do_wakeup)
 {

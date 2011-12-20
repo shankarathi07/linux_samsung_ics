@@ -336,11 +336,7 @@ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
 				continue;
 			if (wk->offchan_tx.frame != skb)
 				continue;
-<<<<<<< HEAD
 			wk->offchan_tx.status = true;
-=======
-			wk->offchan_tx.frame = NULL;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			break;
 		}
 		rcu_read_unlock();

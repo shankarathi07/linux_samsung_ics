@@ -903,10 +903,6 @@ static void __exit spear_pcie_gadget_exit(void)
 }
 module_exit(spear_pcie_gadget_exit);
 
-<<<<<<< HEAD
 MODULE_ALIAS("platform:pcie-gadget-spear");
-=======
-MODULE_ALIAS("pcie-gadget-spear");
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 MODULE_AUTHOR("Pratyush Anand");
 MODULE_LICENSE("GPL");

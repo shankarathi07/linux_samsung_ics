@@ -145,13 +145,7 @@
 #define ADLINK_VENDOR_ID		0x0b63
 #define ADLINK_ND6530_PRODUCT_ID	0x6530
 
-<<<<<<< HEAD
 /* SMART USB Serial Adapter */
 #define SMART_VENDOR_ID	0x0b8c
 #define SMART_PRODUCT_ID	0x2303
 
-=======
-/* WinChipHead USB->RS 232 adapter */
-#define WINCHIPHEAD_VENDOR_ID		0x4348
-#define WINCHIPHEAD_USBSER_PRODUCT_ID	0x5523
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo

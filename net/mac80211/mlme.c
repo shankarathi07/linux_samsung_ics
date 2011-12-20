@@ -613,12 +613,9 @@ static bool ieee80211_powersave_allowed(struct ieee80211_sub_if_data *sdata)
 	if (!mgd->powersave)
 		return false;
 
-<<<<<<< HEAD
 	if (mgd->broken_ap)
 		return false;
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!mgd->associated)
 		return false;
 
@@ -2081,7 +2078,6 @@ void ieee80211_sta_work(struct ieee80211_sub_if_data *sdata)
 			ieee80211_reset_ap_probe(sdata);
 		else if (ifmgd->nullfunc_failed) {
 			if (ifmgd->probe_send_count < max_tries) {
-<<<<<<< HEAD
 #ifdef CONFIG_MAC80211_VERBOSE_DEBUG
 				wiphy_debug(local->hw.wiphy,
 					    "%s: No ack for nullfunc frame to"
@@ -2112,38 +2108,6 @@ void ieee80211_sta_work(struct ieee80211_sub_if_data *sdata)
 			ieee80211_sta_connection_lost(sdata, bssid);
 		} else if (ifmgd->probe_send_count < max_tries) {
 #ifdef CONFIG_MAC80211_VERBOSE_DEBUG
-=======
-#ifdef CONFIG_MAC80211_VERBOSE_DEBUG
-				wiphy_debug(local->hw.wiphy,
-					    "%s: No ack for nullfunc frame to"
-					    " AP %pM, try %d/%i\n",
-					    sdata->name, bssid,
-					    ifmgd->probe_send_count, max_tries);
-#endif
-				ieee80211_mgd_probe_ap_send(sdata);
-			} else {
-#ifdef CONFIG_MAC80211_VERBOSE_DEBUG
-				wiphy_debug(local->hw.wiphy,
-					    "%s: No ack for nullfunc frame to"
-					    " AP %pM, disconnecting.\n",
-					    sdata->name, bssid);
-#endif
-				ieee80211_sta_connection_lost(sdata, bssid);
-			}
-		} else if (time_is_after_jiffies(ifmgd->probe_timeout))
-			run_again(ifmgd, ifmgd->probe_timeout);
-		else if (local->hw.flags & IEEE80211_HW_REPORTS_TX_ACK_STATUS) {
-#ifdef CONFIG_MAC80211_VERBOSE_DEBUG
-			wiphy_debug(local->hw.wiphy,
-				    "%s: Failed to send nullfunc to AP %pM"
-				    " after %dms, disconnecting.\n",
-				    sdata->name,
-				    bssid, probe_wait_ms);
-#endif
-			ieee80211_sta_connection_lost(sdata, bssid);
-		} else if (ifmgd->probe_send_count < max_tries) {
-#ifdef CONFIG_MAC80211_VERBOSE_DEBUG
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			wiphy_debug(local->hw.wiphy,
 				    "%s: No probe response from AP %pM"
 				    " after %dms, try %d/%i\n",

@@ -250,11 +250,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
 	do {
 		times->utime = cputime_add(times->utime, t->utime);
 		times->stime = cputime_add(times->stime, t->stime);
-<<<<<<< HEAD
 		times->sum_exec_runtime += tsk_seruntime(t);
-=======
-		times->sum_exec_runtime += task_sched_runtime(t);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	} while_each_thread(tsk, t);
 out:
 	rcu_read_unlock();

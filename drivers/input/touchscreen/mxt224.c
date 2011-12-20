@@ -315,7 +315,6 @@ static void report_input_data(struct mxt224_data *data)
 		if (data->fingers[i].z == -1)
 			continue;
 
-<<<<<<< HEAD
 #ifdef CONFIG_TOUCH_WAKE
 		if (!device_is_suspended())
 #endif
@@ -344,19 +343,6 @@ static void report_input_data(struct mxt224_data *data)
 #endif
 
 #endif
-=======
-		input_report_abs(data->input_dev, ABS_MT_POSITION_X,
-					data->fingers[i].x);
-		input_report_abs(data->input_dev, ABS_MT_POSITION_Y,
-					data->fingers[i].y);
-		input_report_abs(data->input_dev, ABS_MT_PRESSURE,
-					data->fingers[i].z);
-		input_report_abs(data->input_dev, ABS_MT_TOUCH_MAJOR,
-					data->fingers[i].w);
-		input_report_abs(data->input_dev, ABS_MT_TRACKING_ID, i);
-		input_mt_sync(data->input_dev);
-		num_fingers_down++;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 	data->finger_mask = 0;
 

@@ -1101,10 +1101,7 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
 	disk = get_gendisk(bdev->bd_dev, &partno);
 	if (!disk)
 		goto out;
-<<<<<<< HEAD
 	owner = disk->fops->owner;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	disk_block_events(disk);
 	mutex_lock_nested(&bdev->bd_mutex, for_part);
@@ -1132,13 +1129,8 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
 					bdev->bd_disk = NULL;
 					mutex_unlock(&bdev->bd_mutex);
 					disk_unblock_events(disk);
-<<<<<<< HEAD
 					put_disk(disk);
 					module_put(owner);
-=======
-					module_put(disk->fops->owner);
-					put_disk(disk);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 					goto restart;
 				}
 			}
@@ -1194,13 +1186,8 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
 				goto out_unlock_bdev;
 		}
 		/* only one opener holds refs to the module and disk */
-<<<<<<< HEAD
 		put_disk(disk);
 		module_put(owner);
-=======
-		module_put(disk->fops->owner);
-		put_disk(disk);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 	bdev->bd_openers++;
 	if (for_part)
@@ -1220,13 +1207,8 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
  out_unlock_bdev:
 	mutex_unlock(&bdev->bd_mutex);
 	disk_unblock_events(disk);
-<<<<<<< HEAD
 	put_disk(disk);
 	module_put(owner);
-=======
-	module_put(disk->fops->owner);
-	put_disk(disk);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
  out:
 	bdput(bdev);
 

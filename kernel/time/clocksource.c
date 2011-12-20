@@ -653,11 +653,7 @@ void __clocksource_updatefreq_scale(struct clocksource *cs, u32 scale, u32 freq)
 	 * ~ 0.06ppm granularity for NTP. We apply the same 12.5%
 	 * margin as we do in clocksource_max_deferment()
 	 */
-<<<<<<< HEAD
 	sec = (cs->mask - (cs->mask >> 3));
-=======
-	sec = (cs->mask - (cs->mask >> 5));
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	do_div(sec, freq);
 	do_div(sec, scale);
 	if (!sec)

@@ -1931,13 +1931,10 @@ int ath9k_hw_fill_cap_info(struct ath_hw *ah)
 		pCap->num_gpio_pins = AR9271_NUM_GPIO;
 	else if (AR_DEVID_7010(ah))
 		pCap->num_gpio_pins = AR7010_NUM_GPIO;
-<<<<<<< HEAD
 	else if (AR_SREV_9300_20_OR_LATER(ah))
 		pCap->num_gpio_pins = AR9300_NUM_GPIO;
 	else if (AR_SREV_9287_11_OR_LATER(ah))
 		pCap->num_gpio_pins = AR9287_NUM_GPIO;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	else if (AR_SREV_9285_12_OR_LATER(ah))
 		pCap->num_gpio_pins = AR9285_NUM_GPIO;
 	else if (AR_SREV_9280_20_OR_LATER(ah))

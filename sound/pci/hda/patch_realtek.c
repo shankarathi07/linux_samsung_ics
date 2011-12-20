@@ -2088,47 +2088,27 @@ static void alc_auto_init_digital(struct hda_codec *codec)
 static void alc_auto_parse_digital(struct hda_codec *codec)
 {
 	struct alc_spec *spec = codec->spec;
-<<<<<<< HEAD
 	int i, err, nums;
 	hda_nid_t dig_nid;
 
 	/* support multiple SPDIFs; the secondary is set up as a slave */
 	nums = 0;
-=======
-	int i, err;
-	hda_nid_t dig_nid;
-
-	/* support multiple SPDIFs; the secondary is set up as a slave */
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	for (i = 0; i < spec->autocfg.dig_outs; i++) {
 		err = snd_hda_get_connections(codec,
 					      spec->autocfg.dig_out_pins[i],
 					      &dig_nid, 1);
-<<<<<<< HEAD
 		if (err <= 0)
 			continue;
 		if (!nums) {
-=======
-		if (err < 0)
-			continue;
-		if (!i) {
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			spec->multiout.dig_out_nid = dig_nid;
 			spec->dig_out_type = spec->autocfg.dig_out_type[0];
 		} else {
 			spec->multiout.slave_dig_outs = spec->slave_dig_outs;
-<<<<<<< HEAD
 			if (nums >= ARRAY_SIZE(spec->slave_dig_outs) - 1)
 				break;
 			spec->slave_dig_outs[nums - 1] = dig_nid;
 		}
 		nums++;
-=======
-			if (i >= ARRAY_SIZE(spec->slave_dig_outs) - 1)
-				break;
-			spec->slave_dig_outs[i - 1] = dig_nid;
-		}
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 
 	if (spec->autocfg.dig_in_pin) {
@@ -11213,7 +11193,6 @@ static int alc_auto_add_mic_boost(struct hda_codec *codec)
 	int type_idx = 0;
 	hda_nid_t nid;
 	const char *prev_label = NULL;
-<<<<<<< HEAD
 
 	for (i = 0; i < cfg->num_inputs; i++) {
 		if (cfg->inputs[i].type > AUTO_PIN_MIC)
@@ -11230,24 +11209,6 @@ static int alc_auto_add_mic_boost(struct hda_codec *codec)
 				type_idx = 0;
 			prev_label = label;
 
-=======
-
-	for (i = 0; i < cfg->num_inputs; i++) {
-		if (cfg->inputs[i].type > AUTO_PIN_MIC)
-			break;
-		nid = cfg->inputs[i].pin;
-		if (get_wcaps(codec, nid) & AC_WCAP_IN_AMP) {
-			const char *label;
-			char boost_label[32];
-
-			label = hda_get_autocfg_input_label(codec, cfg, i);
-			if (prev_label && !strcmp(label, prev_label))
-				type_idx++;
-			else
-				type_idx = 0;
-			prev_label = label;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			snprintf(boost_label, sizeof(boost_label),
 				 "%s Boost Volume", label);
 			err = add_control(spec, ALC_CTL_WIDGET_VOL,
@@ -18298,8 +18259,6 @@ static void alc662_eeepc_ep20_setup(struct hda_codec *codec)
 }
 
 static void alc663_m51va_setup(struct hda_codec *codec)
-<<<<<<< HEAD
-=======
 {
 	struct alc_spec *spec = codec->spec;
 	spec->autocfg.hp_pins[0] = 0x21;
@@ -18316,7 +18275,6 @@ static void alc663_m51va_setup(struct hda_codec *codec)
 
 /* ***************** Mode1 ******************************/
 static void alc663_mode1_setup(struct hda_codec *codec)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 {
 	struct alc_spec *spec = codec->spec;
 	spec->autocfg.hp_pins[0] = 0x21;
@@ -18326,22 +18284,6 @@ static void alc663_mode1_setup(struct hda_codec *codec)
 	spec->automute_mode = ALC_AUTOMUTE_MIXER;
 	spec->ext_mic.pin = 0x18;
 	spec->ext_mic.mux_idx = 0;
-<<<<<<< HEAD
-	spec->int_mic.pin = 0x12;
-	spec->int_mic.mux_idx = 9;
-	spec->auto_mic = 1;
-}
-
-/* ***************** Mode1 ******************************/
-static void alc663_mode1_setup(struct hda_codec *codec)
-{
-	struct alc_spec *spec = codec->spec;
-	spec->autocfg.hp_pins[0] = 0x21;
-	spec->autocfg.speaker_pins[0] = 0x14;
-	spec->automute_mixer_nid[0] = 0x0c;
-	spec->automute = 1;
-	spec->automute_mode = ALC_AUTOMUTE_MIXER;
-=======
 	spec->int_mic.pin = 0x19;
 	spec->int_mic.mux_idx = 1;
 	spec->auto_mic = 1;
@@ -18355,7 +18297,6 @@ static void alc662_mode2_setup(struct hda_codec *codec)
 	spec->autocfg.speaker_pins[0] = 0x14;
 	spec->automute = 1;
 	spec->automute_mode = ALC_AUTOMUTE_PIN;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spec->ext_mic.pin = 0x18;
 	spec->ext_mic.mux_idx = 0;
 	spec->int_mic.pin = 0x19;
@@ -18363,20 +18304,12 @@ static void alc662_mode2_setup(struct hda_codec *codec)
 	spec->auto_mic = 1;
 }
 
-<<<<<<< HEAD
-/* ***************** Mode2 ******************************/
-static void alc662_mode2_setup(struct hda_codec *codec)
-{
-	struct alc_spec *spec = codec->spec;
-	spec->autocfg.hp_pins[0] = 0x1b;
-=======
 /* ***************** Mode3 ******************************/
 static void alc663_mode3_setup(struct hda_codec *codec)
 {
 	struct alc_spec *spec = codec->spec;
 	spec->autocfg.hp_pins[0] = 0x21;
 	spec->autocfg.hp_pins[0] = 0x15;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spec->autocfg.speaker_pins[0] = 0x14;
 	spec->automute = 1;
 	spec->automute_mode = ALC_AUTOMUTE_PIN;
@@ -18387,17 +18320,6 @@ static void alc663_mode3_setup(struct hda_codec *codec)
 	spec->auto_mic = 1;
 }
 
-<<<<<<< HEAD
-/* ***************** Mode3 ******************************/
-static void alc663_mode3_setup(struct hda_codec *codec)
-{
-	struct alc_spec *spec = codec->spec;
-	spec->autocfg.hp_pins[0] = 0x21;
-	spec->autocfg.hp_pins[0] = 0x15;
-	spec->autocfg.speaker_pins[0] = 0x14;
-	spec->automute = 1;
-	spec->automute_mode = ALC_AUTOMUTE_PIN;
-=======
 /* ***************** Mode4 ******************************/
 static void alc663_mode4_setup(struct hda_codec *codec)
 {
@@ -18409,7 +18331,6 @@ static void alc663_mode4_setup(struct hda_codec *codec)
 	spec->automute_mixer_nid[1] = 0x0e;
 	spec->automute = 1;
 	spec->automute_mode = ALC_AUTOMUTE_MIXER;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spec->ext_mic.pin = 0x18;
 	spec->ext_mic.mux_idx = 0;
 	spec->int_mic.pin = 0x19;
@@ -18417,19 +18338,11 @@ static void alc663_mode4_setup(struct hda_codec *codec)
 	spec->auto_mic = 1;
 }
 
-<<<<<<< HEAD
-/* ***************** Mode4 ******************************/
-static void alc663_mode4_setup(struct hda_codec *codec)
-{
-	struct alc_spec *spec = codec->spec;
-	spec->autocfg.hp_pins[0] = 0x21;
-=======
 /* ***************** Mode5 ******************************/
 static void alc663_mode5_setup(struct hda_codec *codec)
 {
 	struct alc_spec *spec = codec->spec;
 	spec->autocfg.hp_pins[0] = 0x15;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spec->autocfg.speaker_pins[0] = 0x14;
 	spec->autocfg.speaker_pins[1] = 0x16;
 	spec->automute_mixer_nid[0] = 0x0c;
@@ -18443,36 +18356,6 @@ static void alc663_mode5_setup(struct hda_codec *codec)
 	spec->auto_mic = 1;
 }
 
-<<<<<<< HEAD
-/* ***************** Mode5 ******************************/
-static void alc663_mode5_setup(struct hda_codec *codec)
-{
-	struct alc_spec *spec = codec->spec;
-	spec->autocfg.hp_pins[0] = 0x15;
-	spec->autocfg.speaker_pins[0] = 0x14;
-	spec->autocfg.speaker_pins[1] = 0x16;
-	spec->automute_mixer_nid[0] = 0x0c;
-	spec->automute_mixer_nid[1] = 0x0e;
-=======
-/* ***************** Mode6 ******************************/
-static void alc663_mode6_setup(struct hda_codec *codec)
-{
-	struct alc_spec *spec = codec->spec;
-	spec->autocfg.hp_pins[0] = 0x1b;
-	spec->autocfg.hp_pins[0] = 0x15;
-	spec->autocfg.speaker_pins[0] = 0x14;
-	spec->automute_mixer_nid[0] = 0x0c;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
-	spec->automute = 1;
-	spec->automute_mode = ALC_AUTOMUTE_MIXER;
-	spec->ext_mic.pin = 0x18;
-	spec->ext_mic.mux_idx = 0;
-	spec->int_mic.pin = 0x19;
-	spec->int_mic.mux_idx = 1;
-	spec->auto_mic = 1;
-}
-
-<<<<<<< HEAD
 /* ***************** Mode6 ******************************/
 static void alc663_mode6_setup(struct hda_codec *codec)
 {
@@ -18483,18 +18366,6 @@ static void alc663_mode6_setup(struct hda_codec *codec)
 	spec->automute_mixer_nid[0] = 0x0c;
 	spec->automute = 1;
 	spec->automute_mode = ALC_AUTOMUTE_MIXER;
-=======
-/* ***************** Mode7 ******************************/
-static void alc663_mode7_setup(struct hda_codec *codec)
-{
-	struct alc_spec *spec = codec->spec;
-	spec->autocfg.hp_pins[0] = 0x1b;
-	spec->autocfg.hp_pins[0] = 0x21;
-	spec->autocfg.speaker_pins[0] = 0x14;
-	spec->autocfg.speaker_pins[0] = 0x17;
-	spec->automute = 1;
-	spec->automute_mode = ALC_AUTOMUTE_PIN;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spec->ext_mic.pin = 0x18;
 	spec->ext_mic.mux_idx = 0;
 	spec->int_mic.pin = 0x19;
@@ -18502,28 +18373,18 @@ static void alc663_mode7_setup(struct hda_codec *codec)
 	spec->auto_mic = 1;
 }
 
-<<<<<<< HEAD
 /* ***************** Mode7 ******************************/
 static void alc663_mode7_setup(struct hda_codec *codec)
 {
 	struct alc_spec *spec = codec->spec;
 	spec->autocfg.hp_pins[0] = 0x1b;
 	spec->autocfg.hp_pins[0] = 0x21;
-=======
-/* ***************** Mode8 ******************************/
-static void alc663_mode8_setup(struct hda_codec *codec)
-{
-	struct alc_spec *spec = codec->spec;
-	spec->autocfg.hp_pins[0] = 0x21;
-	spec->autocfg.hp_pins[1] = 0x15;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spec->autocfg.speaker_pins[0] = 0x14;
 	spec->autocfg.speaker_pins[0] = 0x17;
 	spec->automute = 1;
 	spec->automute_mode = ALC_AUTOMUTE_PIN;
 	spec->ext_mic.pin = 0x18;
 	spec->ext_mic.mux_idx = 0;
-<<<<<<< HEAD
 	spec->int_mic.pin = 0x19;
 	spec->int_mic.mux_idx = 1;
 	spec->auto_mic = 1;
@@ -18539,23 +18400,6 @@ static void alc663_mode8_setup(struct hda_codec *codec)
 	spec->autocfg.speaker_pins[0] = 0x17;
 	spec->automute = 1;
 	spec->automute_mode = ALC_AUTOMUTE_PIN;
-=======
-	spec->int_mic.pin = 0x12;
-	spec->int_mic.mux_idx = 9;
-	spec->auto_mic = 1;
-}
-
-static void alc663_g71v_setup(struct hda_codec *codec)
-{
-	struct alc_spec *spec = codec->spec;
-	spec->autocfg.hp_pins[0] = 0x21;
-	spec->autocfg.line_out_pins[0] = 0x15;
-	spec->autocfg.speaker_pins[0] = 0x14;
-	spec->automute = 1;
-	spec->automute_mode = ALC_AUTOMUTE_AMP;
-	spec->detect_line = 1;
-	spec->automute_lines = 1;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spec->ext_mic.pin = 0x18;
 	spec->ext_mic.mux_idx = 0;
 	spec->int_mic.pin = 0x12;
@@ -18563,7 +18407,6 @@ static void alc663_g71v_setup(struct hda_codec *codec)
 	spec->auto_mic = 1;
 }
 
-<<<<<<< HEAD
 static void alc663_g71v_setup(struct hda_codec *codec)
 {
 	struct alc_spec *spec = codec->spec;
@@ -18581,8 +18424,6 @@ static void alc663_g71v_setup(struct hda_codec *codec)
 	spec->auto_mic = 1;
 }
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #define alc663_g50v_setup	alc663_m51va_setup
 
 static const struct snd_kcontrol_new alc662_ecs_mixer[] = {
@@ -19122,38 +18963,11 @@ static hda_nid_t alc_auto_dac_to_mix(struct hda_codec *codec, hda_nid_t pin,
 /* select the connection from pin to DAC if needed */
 static int alc_auto_select_dac(struct hda_codec *codec, hda_nid_t pin,
 			       hda_nid_t dac)
-<<<<<<< HEAD
 {
 	hda_nid_t mix[5];
 	int i, num;
 
 	pin = alc_go_down_to_selector(codec, pin);
-	num = snd_hda_get_connections(codec, pin, mix, ARRAY_SIZE(mix));
-	if (num < 2)
-		return 0;
-	for (i = 0; i < num; i++) {
-		if (alc_auto_mix_to_dac(codec, mix[i]) == dac) {
-			snd_hda_codec_update_cache(codec, pin, 0,
-						   AC_VERB_SET_CONNECT_SEL, i);
-			return 0;
-		}
-	}
-	return 0;
-}
-
-/* look for an empty DAC slot */
-static hda_nid_t alc_auto_look_for_dac(struct hda_codec *codec, hda_nid_t pin)
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
-{
-	hda_nid_t mix[5];
-	int i, num;
-
-	pin = alc_go_down_to_selector(codec, pin);
-<<<<<<< HEAD
-	num = snd_hda_get_connections(codec, pin, srcs, ARRAY_SIZE(srcs));
-	for (i = 0; i < num; i++) {
-=======
 	num = snd_hda_get_connections(codec, pin, mix, ARRAY_SIZE(mix));
 	if (num < 2)
 		return 0;
@@ -19177,7 +18991,6 @@ static hda_nid_t alc_auto_look_for_dac(struct hda_codec *codec, hda_nid_t pin)
 	pin = alc_go_down_to_selector(codec, pin);
 	num = snd_hda_get_connections(codec, pin, srcs, ARRAY_SIZE(srcs));
 	for (i = 0; i < num; i++) {
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		hda_nid_t nid = alc_auto_mix_to_dac(codec, srcs[i]);
 		if (!nid)
 			continue;

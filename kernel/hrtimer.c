@@ -889,13 +889,9 @@ static void __remove_hrtimer(struct hrtimer *timer,
 	if (!(timer->state & HRTIMER_STATE_ENQUEUED))
 		goto out;
 
-<<<<<<< HEAD
 	next_timer = timerqueue_getnext(&base->active);
 	timerqueue_del(&base->active, &timer->node);
 	if (&timer->node == next_timer) {
-=======
-	if (&timer->node == timerqueue_getnext(&base->active)) {
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #ifdef CONFIG_HIGH_RES_TIMERS
 		/* Reprogram the clock event device. if enabled */
 		if (reprogram && hrtimer_hres_active()) {
@@ -908,10 +904,6 @@ static void __remove_hrtimer(struct hrtimer *timer,
 		}
 #endif
 	}
-<<<<<<< HEAD
-=======
-	timerqueue_del(&base->active, &timer->node);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!timerqueue_getnext(&base->active))
 		base->cpu_base->active_bases &= ~(1 << base->index);
 out:

@@ -496,23 +496,15 @@ static void neo_copy_data_from_queue_to_uart(struct jsm_channel *ch)
 	int s;
 	int qlen;
 	u32 len_written = 0;
-<<<<<<< HEAD
 	struct circ_buf *circ;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	if (!ch)
 		return;
 
-<<<<<<< HEAD
 	circ = &ch->uart_port.state->xmit;
 
 	/* No data to write to the UART */
 	if (uart_circ_empty(circ))
-=======
-	/* No data to write to the UART */
-	if (ch->ch_w_tail == ch->ch_w_head)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		return;
 
 	/* If port is "stopped", don't send any data to the UART */
@@ -528,18 +520,10 @@ static void neo_copy_data_from_queue_to_uart(struct jsm_channel *ch)
 		if (ch->ch_cached_lsr & UART_LSR_THRE) {
 			ch->ch_cached_lsr &= ~(UART_LSR_THRE);
 
-<<<<<<< HEAD
 			writeb(circ->buf[circ->tail], &ch->ch_neo_uart->txrx);
 			jsm_printk(WRITE, INFO, &ch->ch_bd->pci_dev,
 					"Tx data: %x\n", circ->buf[circ->head]);
 			circ->tail = (circ->tail + 1) & (UART_XMIT_SIZE - 1);
-=======
-			writeb(ch->ch_wqueue[ch->ch_w_tail], &ch->ch_neo_uart->txrx);
-			jsm_printk(WRITE, INFO, &ch->ch_bd->pci_dev,
-					"Tx data: %x\n", ch->ch_wqueue[ch->ch_w_head]);
-			ch->ch_w_tail++;
-			ch->ch_w_tail &= WQUEUEMASK;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			ch->ch_txcount++;
 		}
 		return;
@@ -554,60 +538,36 @@ static void neo_copy_data_from_queue_to_uart(struct jsm_channel *ch)
 	n = UART_17158_TX_FIFOSIZE - ch->ch_t_tlevel;
 
 	/* cache head and tail of queue */
-<<<<<<< HEAD
 	head = circ->head & (UART_XMIT_SIZE - 1);
 	tail = circ->tail & (UART_XMIT_SIZE - 1);
 	qlen = uart_circ_chars_pending(circ);
-=======
-	head = ch->ch_w_head & WQUEUEMASK;
-	tail = ch->ch_w_tail & WQUEUEMASK;
-	qlen = (head - tail) & WQUEUEMASK;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	/* Find minimum of the FIFO space, versus queue length */
 	n = min(n, qlen);
 
 	while (n > 0) {
 
-<<<<<<< HEAD
 		s = ((head >= tail) ? head : UART_XMIT_SIZE) - tail;
-=======
-		s = ((head >= tail) ? head : WQUEUESIZE) - tail;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		s = min(s, n);
 
 		if (s <= 0)
 			break;
 
-<<<<<<< HEAD
 		memcpy_toio(&ch->ch_neo_uart->txrxburst, circ->buf + tail, s);
 		/* Add and flip queue if needed */
 		tail = (tail + s) & (UART_XMIT_SIZE - 1);
-=======
-		memcpy_toio(&ch->ch_neo_uart->txrxburst, ch->ch_wqueue + tail, s);
-		/* Add and flip queue if needed */
-		tail = (tail + s) & WQUEUEMASK;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		n -= s;
 		ch->ch_txcount += s;
 		len_written += s;
 	}
 
 	/* Update the final tail */
-<<<<<<< HEAD
 	circ->tail = tail & (UART_XMIT_SIZE - 1);
-=======
-	ch->ch_w_tail = tail & WQUEUEMASK;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	if (len_written >= ch->ch_t_tlevel)
 		ch->ch_flags &= ~(CH_TX_FIFO_EMPTY | CH_TX_FIFO_LWM);
 
-<<<<<<< HEAD
 	if (uart_circ_empty(circ))
-=======
-	if (!jsm_tty_write(&ch->uart_port))
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		uart_write_wakeup(&ch->uart_port);
 }
 
@@ -988,10 +948,6 @@ static void neo_param(struct jsm_channel *ch)
 	if ((ch->ch_c_cflag & (CBAUD)) == 0) {
 		ch->ch_r_head = ch->ch_r_tail = 0;
 		ch->ch_e_head = ch->ch_e_tail = 0;
-<<<<<<< HEAD
-=======
-		ch->ch_w_head = ch->ch_w_tail = 0;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 		neo_flush_uart_write(ch);
 		neo_flush_uart_read(ch);

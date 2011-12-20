@@ -84,13 +84,9 @@ static int try_one_irq(int irq, struct irq_desc *desc, bool force)
 	 */
 	action = desc->action;
 	if (!action || !(action->flags & IRQF_SHARED) ||
-<<<<<<< HEAD
 	    (action->flags & __IRQF_TIMER) ||
 	    (action->handler(irq, action->dev_id) == IRQ_HANDLED) ||
 	    !action->next)
-=======
-	    (action->flags & __IRQF_TIMER) || !action->next)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		goto out;
 
 	/* Already running on another processor */
@@ -121,11 +117,7 @@ static int misrouted_irq(int irq)
 	struct irq_desc *desc;
 	int i, ok = 0;
 
-<<<<<<< HEAD
 	if (atomic_inc_return(&irq_poll_active) != 1)
-=======
-	if (atomic_inc_return(&irq_poll_active) == 1)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		goto out;
 
 	irq_poll_cpu = smp_processor_id();

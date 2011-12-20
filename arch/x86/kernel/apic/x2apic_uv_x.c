@@ -501,7 +501,6 @@ static __init void map_mmioh_high(int max_pnode)
 	if (is_uv1_hub() && mmioh.s1.enable) {
 		shift = UV1H_RH_GAM_MMIOH_OVERLAY_CONFIG_MMR_BASE_SHFT;
 		map_high("MMIOH", mmioh.s1.base, shift, mmioh.s1.m_io,
-<<<<<<< HEAD
 			max_pnode, map_uc);
 	}
 	if (is_uv2_hub() && mmioh.s2.enable) {
@@ -509,15 +508,6 @@ static __init void map_mmioh_high(int max_pnode)
 		map_high("MMIOH", mmioh.s2.base, shift, mmioh.s2.m_io,
 			max_pnode, map_uc);
 	}
-=======
-			max_pnode, map_uc);
-	}
-	if (is_uv2_hub() && mmioh.s2.enable) {
-		shift = UV2H_RH_GAM_MMIOH_OVERLAY_CONFIG_MMR_BASE_SHFT;
-		map_high("MMIOH", mmioh.s2.base, shift, mmioh.s2.m_io,
-			max_pnode, map_uc);
-	}
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static __init void map_low_mmrs(void)
@@ -842,13 +832,10 @@ void __init uv_system_init(void)
 		uv_cpu_hub_info(cpu)->apic_pnode_shift = uvh_apicid.s.pnode_shift;
 		uv_cpu_hub_info(cpu)->hub_revision = uv_hub_info->hub_revision;
 
-<<<<<<< HEAD
 		uv_cpu_hub_info(cpu)->m_shift = 64 - m_val;
 		uv_cpu_hub_info(cpu)->n_lshift = is_uv2_1_hub() ?
 				(m_val == 40 ? 40 : 39) : m_val;
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		pnode = uv_apicid_to_pnode(apicid);
 		blade = boot_pnode_to_blade(pnode);
 		lcpu = uv_blade_info[blade].nr_possible_cpus;

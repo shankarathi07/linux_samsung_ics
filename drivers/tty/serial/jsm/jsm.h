@@ -183,15 +183,8 @@ struct jsm_board
 /* Our Read/Error/Write queue sizes */
 #define RQUEUEMASK	0x1FFF		/* 8 K - 1 */
 #define EQUEUEMASK	0x1FFF		/* 8 K - 1 */
-<<<<<<< HEAD
 #define RQUEUESIZE	(RQUEUEMASK + 1)
 #define EQUEUESIZE	RQUEUESIZE
-=======
-#define WQUEUEMASK	0x0FFF		/* 4 K - 1 */
-#define RQUEUESIZE	(RQUEUEMASK + 1)
-#define EQUEUESIZE	RQUEUESIZE
-#define WQUEUESIZE	(WQUEUEMASK + 1)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 
 /************************************************************************
@@ -231,13 +224,6 @@ struct jsm_channel {
 	u16		ch_e_head;	/* Head location of the error queue */
 	u16		ch_e_tail;	/* Tail location of the error queue */
 
-<<<<<<< HEAD
-=======
-	u8		*ch_wqueue;	/* Our write queue buffer - malloc'ed */
-	u16		ch_w_head;	/* Head location of the write queue */
-	u16		ch_w_tail;	/* Tail location of the write queue */
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	u64		ch_rxcount;	/* total of data received so far */
 	u64		ch_txcount;	/* total of data transmitted so far */
 
@@ -386,10 +372,6 @@ extern int	jsm_debug;
  * Prototypes for non-static functions used in more than one module
  *
  *************************************************************************/
-<<<<<<< HEAD
-=======
-int jsm_tty_write(struct uart_port *port);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 int jsm_tty_init(struct jsm_board *);
 int jsm_uart_port_init(struct jsm_board *);
 int jsm_remove_uart_port(struct jsm_board *);

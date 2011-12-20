@@ -136,10 +136,7 @@ struct conexant_spec {
 	unsigned int thinkpad:1;
 	unsigned int hp_laptop:1;
 	unsigned int asus:1;
-<<<<<<< HEAD
 	unsigned int single_adc_amp:1;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 	unsigned int adc_switching:1;
 
@@ -4209,11 +4206,8 @@ static int cx_auto_add_capture_volume(struct hda_codec *codec, hda_nid_t nid,
 		int idx = get_input_connection(codec, adc_nid, nid);
 		if (idx < 0)
 			continue;
-<<<<<<< HEAD
 		if (spec->single_adc_amp)
 			idx = 0;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		return cx_auto_add_volume_idx(codec, label, pfx,
 					      cidx, adc_nid, HDA_INPUT, idx);
 	}
@@ -4254,31 +4248,21 @@ static int cx_auto_build_input_controls(struct hda_codec *codec)
 	struct hda_input_mux *imux = &spec->private_imux;
 	const char *prev_label;
 	int input_conn[HDA_MAX_NUM_INPUTS];
-<<<<<<< HEAD
 	int i, j, err, cidx;
 	int multi_connection;
 
 	if (!imux->num_items)
 		return 0;
 
-=======
-	int i, err, cidx;
-	int multi_connection;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	multi_connection = 0;
 	for (i = 0; i < imux->num_items; i++) {
 		cidx = get_input_connection(codec, spec->imux_info[i].adc,
 					    spec->imux_info[i].pin);
-<<<<<<< HEAD
 		if (cidx < 0)
 			continue;
 		input_conn[i] = spec->imux_info[i].adc;
 		if (!spec->single_adc_amp)
 			input_conn[i] |= cidx << 8;
-=======
-		input_conn[i] = (spec->imux_info[i].adc << 8) | cidx;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		if (i > 0 && input_conn[i] != input_conn[0])
 			multi_connection = 1;
 	}
@@ -4307,7 +4291,6 @@ static int cx_auto_build_input_controls(struct hda_codec *codec)
 			err = cx_auto_add_capture_volume(codec, nid,
 							 "Capture", "", cidx);
 		} else {
-<<<<<<< HEAD
 			bool dup_found = false;
 			for (j = 0; j < i; j++) {
 				if (input_conn[j] == input_conn[i]) {
@@ -4317,8 +4300,6 @@ static int cx_auto_build_input_controls(struct hda_codec *codec)
 			}
 			if (dup_found)
 				continue;
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			err = cx_auto_add_capture_volume(codec, nid,
 							 label, " Capture", cidx);
 		}
@@ -4395,7 +4376,6 @@ static int patch_conexant_auto(struct hda_codec *codec)
 		return -ENOMEM;
 	codec->spec = spec;
 	codec->pin_amp_workaround = 1;
-<<<<<<< HEAD
 
 	switch (codec->vendor_id) {
 	case 0x14f15045:
@@ -4403,8 +4383,6 @@ static int patch_conexant_auto(struct hda_codec *codec)
 		break;
 	}
 
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	err = cx_auto_search_adcs(codec);
 	if (err < 0)
 		return err;

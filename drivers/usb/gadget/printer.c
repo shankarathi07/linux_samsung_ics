@@ -1602,11 +1602,7 @@ cleanup(void)
 	if (status)
 		ERROR(dev, "usb_gadget_unregister_driver %x\n", status);
 
-<<<<<<< HEAD
 	unregister_chrdev_region(g_printer_devno, 1);
-=======
-	unregister_chrdev_region(g_printer_devno, 2);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	class_destroy(usb_gadget_class);
 	mutex_unlock(&usb_printer_gadget.lock_printer_io);
 }

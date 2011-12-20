@@ -7,11 +7,7 @@
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
-<<<<<<< HEAD
  */
-=======
-*/
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 /* Hote on 2410 error handling
  *
@@ -26,11 +22,7 @@
  * and change the policy on BREAK
  *
  * BJD, 04-Nov-2004
-<<<<<<< HEAD
  */
-=======
-*/
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 #if defined(CONFIG_SERIAL_SAMSUNG_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
 #define SUPPORT_SYSRQ
@@ -96,7 +88,6 @@ static void s3c24xx_serial_rx_enable(struct uart_port *port)
 	unsigned long flags;
 	unsigned int ucon, ufcon;
 	int count = 10000;
-<<<<<<< HEAD
     
 	spin_lock_irqsave(&port->lock, flags);
     
@@ -111,22 +102,6 @@ static void s3c24xx_serial_rx_enable(struct uart_port *port)
 	ucon |= S3C2410_UCON_RXIRQMODE;
 	wr_regl(port, S3C2410_UCON, ucon);
     
-=======
-
-	spin_lock_irqsave(&port->lock, flags);
-
-	while (--count && !s3c24xx_serial_txempty_nofifo(port))
-		udelay(100);
-
-	ufcon = rd_regl(port, S3C2410_UFCON);
-	ufcon |= S3C2410_UFCON_RESETRX;
-	wr_regl(port, S3C2410_UFCON, ufcon);
-
-	ucon = rd_regl(port, S3C2410_UCON);
-	ucon |= S3C2410_UCON_RXIRQMODE;
-	wr_regl(port, S3C2410_UCON, ucon);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	rx_enabled(port) = 1;
 	spin_unlock_irqrestore(&port->lock, flags);
 }
@@ -135,7 +110,6 @@ static void s3c24xx_serial_rx_disable(struct uart_port *port)
 {
 	unsigned long flags;
 	unsigned int ucon;
-<<<<<<< HEAD
     
 	spin_lock_irqsave(&port->lock, flags);
     
@@ -143,15 +117,6 @@ static void s3c24xx_serial_rx_disable(struct uart_port *port)
 	ucon &= ~S3C2410_UCON_RXIRQMODE;
 	wr_regl(port, S3C2410_UCON, ucon);
     
-=======
-
-	spin_lock_irqsave(&port->lock, flags);
-
-	ucon = rd_regl(port, S3C2410_UCON);
-	ucon &= ~S3C2410_UCON_RXIRQMODE;
-	wr_regl(port, S3C2410_UCON, ucon);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	rx_enabled(port) = 0;
 	spin_unlock_irqrestore(&port->lock, flags);
 }
@@ -159,11 +124,7 @@ static void s3c24xx_serial_rx_disable(struct uart_port *port)
 static void s3c24xx_serial_stop_tx(struct uart_port *port)
 {
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (tx_enabled(port)) {
 		disable_irq_nosync(ourport->tx_irq);
 		tx_enabled(port) = 0;
@@ -175,19 +136,11 @@ static void s3c24xx_serial_stop_tx(struct uart_port *port)
 static void s3c24xx_serial_start_tx(struct uart_port *port)
 {
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
-<<<<<<< HEAD
     
 	if (!tx_enabled(port)) {
 		if (port->flags & UPF_CONS_FLOW)
 			s3c24xx_serial_rx_disable(port);
         
-=======
-
-	if (!tx_enabled(port)) {
-		if (port->flags & UPF_CONS_FLOW)
-			s3c24xx_serial_rx_disable(port);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		enable_irq(ourport->tx_irq);
 		tx_enabled(port) = 1;
 	}
@@ -197,11 +150,7 @@ static void s3c24xx_serial_start_tx(struct uart_port *port)
 static void s3c24xx_serial_stop_rx(struct uart_port *port)
 {
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (rx_enabled(port)) {
 		dbg("s3c24xx_serial_stop_rx: port=%p\n", port);
 		disable_irq_nosync(ourport->rx_irq);
@@ -224,16 +173,11 @@ s3c2410_uartcfg *s3c24xx_port_to_cfg(struct uart_port *port)
 {
 	if (port->dev == NULL)
 		return NULL;
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return (struct s3c2410_uartcfg *)port->dev->platform_data;
 }
 
 static int s3c24xx_serial_rx_fifocnt(struct s3c24xx_uart_port *ourport,
-<<<<<<< HEAD
                                      unsigned long ufstat)
 {
 	struct s3c24xx_uart_info *info = ourport->info;
@@ -241,15 +185,6 @@ static int s3c24xx_serial_rx_fifocnt(struct s3c24xx_uart_port *ourport,
 	if (ufstat & info->rx_fifofull)
 		return info->fifosize;
     
-=======
-				     unsigned long ufstat)
-{
-	struct s3c24xx_uart_info *info = ourport->info;
-
-	if (ufstat & info->rx_fifofull)
-		return info->fifosize;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return (ufstat & info->rx_fifomask) >> info->rx_fifoshift;
 }
 
@@ -265,7 +200,6 @@ s3c24xx_serial_rx_chars(int irq, void *dev_id)
 	struct tty_struct *tty = port->state->port.tty;
 	unsigned int ufcon, ch, flag, ufstat, uerstat;
 	int max_count = 64;
-<<<<<<< HEAD
     
 	while (max_count-- > 0) {
 		ufcon = rd_regl(port, S3C2410_UFCON);
@@ -280,22 +214,6 @@ s3c24xx_serial_rx_chars(int irq, void *dev_id)
 		if (port->flags & UPF_CONS_FLOW) {
 			int txe = s3c24xx_serial_txempty_nofifo(port);
             
-=======
-
-	while (max_count-- > 0) {
-		ufcon = rd_regl(port, S3C2410_UFCON);
-		ufstat = rd_regl(port, S3C2410_UFSTAT);
-
-		if (s3c24xx_serial_rx_fifocnt(ourport, ufstat) == 0)
-			break;
-
-		uerstat = rd_regl(port, S3C2410_UERSTAT);
-		ch = rd_regb(port, S3C2410_URXH);
-
-		if (port->flags & UPF_CONS_FLOW) {
-			int txe = s3c24xx_serial_txempty_nofifo(port);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			if (rx_enabled(port)) {
 				if (!txe) {
 					rx_enabled(port) = 0;
@@ -311,7 +229,6 @@ s3c24xx_serial_rx_chars(int irq, void *dev_id)
 				continue;
 			}
 		}
-<<<<<<< HEAD
         
 		/* insert the character into the buffer */
         
@@ -322,18 +239,6 @@ s3c24xx_serial_rx_chars(int irq, void *dev_id)
 			dbg("rxerr: port ch=0x%02x, rxs=0x%08x\n",
 			    ch, uerstat);
             
-=======
-
-		/* insert the character into the buffer */
-
-		flag = TTY_NORMAL;
-		port->icount.rx++;
-
-		if (unlikely(uerstat & S3C2410_UERSTAT_ANY)) {
-			dbg("rxerr: port ch=0x%02x, rxs=0x%08x\n",
-			    ch, uerstat);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			/* check for break */
 			if (uerstat & S3C2410_UERSTAT_BREAK) {
 				dbg("break!\n");
@@ -341,30 +246,19 @@ s3c24xx_serial_rx_chars(int irq, void *dev_id)
 				if (uart_handle_break(port))
 					goto ignore_char;
 			}
-<<<<<<< HEAD
             
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			if (uerstat & S3C2410_UERSTAT_FRAME)
 				port->icount.frame++;
 			if (uerstat & S3C2410_UERSTAT_OVERRUN)
 				port->icount.overrun++;
-<<<<<<< HEAD
             
 			uerstat &= port->read_status_mask;
             
-=======
-
-			uerstat &= port->read_status_mask;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			if (uerstat & S3C2410_UERSTAT_BREAK)
 				flag = TTY_BREAK;
 			else if (uerstat & S3C2410_UERSTAT_PARITY)
 				flag = TTY_PARITY;
 			else if (uerstat & (S3C2410_UERSTAT_FRAME |
-<<<<<<< HEAD
                                 S3C2410_UERSTAT_OVERRUN))
 				flag = TTY_FRAME;
 		}
@@ -381,24 +275,6 @@ s3c24xx_serial_rx_chars(int irq, void *dev_id)
 	tty_flip_buffer_push(tty);
     
 out:
-=======
-					    S3C2410_UERSTAT_OVERRUN))
-				flag = TTY_FRAME;
-		}
-
-		if (uart_handle_sysrq_char(port, ch))
-			goto ignore_char;
-
-		uart_insert_char(port, uerstat, S3C2410_UERSTAT_OVERRUN,
-				 ch, flag);
-
- ignore_char:
-		continue;
-	}
-	tty_flip_buffer_push(tty);
-
- out:
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return IRQ_HANDLED;
 }
 
@@ -408,35 +284,22 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
 	struct uart_port *port = &ourport->port;
 	struct circ_buf *xmit = &port->state->xmit;
 	int count = 256;
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (port->x_char) {
 		wr_regb(port, S3C2410_UTXH, port->x_char);
 		port->icount.tx++;
 		port->x_char = 0;
 		goto out;
 	}
-<<<<<<< HEAD
     
 	/* if there isn't anything more to transmit, or the uart is now
 	 * stopped, disable the uart and exit
 	 */
     
-=======
-
-	/* if there isn't anything more to transmit, or the uart is now
-	 * stopped, disable the uart and exit
-	 */
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (uart_circ_empty(xmit) || uart_tx_stopped(port)) {
 		s3c24xx_serial_stop_tx(port);
 		goto out;
 	}
-<<<<<<< HEAD
     
 	/* try and drain the buffer... */
     
@@ -444,20 +307,10 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
 		if (rd_regl(port, S3C2410_UFSTAT) & ourport->info->tx_fifofull)
 			break;
         
-=======
-
-	/* try and drain the buffer... */
-
-	while (!uart_circ_empty(xmit) && count-- > 0) {
-		if (rd_regl(port, S3C2410_UFSTAT) & ourport->info->tx_fifofull)
-			break;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		wr_regb(port, S3C2410_UTXH, xmit->buf[xmit->tail]);
 		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
 		port->icount.tx++;
 	}
-<<<<<<< HEAD
     
 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
 		uart_write_wakeup(port);
@@ -466,16 +319,6 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
 		s3c24xx_serial_stop_tx(port);
     
 out:
-=======
-
-	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
-		uart_write_wakeup(port);
-
-	if (uart_circ_empty(xmit))
-		s3c24xx_serial_stop_tx(port);
-
- out:
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return IRQ_HANDLED;
 }
 
@@ -484,26 +327,15 @@ static unsigned int s3c24xx_serial_tx_empty(struct uart_port *port)
 	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
 	unsigned long ufstat = rd_regl(port, S3C2410_UFSTAT);
 	unsigned long ufcon = rd_regl(port, S3C2410_UFCON);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (ufcon & S3C2410_UFCON_FIFOMODE) {
 		if ((ufstat & info->tx_fifomask) != 0 ||
 		    (ufstat & info->tx_fifofull))
 			return 0;
-<<<<<<< HEAD
         
 		return 1;
 	}
     
-=======
-
-		return 1;
-	}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return s3c24xx_serial_txempty_nofifo(port);
 }
 
@@ -511,11 +343,7 @@ static unsigned int s3c24xx_serial_tx_empty(struct uart_port *port)
 static unsigned int s3c24xx_serial_get_mctrl(struct uart_port *port)
 {
 	unsigned int umstat = rd_regb(port, S3C2410_UMSTAT);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (umstat & S3C2410_UMSTAT_CTS)
 		return TIOCM_CAR | TIOCM_DSR | TIOCM_CTS;
 	else
@@ -531,11 +359,7 @@ static void s3c24xx_serial_set_mctrl(struct uart_port *port, unsigned int mctrl)
 		umcon |= S3C2410_UMCOM_AFC;
 	else
 		umcon &= ~S3C2410_UMCOM_AFC;
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	wr_regl(port, S3C2410_UMCON, umcon);
 }
 
@@ -543,53 +367,31 @@ static void s3c24xx_serial_break_ctl(struct uart_port *port, int break_state)
 {
 	unsigned long flags;
 	unsigned int ucon;
-<<<<<<< HEAD
     
 	spin_lock_irqsave(&port->lock, flags);
     
 	ucon = rd_regl(port, S3C2410_UCON);
     
-=======
-
-	spin_lock_irqsave(&port->lock, flags);
-
-	ucon = rd_regl(port, S3C2410_UCON);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (break_state)
 		ucon |= S3C2410_UCON_SBREAK;
 	else
 		ucon &= ~S3C2410_UCON_SBREAK;
-<<<<<<< HEAD
     
 	wr_regl(port, S3C2410_UCON, ucon);
     
-=======
-
-	wr_regl(port, S3C2410_UCON, ucon);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spin_unlock_irqrestore(&port->lock, flags);
 }
 
 static void s3c24xx_serial_shutdown(struct uart_port *port)
 {
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (ourport->tx_claimed) {
 		free_irq(ourport->tx_irq, ourport);
 		tx_enabled(port) = 0;
 		ourport->tx_claimed = 0;
 	}
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (ourport->rx_claimed) {
 		free_irq(ourport->rx_irq, ourport);
 		ourport->rx_claimed = 0;
@@ -602,7 +404,6 @@ static int s3c24xx_serial_startup(struct uart_port *port)
 {
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
 	int ret;
-<<<<<<< HEAD
     
 	dbg("s3c24xx_serial_startup: port=%p (%08lx,%p)\n",
 	    port, port->mapbase, port->membase);
@@ -612,22 +413,10 @@ static int s3c24xx_serial_startup(struct uart_port *port)
 	ret = request_irq(ourport->rx_irq, s3c24xx_serial_rx_chars, 0,
                       s3c24xx_serial_portname(port), ourport);
     
-=======
-
-	dbg("s3c24xx_serial_startup: port=%p (%08lx,%p)\n",
-	    port, port->mapbase, port->membase);
-
-	rx_enabled(port) = 1;
-
-	ret = request_irq(ourport->rx_irq, s3c24xx_serial_rx_chars, 0,
-			  s3c24xx_serial_portname(port), ourport);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (ret != 0) {
 		printk(KERN_ERR "cannot get irq %d\n", ourport->rx_irq);
 		return ret;
 	}
-<<<<<<< HEAD
     
 	ourport->rx_claimed = 1;
     
@@ -638,23 +427,10 @@ static int s3c24xx_serial_startup(struct uart_port *port)
 	ret = request_irq(ourport->tx_irq, s3c24xx_serial_tx_chars, 0,
                       s3c24xx_serial_portname(port), ourport);
     
-=======
-
-	ourport->rx_claimed = 1;
-
-	dbg("requesting tx irq...\n");
-
-	tx_enabled(port) = 1;
-
-	ret = request_irq(ourport->tx_irq, s3c24xx_serial_tx_chars, 0,
-			  s3c24xx_serial_portname(port), ourport);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (ret) {
 		printk(KERN_ERR "cannot get irq %d\n", ourport->tx_irq);
 		goto err;
 	}
-<<<<<<< HEAD
     
 	ourport->tx_claimed = 1;
     
@@ -666,26 +442,12 @@ static int s3c24xx_serial_startup(struct uart_port *port)
 	return ret;
     
 err:
-=======
-
-	ourport->tx_claimed = 1;
-
-	dbg("s3c24xx_serial_startup ok\n");
-
-	/* the port reset code should have done the correct
-	 * register setup for the port controls */
-
-	return ret;
-
- err:
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	s3c24xx_serial_shutdown(port);
 	return ret;
 }
 
 /* power power management control */
 
-<<<<<<< HEAD
 #ifdef CONFIG_CPU_DIDLE
 static bool gps_running = false;
 
@@ -733,37 +495,6 @@ static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
             break;
         default:
             printk(KERN_ERR "s3c24xx_serial: unknown pm %d\n", level);
-=======
-static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
-			      unsigned int old)
-{
-	struct s3c24xx_uart_port *ourport = to_ourport(port);
-
-	ourport->pm_level = level;
-
-	switch (level) {
-	case 3:
-		disable_irq(ourport->tx_irq);
-		disable_irq(ourport->rx_irq);
-
-		if (!IS_ERR(ourport->baudclk) && ourport->baudclk != NULL)
-			clk_disable(ourport->baudclk);
-
-		clk_disable(ourport->clk);
-		break;
-
-	case 0:
-		clk_enable(ourport->clk);
-
-		if (!IS_ERR(ourport->baudclk) && ourport->baudclk != NULL)
-			clk_enable(ourport->baudclk);
-
-		enable_irq(ourport->tx_irq);
-		enable_irq(ourport->rx_irq);
-		break;
-	default:
-		printk(KERN_ERR "s3c24xx_serial: unknown pm %d\n", level);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 }
 
@@ -778,11 +509,7 @@ static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
  * baud clocks (and the resultant actual baud rates) and then tries to
  * pick the closest one and select that.
  *
-<<<<<<< HEAD
  */
-=======
-*/
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 
 #define MAX_CLKS (8)
@@ -798,11 +525,7 @@ static inline int
 s3c24xx_serial_getsource(struct uart_port *port, struct s3c24xx_uart_clksrc *c)
 {
 	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return (info->get_clksrc)(port, c);
 }
 
@@ -810,11 +533,7 @@ static inline int
 s3c24xx_serial_setsource(struct uart_port *port, struct s3c24xx_uart_clksrc *c)
 {
 	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return (info->set_clksrc)(port, c);
 }
 
@@ -827,7 +546,6 @@ struct baud_calc {
 };
 
 static int s3c24xx_serial_calcbaud(struct baud_calc *calc,
-<<<<<<< HEAD
                                    struct uart_port *port,
                                    struct s3c24xx_uart_clksrc *clksrc,
                                    unsigned int baud)
@@ -847,27 +565,6 @@ static int s3c24xx_serial_calcbaud(struct baud_calc *calc,
 	if (ourport->info->has_divslot) {
 		unsigned long div = rate / baud;
         
-=======
-				   struct uart_port *port,
-				   struct s3c24xx_uart_clksrc *clksrc,
-				   unsigned int baud)
-{
-	struct s3c24xx_uart_port *ourport = to_ourport(port);
-	unsigned long rate;
-
-	calc->src = clk_get(port->dev, clksrc->name);
-	if (calc->src == NULL || IS_ERR(calc->src))
-		return 0;
-
-	rate = clk_get_rate(calc->src);
-	rate /= clksrc->divisor;
-
-	calc->clksrc = clksrc;
-
-	if (ourport->info->has_divslot) {
-		unsigned long div = rate / baud;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		/* The UDIVSLOT register on the newer UARTs allows us to
 		 * get a divisor adjustment of 1/16th on the baud clock.
 		 *
@@ -875,43 +572,28 @@ static int s3c24xx_serial_calcbaud(struct baud_calc *calc,
 		 * by not multiplying the baud by 16) as it is easy enough
 		 * to recalculate.
 		 */
-<<<<<<< HEAD
         
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		calc->quot = div / 16;
 		calc->calc = rate / div;
 	} else {
 		calc->quot = (rate + (8 * baud)) / (16 * baud);
 		calc->calc = (rate / (calc->quot * 16));
 	}
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	calc->quot--;
 	return 1;
 }
 
 static unsigned int s3c24xx_serial_getclk(struct uart_port *port,
-<<<<<<< HEAD
                                           struct s3c24xx_uart_clksrc **clksrc,
                                           struct clk **clk,
                                           unsigned int baud)
-=======
-					  struct s3c24xx_uart_clksrc **clksrc,
-					  struct clk **clk,
-					  unsigned int baud)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 {
 	struct s3c2410_uartcfg *cfg = s3c24xx_port_to_cfg(port);
 	struct s3c24xx_uart_clksrc *clkp;
 	struct baud_calc res[MAX_CLKS];
 	struct baud_calc *resptr, *best, *sptr;
 	int i;
-<<<<<<< HEAD
     
 	clkp = cfg->clocks;
 	best = NULL;
@@ -933,60 +615,25 @@ static unsigned int s3c24xx_serial_getclk(struct uart_port *port,
 			 * not, then re-select fclk
 			 */
             
-=======
-
-	clkp = cfg->clocks;
-	best = NULL;
-
-	if (cfg->clocks_size < 2) {
-		if (cfg->clocks_size == 0)
-			clkp = &tmp_clksrc;
-
-		/* check to see if we're sourcing fclk, and if so we're
-		 * going to have to update the clock source
-		 */
-
-		if (strcmp(clkp->name, "fclk") == 0) {
-			struct s3c24xx_uart_clksrc src;
-
-			s3c24xx_serial_getsource(port, &src);
-
-			/* check that the port already using fclk, and if
-			 * not, then re-select fclk
-			 */
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			if (strcmp(src.name, clkp->name) == 0) {
 				s3c24xx_serial_setsource(port, clkp);
 				s3c24xx_serial_getsource(port, &src);
 			}
-<<<<<<< HEAD
             
 			clkp->divisor = src.divisor;
 		}
         
-=======
-
-			clkp->divisor = src.divisor;
-		}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		s3c24xx_serial_calcbaud(res, port, clkp, baud);
 		best = res;
 		resptr = best + 1;
 	} else {
 		resptr = res;
-<<<<<<< HEAD
         
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		for (i = 0; i < cfg->clocks_size; i++, clkp++) {
 			if (s3c24xx_serial_calcbaud(resptr, port, clkp, baud))
 				resptr++;
 		}
 	}
-<<<<<<< HEAD
     
 	/* ok, we now need to select the best clock we found */
     
@@ -994,45 +641,23 @@ static unsigned int s3c24xx_serial_getclk(struct uart_port *port,
 		unsigned int deviation = (1<<30)|((1<<30)-1);
 		int calc_deviation;
         
-=======
-
-	/* ok, we now need to select the best clock we found */
-
-	if (!best) {
-		unsigned int deviation = (1<<30)|((1<<30)-1);
-		int calc_deviation;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		for (sptr = res; sptr < resptr; sptr++) {
 			calc_deviation = baud - sptr->calc;
 			if (calc_deviation < 0)
 				calc_deviation = -calc_deviation;
-<<<<<<< HEAD
             
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			if (calc_deviation < deviation) {
 				best = sptr;
 				deviation = calc_deviation;
 			}
 		}
 	}
-<<<<<<< HEAD
     
 	/* store results to pass back */
     
 	*clksrc = best->clksrc;
 	*clk    = best->src;
     
-=======
-
-	/* store results to pass back */
-
-	*clksrc = best->clksrc;
-	*clk    = best->src;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return best->quot;
 }
 
@@ -1061,13 +686,8 @@ static u16 udivslot_table[16] = {
 };
 
 static void s3c24xx_serial_set_termios(struct uart_port *port,
-<<<<<<< HEAD
                                        struct ktermios *termios,
                                        struct ktermios *old)
-=======
-				       struct ktermios *termios,
-				       struct ktermios *old)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 {
 	struct s3c2410_uartcfg *cfg = s3c24xx_port_to_cfg(port);
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
@@ -1078,17 +698,12 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
 	unsigned int ulcon;
 	unsigned int umcon;
 	unsigned int udivslot = 0;
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/*
 	 * We don't support modem control lines.
 	 */
 	termios->c_cflag &= ~(HUPCL | CMSPAR);
 	termios->c_cflag |= CLOCAL;
-<<<<<<< HEAD
     
 	/*
 	 * Ask the core to calculate the divisor for us.
@@ -1096,20 +711,10 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
     
 	baud = uart_get_baud_rate(port, termios, old, 0, 3000000);
     
-=======
-
-	/*
-	 * Ask the core to calculate the divisor for us.
-	 */
-
-	baud = uart_get_baud_rate(port, termios, old, 0, 3000000);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (baud == 38400 && (port->flags & UPF_SPD_MASK) == UPF_SPD_CUST)
 		quot = port->custom_divisor;
 	else
 		quot = s3c24xx_serial_getclk(port, &clksrc, &clk, baud);
-<<<<<<< HEAD
     
 	/* check to see if we need  to change clock source */
     
@@ -1117,43 +722,21 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
 		dbg("selecting clock %p\n", clk);
 		s3c24xx_serial_setsource(port, clksrc);
         
-=======
-
-	/* check to see if we need  to change clock source */
-
-	if (ourport->clksrc != clksrc || ourport->baudclk != clk) {
-		dbg("selecting clock %p\n", clk);
-		s3c24xx_serial_setsource(port, clksrc);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		if (ourport->baudclk != NULL && !IS_ERR(ourport->baudclk)) {
 			clk_disable(ourport->baudclk);
 			ourport->baudclk  = NULL;
 		}
-<<<<<<< HEAD
         
 		clk_enable(clk);
         
-=======
-
-		clk_enable(clk);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		ourport->clksrc = clksrc;
 		ourport->baudclk = clk;
 		ourport->baudclk_rate = clk ? clk_get_rate(clk) : 0;
 	}
-<<<<<<< HEAD
     
 	if (ourport->info->has_divslot) {
 		unsigned int div = ourport->baudclk_rate / baud;
         
-=======
-
-	if (ourport->info->has_divslot) {
-		unsigned int div = ourport->baudclk_rate / baud;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		if (cfg->has_fracval) {
 			udivslot = (div & 15);
 			dbg("fracval = %04x\n", udivslot);
@@ -1162,7 +745,6 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
 			dbg("udivslot = %04x (div %d)\n", udivslot, div & 15);
 		}
 	}
-<<<<<<< HEAD
     
 	switch (termios->c_cflag & CSIZE) {
         case CS5:
@@ -1192,37 +774,6 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
     
 	umcon = (termios->c_cflag & CRTSCTS) ? S3C2410_UMCOM_AFC : 0;
     
-=======
-
-	switch (termios->c_cflag & CSIZE) {
-	case CS5:
-		dbg("config: 5bits/char\n");
-		ulcon = S3C2410_LCON_CS5;
-		break;
-	case CS6:
-		dbg("config: 6bits/char\n");
-		ulcon = S3C2410_LCON_CS6;
-		break;
-	case CS7:
-		dbg("config: 7bits/char\n");
-		ulcon = S3C2410_LCON_CS7;
-		break;
-	case CS8:
-	default:
-		dbg("config: 8bits/char\n");
-		ulcon = S3C2410_LCON_CS8;
-		break;
-	}
-
-	/* preserve original lcon IR settings */
-	ulcon |= (cfg->ulcon & S3C2410_LCON_IRM);
-
-	if (termios->c_cflag & CSTOPB)
-		ulcon |= S3C2410_LCON_STOPB;
-
-	umcon = (termios->c_cflag & CRTSCTS) ? S3C2410_UMCOM_AFC : 0;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (termios->c_cflag & PARENB) {
 		if (termios->c_cflag & PARODD)
 			ulcon |= S3C2410_LCON_PODD;
@@ -1231,7 +782,6 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
 	} else {
 		ulcon |= S3C2410_LCON_PNONE;
 	}
-<<<<<<< HEAD
     
 	spin_lock_irqsave(&port->lock, flags);
     
@@ -1245,52 +795,24 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
 	if (ourport->info->has_divslot)
 		wr_regl(port, S3C2443_DIVSLOT, udivslot);
     
-=======
-
-	spin_lock_irqsave(&port->lock, flags);
-
-	dbg("setting ulcon to %08x, brddiv to %d, udivslot %08x\n",
-	    ulcon, quot, udivslot);
-
-	wr_regl(port, S3C2410_ULCON, ulcon);
-	wr_regl(port, S3C2410_UBRDIV, quot);
-	wr_regl(port, S3C2410_UMCON, umcon);
-
-	if (ourport->info->has_divslot)
-		wr_regl(port, S3C2443_DIVSLOT, udivslot);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	dbg("uart: ulcon = 0x%08x, ucon = 0x%08x, ufcon = 0x%08x\n",
 	    rd_regl(port, S3C2410_ULCON),
 	    rd_regl(port, S3C2410_UCON),
 	    rd_regl(port, S3C2410_UFCON));
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/*
 	 * Update the per-port timeout.
 	 */
 	uart_update_timeout(port, termios->c_cflag, baud);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/*
 	 * Which character status flags are we interested in?
 	 */
 	port->read_status_mask = S3C2410_UERSTAT_OVERRUN;
 	if (termios->c_iflag & INPCK)
 		port->read_status_mask |= S3C2410_UERSTAT_FRAME
-<<<<<<< HEAD
         | S3C2410_UERSTAT_PARITY;
     
-=======
-				       | S3C2410_UERSTAT_PARITY;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/*
 	 * Which character status flags should we ignore?
 	 */
@@ -1299,28 +821,19 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
 		port->ignore_status_mask |= S3C2410_UERSTAT_OVERRUN;
 	if (termios->c_iflag & IGNBRK && termios->c_iflag & IGNPAR)
 		port->ignore_status_mask |= S3C2410_UERSTAT_FRAME;
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/*
 	 * Ignore all characters if CREAD is not set.
 	 */
 	if ((termios->c_cflag & CREAD) == 0)
 		port->ignore_status_mask |= RXSTAT_DUMMY_READ;
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	spin_unlock_irqrestore(&port->lock, flags);
 }
 
 static const char *s3c24xx_serial_type(struct uart_port *port)
 {
 	switch (port->type) {
-<<<<<<< HEAD
         case PORT_S3C2410:
             return "S3C2410";
         case PORT_S3C2440:
@@ -1331,18 +844,6 @@ static const char *s3c24xx_serial_type(struct uart_port *port)
             return "S3C6400/10";
         default:
             return NULL;
-=======
-	case PORT_S3C2410:
-		return "S3C2410";
-	case PORT_S3C2440:
-		return "S3C2440";
-	case PORT_S3C2412:
-		return "S3C2412";
-	case PORT_S3C6400:
-		return "S3C6400/10";
-	default:
-		return NULL;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 }
 
@@ -1362,11 +863,7 @@ static int s3c24xx_serial_request_port(struct uart_port *port)
 static void s3c24xx_serial_config_port(struct uart_port *port, int flags)
 {
 	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (flags & UART_CONFIG_TYPE &&
 	    s3c24xx_serial_request_port(port) == 0)
 		port->type = info->type;
@@ -1379,17 +876,10 @@ static int
 s3c24xx_serial_verify_port(struct uart_port *port, struct serial_struct *ser)
 {
 	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
-<<<<<<< HEAD
     
 	if (ser->type != PORT_UNKNOWN && ser->type != info->type)
 		return -EINVAL;
     
-=======
-
-	if (ser->type != PORT_UNKNOWN && ser->type != info->type)
-		return -EINVAL;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return 0;
 }
 
@@ -1397,11 +887,7 @@ static void
 s3c24xx_serial_wake_peer(struct uart_port *port)
 {
 	struct s3c2410_uartcfg *cfg = s3c24xx_port_to_cfg(port);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (cfg->wake_peer)
 		cfg->wake_peer(port);
 }
@@ -1448,11 +934,7 @@ static struct uart_driver s3c24xx_uart_drv = {
 };
 
 static struct s3c24xx_uart_port
-<<<<<<< HEAD
 s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS] = {
-=======
-	s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS] = {
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	[0] = {
 		.port = {
 			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[0].port.lock),
@@ -1478,11 +960,7 @@ s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS] = {
 		}
 	},
 #if CONFIG_SERIAL_SAMSUNG_UARTS > 2
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	[2] = {
 		.port = {
 			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[2].port.lock),
@@ -1516,7 +994,6 @@ s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS] = {
  *
  * wrapper to call the specific reset for this port (reset the fifos
  * and the settings)
-<<<<<<< HEAD
  */
 
 static inline int s3c24xx_serial_resetport(struct uart_port *port,
@@ -1524,15 +1001,6 @@ static inline int s3c24xx_serial_resetport(struct uart_port *port,
 {
 	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
     
-=======
-*/
-
-static inline int s3c24xx_serial_resetport(struct uart_port *port,
-					   struct s3c2410_uartcfg *cfg)
-{
-	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return (info->reset_port)(port, cfg);
 }
 
@@ -1540,7 +1008,6 @@ static inline int s3c24xx_serial_resetport(struct uart_port *port,
 #ifdef CONFIG_CPU_FREQ
 
 static int s3c24xx_serial_cpufreq_transition(struct notifier_block *nb,
-<<<<<<< HEAD
                                              unsigned long val, void *data)
 {
 	struct s3c24xx_uart_port *port;
@@ -1554,26 +1021,10 @@ static int s3c24xx_serial_cpufreq_transition(struct notifier_block *nb,
 	if (port->pm_level != 0)
 		return 0;
     
-=======
-					     unsigned long val, void *data)
-{
-	struct s3c24xx_uart_port *port;
-	struct uart_port *uport;
-
-	port = container_of(nb, struct s3c24xx_uart_port, freq_transition);
-	uport = &port->port;
-
-	/* check to see if port is enabled */
-
-	if (port->pm_level != 0)
-		return 0;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/* try and work out if the baudrate is changing, we can detect
 	 * a change in rate, but we do not have support for detecting
 	 * a disturbance in the clock-rate over the change.
 	 */
-<<<<<<< HEAD
     
 	if (IS_ERR(port->clk))
 		goto exit;
@@ -1599,50 +1050,15 @@ static int s3c24xx_serial_cpufreq_transition(struct notifier_block *nb,
         
 		termios = tty->termios;
         
-=======
-
-	if (IS_ERR(port->clk))
-		goto exit;
-
-	if (port->baudclk_rate == clk_get_rate(port->clk))
-		goto exit;
-
-	if (val == CPUFREQ_PRECHANGE) {
-		/* we should really shut the port down whilst the
-		 * frequency change is in progress. */
-
-	} else if (val == CPUFREQ_POSTCHANGE) {
-		struct ktermios *termios;
-		struct tty_struct *tty;
-
-		if (uport->state == NULL)
-			goto exit;
-
-		tty = uport->state->port.tty;
-
-		if (tty == NULL)
-			goto exit;
-
-		termios = tty->termios;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		if (termios == NULL) {
 			printk(KERN_WARNING "%s: no termios?\n", __func__);
 			goto exit;
 		}
-<<<<<<< HEAD
         
 		s3c24xx_serial_set_termios(uport, termios, NULL);
 	}
     
 exit:
-=======
-
-		s3c24xx_serial_set_termios(uport, termios, NULL);
-	}
-
- exit:
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return 0;
 }
 
@@ -1650,26 +1066,16 @@ static inline int
 s3c24xx_serial_cpufreq_register(struct s3c24xx_uart_port *port)
 {
 	port->freq_transition.notifier_call = s3c24xx_serial_cpufreq_transition;
-<<<<<<< HEAD
     
 	return cpufreq_register_notifier(&port->freq_transition,
                                      CPUFREQ_TRANSITION_NOTIFIER);
-=======
-
-	return cpufreq_register_notifier(&port->freq_transition,
-					 CPUFREQ_TRANSITION_NOTIFIER);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 static inline void
 s3c24xx_serial_cpufreq_deregister(struct s3c24xx_uart_port *port)
 {
 	cpufreq_unregister_notifier(&port->freq_transition,
-<<<<<<< HEAD
                                 CPUFREQ_TRANSITION_NOTIFIER);
-=======
-				    CPUFREQ_TRANSITION_NOTIFIER);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 #else
@@ -1691,19 +1097,13 @@ s3c24xx_serial_cpufreq_deregister(struct s3c24xx_uart_port *port)
  */
 
 static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
-<<<<<<< HEAD
                                     struct s3c24xx_uart_info *info,
                                     struct platform_device *platdev)
-=======
-				    struct s3c24xx_uart_info *info,
-				    struct platform_device *platdev)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 {
 	struct uart_port *port = &ourport->port;
 	struct s3c2410_uartcfg *cfg;
 	struct resource *res;
 	int ret;
-<<<<<<< HEAD
     
 	dbg("s3c24xx_serial_init_port: port=%p, platdev=%p\n", port, platdev);
     
@@ -1715,25 +1115,11 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
 	if (port->mapbase != 0)
 		return 0;
     
-=======
-
-	dbg("s3c24xx_serial_init_port: port=%p, platdev=%p\n", port, platdev);
-
-	if (platdev == NULL)
-		return -ENODEV;
-
-	cfg = s3c24xx_dev_to_cfg(&platdev->dev);
-
-	if (port->mapbase != 0)
-		return 0;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (cfg->hwport > CONFIG_SERIAL_SAMSUNG_UARTS) {
 		printk(KERN_ERR "%s: port %d bigger than %d\n", __func__,
 		       cfg->hwport, CONFIG_SERIAL_SAMSUNG_UARTS);
 		return -ERANGE;
 	}
-<<<<<<< HEAD
     
 	/* setup info for port */
 	port->dev	= &platdev->dev;
@@ -1746,47 +1132,21 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
     
 	port->uartclk = 1;
     
-=======
-
-	/* setup info for port */
-	port->dev	= &platdev->dev;
-	ourport->info	= info;
-
-	/* copy the info in from provided structure */
-	ourport->port.fifosize = info->fifosize;
-
-	dbg("s3c24xx_serial_init_port: %p (hw %d)...\n", port, cfg->hwport);
-
-	port->uartclk = 1;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (cfg->uart_flags & UPF_CONS_FLOW) {
 		dbg("s3c24xx_serial_init_port: enabling flow control\n");
 		port->flags |= UPF_CONS_FLOW;
 	}
-<<<<<<< HEAD
     
 	/* sort our the physical and virtual addresses for each UART */
     
-=======
-
-	/* sort our the physical and virtual addresses for each UART */
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	res = platform_get_resource(platdev, IORESOURCE_MEM, 0);
 	if (res == NULL) {
 		printk(KERN_ERR "failed to find memory resource for uart\n");
 		return -EINVAL;
 	}
-<<<<<<< HEAD
     
 	dbg("resource %p (%lx..%lx)\n", res, res->start, res->end);
     
-=======
-
-	dbg("resource %p (%lx..%lx)\n", res, res->start, res->end);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	port->mapbase = res->start;
 	port->membase = S3C_VA_UART + (res->start & 0xfffff);
 	ret = platform_get_irq(platdev, 0);
@@ -1797,7 +1157,6 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
 		ourport->rx_irq = ret;
 		ourport->tx_irq = ret + 1;
 	}
-<<<<<<< HEAD
     
 	ret = platform_get_irq(platdev, 1);
 	if (ret > 0)
@@ -1814,43 +1173,16 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
     
 	s3c_setup_uart_cfg_gpio(cfg->hwport);
     
-=======
-
-	ret = platform_get_irq(platdev, 1);
-	if (ret > 0)
-		ourport->tx_irq = ret;
-
-	ourport->clk	= clk_get(&platdev->dev, "uart");
-
-	dbg("port: map=%08x, mem=%08x, irq=%d (%d,%d), clock=%ld\n",
-	    port->mapbase, port->membase, port->irq,
-	    ourport->rx_irq, ourport->tx_irq, port->uartclk);
-
-	/* reset the fifos (and setup the uart) */
-	s3c24xx_serial_resetport(port, cfg);
-
-	s3c_setup_uart_cfg_gpio(cfg->hwport);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return 0;
 }
 
 static ssize_t s3c24xx_serial_show_clksrc(struct device *dev,
-<<<<<<< HEAD
                                           struct device_attribute *attr,
                                           char *buf)
 {
 	struct uart_port *port = s3c24xx_dev_to_port(dev);
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
     
-=======
-					  struct device_attribute *attr,
-					  char *buf)
-{
-	struct uart_port *port = s3c24xx_dev_to_port(dev);
-	struct s3c24xx_uart_port *ourport = to_ourport(port);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return snprintf(buf, PAGE_SIZE, "* %s\n", ourport->clksrc->name);
 }
 
@@ -1859,7 +1191,6 @@ static DEVICE_ATTR(clock_source, S_IRUGO, s3c24xx_serial_show_clksrc, NULL);
 /* Device driver serial port probe */
 
 int s3c24xx_serial_probe(struct platform_device *dev,
-<<<<<<< HEAD
                          struct s3c24xx_uart_info *info)
 {
 	struct s3c24xx_uart_port *ourport;
@@ -1867,20 +1198,10 @@ int s3c24xx_serial_probe(struct platform_device *dev,
     
 	dbg("s3c24xx_serial_probe(%p, %p) %d\n", dev, info, dev->id);
     
-=======
-			 struct s3c24xx_uart_info *info)
-{
-	struct s3c24xx_uart_port *ourport;
-	int ret;
-
-	dbg("s3c24xx_serial_probe(%p, %p) %d\n", dev, info, dev->id);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (dev->id >= ARRAY_SIZE(s3c24xx_serial_ports)) {
 		dev_err(&dev->dev, "unsupported device id %d\n", dev->id);
 		return -ENODEV;
 	}
-<<<<<<< HEAD
     
 	ourport = &s3c24xx_serial_ports[dev->id];
     
@@ -1905,32 +1226,6 @@ int s3c24xx_serial_probe(struct platform_device *dev,
 	return 0;
     
 probe_err:
-=======
-
-	ourport = &s3c24xx_serial_ports[dev->id];
-
-	dbg("%s: initialising port %p...\n", __func__, ourport);
-
-	ret = s3c24xx_serial_init_port(ourport, info, dev);
-	if (ret < 0)
-		goto probe_err;
-
-	dbg("%s: adding port\n", __func__);
-	uart_add_one_port(&s3c24xx_uart_drv, &ourport->port);
-	platform_set_drvdata(dev, &ourport->port);
-
-	ret = device_create_file(&dev->dev, &dev_attr_clock_source);
-	if (ret < 0)
-		printk(KERN_ERR "%s: failed to add clksrc attr.\n", __func__);
-
-	ret = s3c24xx_serial_cpufreq_register(ourport);
-	if (ret < 0)
-		dev_err(&dev->dev, "failed to add cpufreq notifier\n");
-
-	return 0;
-
- probe_err:
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return ret;
 }
 EXPORT_SYMBOL_GPL(s3c24xx_serial_probe);
@@ -1938,21 +1233,13 @@ EXPORT_SYMBOL_GPL(s3c24xx_serial_probe);
 int __devexit s3c24xx_serial_remove(struct platform_device *dev)
 {
 	struct uart_port *port = s3c24xx_dev_to_port(&dev->dev);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (port) {
 		s3c24xx_serial_cpufreq_deregister(to_ourport(port));
 		device_remove_file(&dev->dev, &dev_attr_clock_source);
 		uart_remove_one_port(&s3c24xx_uart_drv, port);
 	}
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return 0;
 }
 EXPORT_SYMBOL_GPL(s3c24xx_serial_remove);
@@ -1964,7 +1251,6 @@ EXPORT_SYMBOL_GPL(s3c24xx_serial_remove);
 #include <plat/pm.h>
 
 #define SAVE_UART(va) \
-<<<<<<< HEAD
 SAVE_ITEM((va) + S3C2410_ULCON), \
 SAVE_ITEM((va) + S3C2410_UCON), \
 SAVE_ITEM((va) + S3C2410_UFCON), \
@@ -1972,15 +1258,6 @@ SAVE_ITEM((va) + S3C2410_UMCON), \
 SAVE_ITEM((va) + S3C2410_UBRDIV), \
 SAVE_ITEM((va) + S3C2410_UDIVSLOT), \
 SAVE_ITEM((va) + S3C2410_UINTMSK)
-=======
-	 SAVE_ITEM((va) + S3C2410_ULCON), \
-	 SAVE_ITEM((va) + S3C2410_UCON), \
-	 SAVE_ITEM((va) + S3C2410_UFCON), \
-	 SAVE_ITEM((va) + S3C2410_UMCON), \
-	 SAVE_ITEM((va) + S3C2410_UBRDIV), \
-	 SAVE_ITEM((va) + S3C2410_UDIVSLOT), \
-	 SAVE_ITEM((va) + S3C2410_UINTMSK)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 static struct sleep_save uart_save[] = {
 	SAVE_UART(S3C_VA_UARTx(0)),
@@ -1995,7 +1272,6 @@ static int
 s3c24xx_serial_suspend(struct platform_device *dev, pm_message_t state)
 {
 	struct uart_port *port = s3c24xx_dev_to_port(&dev->dev);
-<<<<<<< HEAD
     
 	if (port) {
 		uart_suspend_port(&s3c24xx_uart_drv, port);
@@ -2003,15 +1279,6 @@ s3c24xx_serial_suspend(struct platform_device *dev, pm_message_t state)
                        SAVE_UART_PORT);
 	}
     
-=======
-
-	if (port) {
-		uart_suspend_port(&s3c24xx_uart_drv, port);
-		s3c_pm_do_save(uart_save + port->line * SAVE_UART_PORT,
-				SAVE_UART_PORT);
-	}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return 0;
 }
 
@@ -2019,53 +1286,30 @@ static int s3c24xx_serial_resume(struct platform_device *dev)
 {
 	struct uart_port *port = s3c24xx_dev_to_port(&dev->dev);
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (port) {
 		clk_enable(ourport->clk);
 		s3c24xx_serial_resetport(port, s3c24xx_port_to_cfg(port));
 		s3c_pm_do_restore(uart_save + port->line * SAVE_UART_PORT,
-<<<<<<< HEAD
                           SAVE_UART_PORT);
 		clk_disable(ourport->clk);
 		uart_resume_port(&s3c24xx_uart_drv, port);
 	}
     
-=======
-				SAVE_UART_PORT);
-		clk_disable(ourport->clk);
-		uart_resume_port(&s3c24xx_uart_drv, port);
-	}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return 0;
 }
 #endif
 
 int s3c24xx_serial_init(struct platform_driver *drv,
-<<<<<<< HEAD
                         struct s3c24xx_uart_info *info)
 {
 	dbg("s3c24xx_serial_init(%p,%p)\n", drv, info);
     
-=======
-			struct s3c24xx_uart_info *info)
-{
-	dbg("s3c24xx_serial_init(%p,%p)\n", drv, info);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 #ifdef CONFIG_PM
 	drv->suspend = s3c24xx_serial_suspend;
 	drv->resume = s3c24xx_serial_resume;
 #endif
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return platform_driver_register(drv);
 }
 EXPORT_SYMBOL_GPL(s3c24xx_serial_init);
@@ -2075,21 +1319,13 @@ EXPORT_SYMBOL_GPL(s3c24xx_serial_init);
 static int __init s3c24xx_serial_modinit(void)
 {
 	int ret;
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	ret = uart_register_driver(&s3c24xx_uart_drv);
 	if (ret < 0) {
 		printk(KERN_ERR "failed to register UART driver\n");
 		return -1;
 	}
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return 0;
 }
 
@@ -2112,7 +1348,6 @@ s3c24xx_serial_console_txrdy(struct uart_port *port, unsigned int ufcon)
 {
 	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
 	unsigned long ufstat, utrstat;
-<<<<<<< HEAD
     
 	if (ufcon & S3C2410_UFCON_FIFOMODE) {
 		/* fifo mode - check amount of data in fifo registers... */
@@ -2123,18 +1358,6 @@ s3c24xx_serial_console_txrdy(struct uart_port *port, unsigned int ufcon)
     
 	/* in non-fifo mode, we go and use the tx buffer empty */
     
-=======
-
-	if (ufcon & S3C2410_UFCON_FIFOMODE) {
-		/* fifo mode - check amount of data in fifo registers... */
-
-		ufstat = rd_regl(port, S3C2410_UFSTAT);
-		return (ufstat & info->tx_fifofull) ? 0 : 1;
-	}
-
-	/* in non-fifo mode, we go and use the tx buffer empty */
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	utrstat = rd_regl(port, S3C2410_UTRSTAT);
 	return (utrstat & S3C2410_UTRSTAT_TXE) ? 1 : 0;
 }
@@ -2150,22 +1373,14 @@ s3c24xx_serial_console_putchar(struct uart_port *port, int ch)
 
 static void
 s3c24xx_serial_console_write(struct console *co, const char *s,
-<<<<<<< HEAD
                              unsigned int count)
-=======
-			     unsigned int count)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 {
 	uart_console_write(cons_uart, s, count, s3c24xx_serial_console_putchar);
 }
 
 static void __init
 s3c24xx_serial_get_options(struct uart_port *port, int *baud,
-<<<<<<< HEAD
                            int *parity, int *bits)
-=======
-			   int *parity, int *bits)
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 {
 	struct s3c24xx_uart_clksrc clksrc;
 	struct clk *clk;
@@ -2173,7 +1388,6 @@ s3c24xx_serial_get_options(struct uart_port *port, int *baud,
 	unsigned int ucon;
 	unsigned int ubrdiv;
 	unsigned long rate;
-<<<<<<< HEAD
     
 	ulcon  = rd_regl(port, S3C2410_ULCON);
 	ucon   = rd_regl(port, S3C2410_UCON);
@@ -2220,92 +1434,30 @@ s3c24xx_serial_get_options(struct uart_port *port, int *baud,
         
 		s3c24xx_serial_getsource(port, &clksrc);
         
-=======
-
-	ulcon  = rd_regl(port, S3C2410_ULCON);
-	ucon   = rd_regl(port, S3C2410_UCON);
-	ubrdiv = rd_regl(port, S3C2410_UBRDIV);
-
-	dbg("s3c24xx_serial_get_options: port=%p\n"
-	    "registers: ulcon=%08x, ucon=%08x, ubdriv=%08x\n",
-	    port, ulcon, ucon, ubrdiv);
-
-	if ((ucon & 0xf) != 0) {
-		/* consider the serial port configured if the tx/rx mode set */
-
-		switch (ulcon & S3C2410_LCON_CSMASK) {
-		case S3C2410_LCON_CS5:
-			*bits = 5;
-			break;
-		case S3C2410_LCON_CS6:
-			*bits = 6;
-			break;
-		case S3C2410_LCON_CS7:
-			*bits = 7;
-			break;
-		default:
-		case S3C2410_LCON_CS8:
-			*bits = 8;
-			break;
-		}
-
-		switch (ulcon & S3C2410_LCON_PMASK) {
-		case S3C2410_LCON_PEVEN:
-			*parity = 'e';
-			break;
-
-		case S3C2410_LCON_PODD:
-			*parity = 'o';
-			break;
-
-		case S3C2410_LCON_PNONE:
-		default:
-			*parity = 'n';
-		}
-
-		/* now calculate the baud rate */
-
-		s3c24xx_serial_getsource(port, &clksrc);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		clk = clk_get(port->dev, clksrc.name);
 		if (!IS_ERR(clk) && clk != NULL)
 			rate = clk_get_rate(clk) / clksrc.divisor;
 		else
 			rate = 1;
-<<<<<<< HEAD
         
         
 		*baud = rate / (16 * (ubrdiv + 1));
 		dbg("calculated baud %d\n", *baud);
 	}
     
-=======
-
-
-		*baud = rate / (16 * (ubrdiv + 1));
-		dbg("calculated baud %d\n", *baud);
-	}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 }
 
 /* s3c24xx_serial_init_ports
  *
  * initialise the serial ports from the machine provided initialisation
  * data.
-<<<<<<< HEAD
  */
-=======
-*/
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 static int s3c24xx_serial_init_ports(struct s3c24xx_uart_info **info)
 {
 	struct s3c24xx_uart_port *ptr = s3c24xx_serial_ports;
 	struct platform_device **platdev_ptr;
 	int i;
-<<<<<<< HEAD
     
 	dbg("s3c24xx_serial_init_ports: initialising ports...\n");
     
@@ -2314,16 +1466,6 @@ static int s3c24xx_serial_init_ports(struct s3c24xx_uart_info **info)
 	for (i = 0; i < CONFIG_SERIAL_SAMSUNG_UARTS; i++, ptr++, platdev_ptr++)
 		s3c24xx_serial_init_port(ptr, info[i], *platdev_ptr);
     
-=======
-
-	dbg("s3c24xx_serial_init_ports: initialising ports...\n");
-
-	platdev_ptr = s3c24xx_uart_devs;
-
-	for (i = 0; i < CONFIG_SERIAL_SAMSUNG_UARTS; i++, ptr++, platdev_ptr++)
-		s3c24xx_serial_init_port(ptr, info[i], *platdev_ptr);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return 0;
 }
 
@@ -2335,7 +1477,6 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
 	int bits = 8;
 	int parity = 'n';
 	int flow = 'n';
-<<<<<<< HEAD
     
 	dbg("s3c24xx_serial_console_setup: co=%p (%d), %s\n",
 	    co, co->index, options);
@@ -2349,38 +1490,15 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
     
 	/* is the port configured? */
     
-=======
-
-	dbg("s3c24xx_serial_console_setup: co=%p (%d), %s\n",
-	    co, co->index, options);
-
-	/* is this a valid port */
-
-	if (co->index == -1 || co->index >= CONFIG_SERIAL_SAMSUNG_UARTS)
-		co->index = 0;
-
-	port = &s3c24xx_serial_ports[co->index].port;
-
-	/* is the port configured? */
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (port->mapbase == 0x0) {
 		co->index = 0;
 		port = &s3c24xx_serial_ports[co->index].port;
 	}
-<<<<<<< HEAD
     
 	cons_uart = port;
     
 	dbg("s3c24xx_serial_console_setup: port=%p (%d)\n", port, co->index);
     
-=======
-
-	cons_uart = port;
-
-	dbg("s3c24xx_serial_console_setup: port=%p (%d)\n", port, co->index);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	/*
 	 * Check whether an invalid uart number has been specified, and
 	 * if so, search for the first available port that does have
@@ -2390,26 +1508,16 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
 		uart_parse_options(options, &baud, &parity, &bits, &flow);
 	else
 		s3c24xx_serial_get_options(port, &baud, &parity, &bits);
-<<<<<<< HEAD
     
 	dbg("s3c24xx_serial_console_setup: baud %d\n", baud);
     
-=======
-
-	dbg("s3c24xx_serial_console_setup: baud %d\n", baud);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	return uart_set_options(port, co, baud, parity, bits, flow);
 }
 
 /* s3c24xx_serial_initconsole
  *
  * initialise the console from one of the uart drivers
-<<<<<<< HEAD
  */
-=======
-*/
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 
 static struct console s3c24xx_serial_console = {
 	.name		= S3C24XX_SERIAL_NAME,
@@ -2421,7 +1529,6 @@ static struct console s3c24xx_serial_console = {
 };
 
 int s3c24xx_serial_initconsole(struct platform_driver *drv,
-<<<<<<< HEAD
                                struct s3c24xx_uart_info **info)
 
 {
@@ -2431,22 +1538,10 @@ int s3c24xx_serial_initconsole(struct platform_driver *drv,
     
 	/* select driver based on the cpu */
     
-=======
-			       struct s3c24xx_uart_info **info)
-
-{
-	struct platform_device *dev = s3c24xx_uart_devs[0];
-
-	dbg("s3c24xx_serial_initconsole\n");
-
-	/* select driver based on the cpu */
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (dev == NULL) {
 		printk(KERN_ERR "s3c24xx: no devices for console init\n");
 		return 0;
 	}
-<<<<<<< HEAD
     
 	if (strcmp(dev->name, drv->driver.name) != 0)
 		return 0;
@@ -2454,15 +1549,6 @@ int s3c24xx_serial_initconsole(struct platform_driver *drv,
 	s3c24xx_serial_console.data = &s3c24xx_uart_drv;
 	s3c24xx_serial_init_ports(info);
     
-=======
-
-	if (strcmp(dev->name, drv->driver.name) != 0)
-		return 0;
-
-	s3c24xx_serial_console.data = &s3c24xx_uart_drv;
-	s3c24xx_serial_init_ports(info);
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	register_console(&s3c24xx_serial_console);
 	return 0;
 }
@@ -2471,8 +1557,4 @@ int s3c24xx_serial_initconsole(struct platform_driver *drv,
 
 MODULE_DESCRIPTION("Samsung SoC Serial port driver");
 MODULE_AUTHOR("Ben Dooks <ben@simtec.co.uk>");
-<<<<<<< HEAD
 MODULE_LICENSE("GPL v2");
-=======
-MODULE_LICENSE("GPL v2");
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo

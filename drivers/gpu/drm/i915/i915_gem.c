@@ -1475,11 +1475,7 @@ i915_gem_mmap_gtt(struct drm_file *file,
 
 	if (obj->base.size > dev_priv->mm.gtt_mappable_end) {
 		ret = -E2BIG;
-<<<<<<< HEAD
 		goto out;
-=======
-		goto unlock;
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	}
 
 	if (obj->madv != I915_MADV_WILLNEED) {
@@ -1926,7 +1922,6 @@ i915_gem_retire_requests_ring(struct intel_ring_buffer *ring)
 		obj= list_first_entry(&ring->active_list,
 				      struct drm_i915_gem_object,
 				      ring_list);
-<<<<<<< HEAD
 
 		if (!i915_seqno_passed(seqno, obj->last_rendering_seqno))
 			break;
@@ -1937,18 +1932,6 @@ i915_gem_retire_requests_ring(struct intel_ring_buffer *ring)
 			i915_gem_object_move_to_inactive(obj);
 	}
 
-=======
-
-		if (!i915_seqno_passed(seqno, obj->last_rendering_seqno))
-			break;
-
-		if (obj->base.write_domain != 0)
-			i915_gem_object_move_to_flushing(obj);
-		else
-			i915_gem_object_move_to_inactive(obj);
-	}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (unlikely(ring->trace_irq_seqno &&
 		     i915_seqno_passed(seqno, ring->trace_irq_seqno))) {
 		ring->irq_put(ring);
@@ -2001,7 +1984,6 @@ i915_gem_retire_work_handler(struct work_struct *work)
 	}
 
 	i915_gem_retire_requests(dev);
-<<<<<<< HEAD
 
 	/* Send a periodic flush down the ring so we don't hold onto GEM
 	 * objects indefinitely.
@@ -2025,31 +2007,6 @@ i915_gem_retire_work_handler(struct work_struct *work)
 		idle &= list_empty(&ring->request_list);
 	}
 
-=======
-
-	/* Send a periodic flush down the ring so we don't hold onto GEM
-	 * objects indefinitely.
-	 */
-	idle = true;
-	for (i = 0; i < I915_NUM_RINGS; i++) {
-		struct intel_ring_buffer *ring = &dev_priv->ring[i];
-
-		if (!list_empty(&ring->gpu_write_list)) {
-			struct drm_i915_gem_request *request;
-			int ret;
-
-			ret = i915_gem_flush_ring(ring,
-						  0, I915_GEM_GPU_DOMAINS);
-			request = kzalloc(sizeof(*request), GFP_KERNEL);
-			if (ret || request == NULL ||
-			    i915_add_request(ring, NULL, request))
-			    kfree(request);
-		}
-
-		idle &= list_empty(&ring->request_list);
-	}
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (!dev_priv->mm.suspended && !idle)
 		queue_delayed_work(dev_priv->wq, &dev_priv->mm.retire_work, HZ);
 
@@ -2669,7 +2626,6 @@ i915_gem_object_get_fence(struct drm_i915_gem_object *obj,
 
 		if (old->tiling_mode)
 			i915_gem_release_mmap(old);
-<<<<<<< HEAD
 
 		ret = i915_gem_object_flush_fence(old, pipelined);
 		if (ret) {
@@ -2680,18 +2636,6 @@ i915_gem_object_get_fence(struct drm_i915_gem_object *obj,
 		if (old->last_fenced_seqno == 0 && obj->last_fenced_seqno == 0)
 			pipelined = NULL;
 
-=======
-
-		ret = i915_gem_object_flush_fence(old, pipelined);
-		if (ret) {
-			drm_gem_object_unreference(&old->base);
-			return ret;
-		}
-
-		if (old->last_fenced_seqno == 0 && obj->last_fenced_seqno == 0)
-			pipelined = NULL;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 		old->fence_reg = I915_FENCE_REG_NONE;
 		old->last_fenced_ring = pipelined;
 		old->last_fenced_seqno =
@@ -2901,7 +2845,6 @@ i915_gem_object_bind_to_gtt(struct drm_i915_gem_object *obj,
 	 */
 	BUG_ON(obj->base.read_domains & I915_GEM_GPU_DOMAINS);
 	BUG_ON(obj->base.write_domain & I915_GEM_GPU_DOMAINS);
-<<<<<<< HEAD
 
 	obj->gtt_offset = obj->gtt_space->start;
 
@@ -2909,15 +2852,6 @@ i915_gem_object_bind_to_gtt(struct drm_i915_gem_object *obj,
 		obj->gtt_space->size == fence_size &&
 		(obj->gtt_space->start & (fence_alignment -1)) == 0;
 
-=======
-
-	obj->gtt_offset = obj->gtt_space->start;
-
-	fenceable =
-		obj->gtt_space->size == fence_size &&
-		(obj->gtt_space->start & (fence_alignment -1)) == 0;
-
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	mappable =
 		obj->gtt_offset + obj->base.size <= dev_priv->mm.gtt_mappable_end;
 
@@ -3103,37 +3037,9 @@ i915_gem_object_set_to_display_plane(struct drm_i915_gem_object *obj,
 
 int
 i915_gem_object_flush_gpu(struct drm_i915_gem_object *obj)
-<<<<<<< HEAD
 {
 	int ret;
 
-	if (!obj->active)
-		return 0;
-
-	if (obj->base.write_domain & I915_GEM_GPU_DOMAINS) {
-		ret = i915_gem_flush_ring(obj->ring, 0, obj->base.write_domain);
-		if (ret)
-			return ret;
-	}
-
-	return i915_gem_object_wait_rendering(obj);
-}
-
-/**
- * Moves a single object to the CPU read, and possibly write domain.
- *
- * This function returns when the move is complete, including waiting on
- * flushes to occur.
- */
-static int
-i915_gem_object_set_to_cpu_domain(struct drm_i915_gem_object *obj, bool write)
-=======
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
-{
-	int ret;
-
-<<<<<<< HEAD
-=======
 	if (!obj->active)
 		return 0;
 
@@ -3158,7 +3064,6 @@ i915_gem_object_set_to_cpu_domain(struct drm_i915_gem_object *obj, bool write)
 	uint32_t old_write_domain, old_read_domains;
 	int ret;
 
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 	if (obj->base.write_domain == I915_GEM_DOMAIN_CPU)
 		return 0;
 

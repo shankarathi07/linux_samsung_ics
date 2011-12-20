@@ -820,7 +820,6 @@ inserted:
 			if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)))
 				goal = goal & EXT4_MAX_BLOCK_FILE_PHYS;
 
-<<<<<<< HEAD
 			/*
 			 * take i_data_sem because we will test
 			 * i_delalloc_reserved_flag in ext4_mb_new_blocks
@@ -829,10 +828,6 @@ inserted:
 			block = ext4_new_meta_blocks(handle, inode, goal, 0,
 						     NULL, &error);
 			up_read((&EXT4_I(inode)->i_data_sem));
-=======
-			block = ext4_new_meta_blocks(handle, inode, goal, 0,
-						     NULL, &error);
->>>>>>> 2f57f5b... Merge branch 'androidsource' android-samsung-3.0-ics-mr1 into nexus-s-voodoo
 			if (error)
 				goto cleanup;
 
