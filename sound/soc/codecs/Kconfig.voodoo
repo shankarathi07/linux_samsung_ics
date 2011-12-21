@@ -57,3 +57,5 @@ config SND_VOODOO_DEVELOPMENT
 	help
 	  Allow to codec dump registers and load register-address/value batchs
 	  Powerful but also dangerous tool
+
+

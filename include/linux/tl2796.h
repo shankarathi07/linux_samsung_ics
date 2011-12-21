@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
-*/
+ */
 #include <linux/types.h>
 
 struct gamma_entry {
@@ -36,7 +36,7 @@ struct s5p_panel_data {
 	const u16 *seq_etc_set;
 	const u16 *standby_on;
 	const u16 *standby_off;
-
+    
 	int gpio_dcx;
 	int gpio_rdx;
 	int gpio_csx;
@@ -46,9 +46,13 @@ struct s5p_panel_data {
 	int (*configure_mtp_gpios)(struct s5p_panel_data *pdata, bool enable);
 	u16 factory_v255_regs[3];
 	struct tl2796_color_adj color_adj;
-
+    
 	const struct tl2796_gamma_adj_points *gamma_adj_points;
+#ifdef CONFIG_FB_VOODOO
+	struct gamma_entry *gamma_table;
+#else
 	const struct gamma_entry *gamma_table;
+#endif
 	int gamma_table_size;
 };
 
