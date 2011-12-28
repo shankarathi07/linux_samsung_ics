@@ -1,6 +1,6 @@
 config XVMALLOC
 	bool
-	default n
+	default y
 
 config ZRAM
 	tristate "Compressed RAM block device support"
@@ -8,7 +8,7 @@ config ZRAM
 	select XVMALLOC
 	select LZO_COMPRESS
 	select LZO_DECOMPRESS
-	default n
+	default y
 	help
 	  Creates virtual block devices called /dev/zramX (X = 0, 1, ...).
 	  Pages written to these disks are compressed and stored in memory

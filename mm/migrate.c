@@ -39,7 +39,6 @@
 
 #include "internal.h"
 
-#define lru_to_page(_head) (list_entry((_head)->prev, struct page, lru))
 
 /*
  * migrate_prep() needs to be called before we start compiling a list of pages
