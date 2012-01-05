@@ -1424,7 +1424,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct zone *zone,
 	unsigned long nr_anon;
 	unsigned long nr_file;
 	unsigned long nr_dirty = 0;
-+	unsigned long nr_writeback = 0;
+	unsigned long nr_writeback = 0;
 
 	while (unlikely(too_many_isolated(zone, file, sc))) {
 		congestion_wait(BLK_RW_ASYNC, HZ/10);
