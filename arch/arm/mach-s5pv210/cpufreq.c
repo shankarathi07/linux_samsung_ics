@@ -131,11 +131,11 @@ static struct s5pv210_dvs_conf dvs_conf[] = {
 		.int_volt   = 1000000,
 	},
     [L6] = {
-		.arm_volt   = 925000,
+		.arm_volt   = 950000,
 		.int_volt   = 950000,
 	},
 	[L7] = {
-		.arm_volt   = 900000,
+		.arm_volt   = 950000,
 		.int_volt   = 900000,
 	},
     
@@ -418,6 +418,11 @@ static int s5pv210_target(struct cpufreq_policy *policy,
 		 * 6-1. Set PMS values
 		 * 6-2. Wait untile the PLL is locked
 		 */
+        
+#ifdef CONFIG_LIVE_OC
+		__raw_writel(apll_values[index], S5P_APLL_CON);
+#else
+        
         switch ( index ) {
             case L0:
                 /* APLL FOUT becomes 1460 Mhz */
@@ -442,6 +447,7 @@ static int s5pv210_target(struct cpufreq_policy *policy,
                 __raw_writel(APLL_VAL_800, S5P_APLL_CON); 
                 break;
         }
+#endif
         
         /* 2-2. Wait until the PLL is locked */
         do {
@@ -801,6 +807,11 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
 
 	policy->cpuinfo.transition_latency = 40000;
     
+    
+#ifdef CONFIG_LIVE_OC
+	liveoc_init();
+#endif
+    
     ret = cpufreq_frequency_table_cpuinfo(policy, s5pv210_freq_table);
     
 	if (!ret)
@@ -808,11 +819,6 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
     
 	return ret;
 
-#ifdef CONFIG_LIVE_OC
-	liveoc_init();
-#endif
-
-	return cpufreq_frequency_table_cpuinfo(policy, s5pv210_freq_table);
 }
 
 static int s5pv210_cpufreq_notifier_event(struct notifier_block *this,

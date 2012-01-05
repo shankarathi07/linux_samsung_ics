@@ -205,6 +205,12 @@ static irqreturn_t touchkey_interrupt_thread(int irq, void *touchkey_devdata)
 #if defined(CONFIG_TOUCH_WAKE) || defined(CONFIG_BLD)
 		if (!(data & UPDOWN_EVENT_MASK))
         {
+            
+            #ifdef CONFIG_BLD      
+           
+                  touchkey_pressed();
+         
+            #endif
 #ifdef CONFIG_TOUCH_WAKE
 			touch_press();
 #endif
@@ -226,6 +232,11 @@ static irqreturn_t touchkey_interrupt_thread(int irq, void *touchkey_devdata)
         {
 			if(!!(data & (1U << i)))
             {
+                #ifdef CONFIG_BLD      
+                	
+                      touchkey_pressed();
+                	
+                #endif
 #ifdef CONFIG_TOUCH_WAKE
 				touch_press();
 #endif
