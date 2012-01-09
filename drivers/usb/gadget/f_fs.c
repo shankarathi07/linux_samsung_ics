@@ -1078,6 +1078,9 @@ static int ffs_sb_fill(struct super_block *sb, void *_data, int silent)
 	if (unlikely(!d))
 		goto enomem2;
 	sb->s_root = d;
+	sb->s_root = d_make_root(inode);
+	if (unlikely(!sb->s_root))
+		goto Enomem;
 
 	/* EP0 file */
 	if (unlikely(!ffs_sb_create_file(sb, "ep0", ffs,

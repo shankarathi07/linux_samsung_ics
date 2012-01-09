@@ -816,8 +816,6 @@ bad_val:
 static int
 hugetlbfs_fill_super(struct super_block *sb, void *data, int silent)
 {
-	struct inode * inode;
-	struct dentry * root;
 	int ret;
 	struct hugetlbfs_config config;
 	struct hugetlbfs_sb_info *sbinfo;
@@ -858,9 +856,9 @@ hugetlbfs_fill_super(struct super_block *sb, void *data, int silent)
 	root = d_alloc_root(inode);
 	if (!root) {
 		iput(inode);
+	sb->s_root = d_make_root(hugetlbfs_get_root(sb, &config));
+	if (!sb->s_root)
 		goto out_free;
-	}
-	sb->s_root = root;
 	return 0;
 out_free:
 	kfree(sbinfo);

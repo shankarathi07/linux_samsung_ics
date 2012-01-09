@@ -951,6 +951,11 @@ root_found:
 	s->s_root = d_alloc_root(inode);
 	if (!(s->s_root))
 		goto out_no_root;
+	s->s_root = d_make_root(inode);
+	if (!(s->s_root)) {
+		error = -ENOMEM;
+		goto out_no_inode;
+	}
 
 	kfree(opt.iocharset);
 

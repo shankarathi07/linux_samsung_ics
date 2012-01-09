@@ -2072,6 +2072,8 @@ gadgetfs_fill_super (struct super_block *sb, void *opts, int silent)
 	if (!(d = d_alloc_root (inode)))
 		goto enomem1;
 	sb->s_root = d;
+	if (!(sb->s_root = d_make_root (inode)))
+		goto Enomem;
 
 	/* the ep0 file is named after the controller we expect;
 	 * user mode code can use it for sanity checks, like we do.
