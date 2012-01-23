@@ -67,12 +67,6 @@ config CPU_FREQ_DEFAULT_GOV_MINMAX
 	  frequency jumps does by the governor. This is aimed at maximizing
 	  both perfomance and battery life.
 
-config CPU_FREQ_DEFAULT_GOV_SCARY
-    bool "scary"
-    select CPU_FREQ_GOV_SCARY
-    select CPU_FREQ_GOV_SCARY
-    help
-        Use the CPUFreq governor 'scary' as default.
 
 config CPU_FREQ_DEFAULT_GOV_USERSPACE
 	bool "userspace"
@@ -156,14 +150,6 @@ config CPU_FREQ_GOV_MINMAX
 	  the policy. The frequency is selected according to the load.
 
 	  If in doubt, say N.
-
-config CPU_FREQ_GOV_SCARY
-    tristate "'scary' cpufreq governor"
-    depends on CPU_FREQ
-    help
-        scary - a governor for cabbages
-
-        If in doubt, say N.
 
 
 config CPU_FREQ_GOV_USERSPACE
