@@ -4777,10 +4777,11 @@ error_return:
  * one will allocate those blocks, mark it as used in buddy bitmap. This must
  * be called with under the group lock.
  */
-static void ext4_trim_extent(struct super_block *sb, int start, int count,
+static int ext4_trim_extent(struct super_block *sb, int start, int count,
 			     ext4_group_t group, struct ext4_buddy *e4b)
 {
 	struct ext4_free_extent ex;
+	int err;
 
 	assert_spin_locked(ext4_group_lock_ptr(sb, group));
 
@@ -4794,9 +4795,10 @@ static void ext4_trim_extent(struct super_block *sb, int start, int count,
 	 */
 	mb_mark_used(e4b, &ex);
 	ext4_unlock_group(sb, group);
-	ext4_issue_discard(sb, group, start, count);
+	err = ext4_issue_discard(sb, group, start, count);
 	ext4_lock_group(sb, group);
 	mb_free_blocks(NULL, e4b, start, ex.fe_len);
+	return err;
 }
 
 /**
@@ -4845,15 +4847,22 @@ ext4_trim_all_free(struct super_block *sb, ext4_group_t group,
 			break;
 		next = mb_find_next_bit(bitmap, max, start);
 
-		if ((next - start) >= minblocks) {
-			ext4_trim_extent(sb, start,
-					 next - start, group, &e4b);
-			count += next - start;
-		}
+        if ((next - start) >= minblocks) {
+            ret = ext4_trim_extent(sb, start,
+            next - start, group, &e4b);
+            if (ret < 0) {
+                 				if (ret != -EOPNOTSUPP)
+                    					ext4_warning(sb, "Discard command "
+                                        "returned error %d\n", ret);
+                 				break;
+                 			} else
+                     				count += next - start;
+  		}
+        free_count += next - start;
 		start = next + 1;
 
 		if (fatal_signal_pending(current)) {
-			count = -ERESTARTSYS;
+            ret = -ERESTARTSYS;
 			break;
 		}
 
@@ -4872,7 +4881,7 @@ ext4_trim_all_free(struct super_block *sb, ext4_group_t group,
 	ext4_debug("trimmed %d blocks in the group %d\n",
 		count, group);
 
-	return count;
+	return (ret < 0) ? ret : count;
 }
 
 /**
