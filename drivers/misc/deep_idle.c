@@ -19,7 +19,7 @@
 
 static DEFINE_MUTEX(lock);
 
-static bool deepidle_enabled = true;
+static bool deepidle_enabled = false;
 
 static unsigned long long num_idlecalls[NUM_IDLESTATES], time_in_idlestate[NUM_IDLESTATES]; 
 

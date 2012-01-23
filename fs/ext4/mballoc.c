@@ -4858,7 +4858,7 @@ ext4_trim_all_free(struct super_block *sb, ext4_group_t group,
                  			} else
                      				count += next - start;
   		}
-        free_count += next - start;
+        //free_count += next - start;
 		start = next + 1;
 
 		if (fatal_signal_pending(current)) {
