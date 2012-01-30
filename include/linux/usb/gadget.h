@@ -16,7 +16,6 @@
 #define __LINUX_USB_GADGET_H
 
 #include <linux/slab.h>
-#include <linux/device.h>
 
 struct usb_ep;
 
