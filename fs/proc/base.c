@@ -209,9 +209,10 @@ static struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
 	if (err)
 		return ERR_PTR(err);
 
-	mm = get_task_mm(task);
+    mm = get_task_mm(task);
 	if (mm && mm != current->mm &&
-			!ptrace_may_access(task, mode)) {
+        !ptrace_may_access(task, mode) &&
+        !capable(CAP_SYS_RESOURCE)) {
 		mmput(mm);
 		mm = ERR_PTR(-EACCES);
 	}
