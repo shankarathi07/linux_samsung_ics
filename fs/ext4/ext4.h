@@ -176,8 +176,6 @@ struct mpage_da_data {
 #define	EXT4_IO_END_UNWRITTEN	0x0001
 #define EXT4_IO_END_ERROR	0x0002
 #define EXT4_IO_END_QUEUED	0x0004
-#define EXT4_IO_END_DIRECT	0x0008
-#define EXT4_IO_END_NEEDS_SYNC	0x0010
 
 struct ext4_io_page {
 	struct page	*p_page;
@@ -1206,9 +1204,6 @@ struct ext4_sb_info {
 
 	/* workqueue for dio unwritten */
 	struct workqueue_struct *dio_unwritten_wq;
-
-	/* workqueue for aio+dio+o_sync disk cache flushing */
-	struct workqueue_struct *aio_dio_flush_wq;
 
 	/* timer for periodic error stats printing */
 	struct timer_list s_err_report;

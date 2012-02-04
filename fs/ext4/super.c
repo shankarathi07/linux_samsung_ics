@@ -759,7 +759,6 @@ static void ext4_put_super(struct super_block *sb)
 	dquot_disable(sb, -1, DQUOT_USAGE_ENABLED | DQUOT_LIMITS_ENABLED);
 
 	flush_workqueue(sbi->dio_unwritten_wq);
-	destroy_workqueue(sbi->aio_dio_flush_wq);
 	destroy_workqueue(sbi->dio_unwritten_wq);
 
 	lock_super(sb);
@@ -3597,13 +3596,6 @@ no_journal:
 		goto failed_mount_wq;
 	}
 
-	EXT4_SB(sb)->aio_dio_flush_wq =
-		alloc_workqueue("ext4-aio-dio-flush", WQ_MEM_RECLAIM | WQ_UNBOUND, 1);
-	if (!EXT4_SB(sb)->aio_dio_flush_wq) {
-		printk(KERN_ERR "EXT4-fs: failed to create flush workqueue\n");
-		goto failed_flush_wq;
-	}
-
 	/*
 	 * The jbd2_journal_load will have done any necessary log recovery,
 	 * so we can safely mount the rest of the filesystem now.
@@ -3738,8 +3730,6 @@ failed_mount4:
 	iput(root);
 	sb->s_root = NULL;
 	ext4_msg(sb, KERN_ERR, "mount failed");
-	destroy_workqueue(EXT4_SB(sb)->aio_dio_flush_wq);
-failed_flush_wq:
 	destroy_workqueue(EXT4_SB(sb)->dio_unwritten_wq);
 failed_mount_wq:
 	ext4_release_system_zone(sb);
@@ -4207,7 +4197,6 @@ static int ext4_sync_fs(struct super_block *sb, int wait)
 
 	trace_ext4_sync_fs(sb, wait);
 	flush_workqueue(sbi->dio_unwritten_wq);
-	flush_workqueue(sbi->aio_dio_flush_wq);
 	if (jbd2_journal_start_commit(sbi->s_journal, &target)) {
 		if (wait)
 			jbd2_log_wait_commit(sbi->s_journal, target);
