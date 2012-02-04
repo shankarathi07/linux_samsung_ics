@@ -61,6 +61,6 @@ obj-$(CONFIG_GENERIC_BLN)	+= bln.o
 obj-$(CONFIG_BLD)		+= bld.o
 obj-$(CONFIG_BLX)		+= blx.o
 obj-$(CONFIG_LIVE_OC)		+= live_oc.o
-obj-$(CONFIG_CPU_DIDLE)		+= deep_idle.o
+
 obj-$(CONFIG_CUSTOM_VOLTAGE)	+= custom_voltage.o
 obj-$(CONFIG_TOUCH_WAKE)	+= touch_wake.o
