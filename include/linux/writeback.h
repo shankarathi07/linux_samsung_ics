@@ -58,6 +58,7 @@ struct writeback_control {
 	loff_t range_end;
 
 	unsigned for_kupdate:1;		/* A kupdate writeback */
+    unsigned nonblocking:1;
 	unsigned for_background:1;	/* A background writeback */
 	unsigned tagged_writepages:1;	/* tag-and-write to avoid livelock */
 	unsigned for_reclaim:1;		/* Invoked from the page allocator */
