@@ -41,6 +41,24 @@ DEFINE_SPINLOCK(sb_lock);
 
 static struct lock_class_key sb_writers_key[SB_FREEZE_LEVELS-1];
 
+static int init_sb_writers(struct super_block *s, int level, char *lockname)
+{
+	struct sb_writers_level *sl = &s->s_writers[level-1];
+	int err;
+    
+	err = percpu_counter_init(&sl->counter, 0);
+	if (err < 0)
+		return err;
+	init_waitqueue_head(&sl->wait);
+	lockdep_init_map(&sl->lock_map, lockname, &sb_writers_key[level-1], 0);
+	return 0;
+}
+
+static void destroy_sb_writers(struct super_block *s, int level)
+{
+	percpu_counter_destroy(&s->s_writers[level-1].counter);
+}
+
 /**
  *	alloc_super	-	create new superblock
  *	@type:	filesystem type superblock should belong to
@@ -77,11 +95,12 @@ static struct super_block *alloc_super(struct file_system_type *type)
 #else
 		INIT_LIST_HEAD(&s->s_files);
 #endif
-		s->s_bdi = &default_backing_dev_info;
+		
         if (init_sb_writers(s, SB_FREEZE_WRITE, "sb_writers_write"))
             goto err_out;
         if (init_sb_writers(s, SB_FREEZE_TRANS, "sb_writers_trans"))
             goto err_out;
+        s->s_bdi = &default_backing_dev_info;
 		INIT_LIST_HEAD(&s->s_instances);
 		INIT_HLIST_BL_HEAD(&s->s_anon);
 		INIT_LIST_HEAD(&s->s_inodes);
@@ -126,25 +145,19 @@ static struct super_block *alloc_super(struct file_system_type *type)
 	}
 out:
 	return s;
+err_out:
+	security_sb_free(s);
+#ifdef CONFIG_SMP
+    if (s->s_files)
+        free_percpu(s->s_files);
+#endif
+    destroy_sb_writers(s, SB_FREEZE_WRITE);
+    destroy_sb_writers(s, SB_FREEZE_TRANS);
+    kfree(s);
+    s = NULL;
+    goto out;
 }
 
-static int init_sb_writers(struct super_block *s, int level, char *lockname)
-{
-	struct sb_writers_level *sl = &s->s_writers[level-1];
-	int err;
-
-	err = percpu_counter_init(&sl->counter, 0);
-	if (err < 0)
-		return err;
-	init_waitqueue_head(&sl->wait);
-	lockdep_init_map(&sl->lock_map, lockname, &sb_writers_key[level-1], 0);
-	return 0;
-}
-
-static void destroy_sb_writers(struct super_block *s, int level)
-{
-	percpu_counter_destroy(&s->s_writers[level-1].counter);
-}
 
 /**
  *	destroy_super	-	frees a superblock
@@ -423,17 +436,6 @@ retry:
 	spin_unlock(&sb_lock);
 	get_filesystem(type);
 	return s;
-err_out:
-	security_sb_free(s);
-#ifdef CONFIG_SMP
-	if (s->s_files)
-		free_percpu(s->s_files);
-#endif
-	destroy_sb_writers(s, SB_FREEZE_WRITE);
-	destroy_sb_writers(s, SB_FREEZE_TRANS);
-	kfree(s);
-	s = NULL;
-	goto out;
 }
 
 EXPORT_SYMBOL(sget);
