@@ -100,21 +100,39 @@ int ext4_end_io_nolock(ext4_io_end_t *io)
 		   "list->prev 0x%p\n",
 		   io, inode->i_ino, io->list.next, io->list.prev);
 
-	if (list_empty(&io->list))
-		return ret;
-
-	if (!(io->flag & EXT4_IO_END_UNWRITTEN))
-		return ret;
-
-	ret = ext4_convert_unwritten_extents(inode, offset, size);
-	if (ret < 0) {
-		printk(KERN_EMERG "%s: failed to convert unwritten "
-			"extents to written extents, error is %d "
-			"io is still on inode %lu aio dio list\n",
-		       __func__, ret, inode->i_ino);
-		return ret;
-	}
-
+    if (io->flag & EXT4_IO_END_UNWRITTEN) {
+        
+        		ret = ext4_convert_unwritten_extents(inode, offset, size);
+        		if (ret < 0) {
+        			ext4_msg(inode->i_sb, KERN_EMERG,
+                                 				 "failed to convert unwritten extents to "
+                                 				 "written extents -- potential data loss!  "
+                                 				 "(inode %lu, offset %llu, size %zd, error %d)",
+                                 				 inode->i_ino, offset, size, ret);
+            			goto endio;
+            		}
+        	}
+    
+    	/*
+         +	 * This function has two callers.  The first is the end_io_work
+         +	 * routine just below.  This is an asynchronous completion context.
+         +	 * The second is in the fsync path.  For the latter path, we can't
+         +	 * return from here until the job is done.  Hence, we issue a
+         +	 * blocking blkdev_issue_flush call.
+         +	 */
+    	if (io->flag & EXT4_IO_END_NEEDS_SYNC) {
+        		/*
+                 +		 * Ideally, we'd like to know if the force_commit routine
+                 +		 * actually did send something to disk.  If it didn't,
+                 +		 * then we need to issue the cache flush by hand.  For now,
+                 +		 * play it safe and do both.
+                 +		 */
+        		ret = ext4_force_commit(inode->i_sb);
+        		if (ret)
+            			goto endio;
+        		ret = blkdev_issue_flush(inode->i_sb->s_bdev, GFP_NOIO, NULL);
+        }
+endio:
 	if (io->iocb)
 		aio_complete(io->iocb, io->result, 0);
 	/* clear the DIO AIO unwritten flag */

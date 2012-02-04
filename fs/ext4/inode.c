@@ -3608,8 +3608,12 @@ static void ext4_end_io_dio(struct kiocb *iocb, loff_t offset,
  		  iocb->private, io_end->inode->i_ino, iocb, offset,
 		  size);
 
+	/* AIO+DIO+O_SYNC I/Os need a cache flush after completion */
+	if (is_async && (IS_SYNC(inode) || (iocb->ki_filp->f_flags & O_DSYNC)))
+		io_end->flag |= EXT4_IO_END_NEEDS_SYNC;
+
 	/* if not aio dio with unwritten extents, just free io and return */
-	if (!(io_end->flag & EXT4_IO_END_UNWRITTEN)) {
+	if (!(io_end->flag & (EXT4_IO_END_UNWRITTEN|EXT4_IO_END_NEEDS_SYNC))) {
 		ext4_free_io_end(io_end);
 		iocb->private = NULL;
 out:
@@ -3624,7 +3628,10 @@ out:
 		io_end->iocb = iocb;
 		io_end->result = ret;
 	}
-	wq = EXT4_SB(io_end->inode->i_sb)->dio_unwritten_wq;
+	if (io_end->flag & EXT4_IO_END_UNWRITTEN)
+		wq = EXT4_SB(io_end->inode->i_sb)->dio_unwritten_wq;
+	else
+		wq = EXT4_SB(io_end->inode->i_sb)->aio_dio_flush_wq;
 
 	/* Add the io_end to per-inode completed aio dio list*/
 	ei = EXT4_I(io_end->inode);
