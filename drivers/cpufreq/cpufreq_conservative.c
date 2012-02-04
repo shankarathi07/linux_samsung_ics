@@ -29,7 +29,7 @@
  * It helps to keep variable names smaller, simpler
  */
 
-#define DEF_FREQUENCY_UP_THRESHOLD		(60)
+#define DEF_FREQUENCY_UP_THRESHOLD		(80)
 #define DEF_FREQUENCY_DOWN_THRESHOLD		(20)
 
 /*
@@ -534,7 +534,7 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
             min_sampling_rate = 10000;
 			/* Bring kernel and HW constraints together */
             
-            dbs_tuners_ins.sampling_rate = 10000;
+            dbs_tuners_ins.sampling_rate = 40000;
 			cpufreq_register_notifier(
 					&dbs_cpufreq_notifier_block,
 					CPUFREQ_TRANSITION_NOTIFIER);
