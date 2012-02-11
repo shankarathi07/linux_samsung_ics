@@ -13,4 +13,4 @@
 extern int  s5pv210_didle_save(unsigned long *saveblk);
 extern void s5pv210_didle_resume(void);
 extern void i2sdma_getpos(dma_addr_t *src);
-extern unsigned int get_rtc_cnt(void);
+extern unsigned int  get_rtc_cnt(void);
