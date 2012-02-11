@@ -125,7 +125,7 @@ int ext4_end_io_nolock(ext4_io_end_t *io)
 		    waitqueue_active(wq)) {
 			wake_up_all(wq);
 		}
-	}
+	
 
 	return ret;
 }
