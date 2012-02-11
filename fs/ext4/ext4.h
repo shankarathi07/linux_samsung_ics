@@ -1067,6 +1067,8 @@ struct ext4_super_block {
 	__u8	s_last_error_func[32];	/* function where the error happened */
 #define EXT4_S_ERR_END offsetof(struct ext4_super_block, s_mount_opts)
 	__u8	s_mount_opts[64];
+    __le32  s_usr_quota_inum;       /* inode for tracking user quota */
+    __le32  s_grp_quota_inum;       /* inode for tracking group quota */
 	__le32	s_reserved[112];        /* Padding to the end of the block */
 };
 
