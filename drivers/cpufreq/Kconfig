@@ -67,6 +67,12 @@ config CPU_FREQ_DEFAULT_GOV_MINMAX
 	  frequency jumps does by the governor. This is aimed at maximizing
 	  both perfomance and battery life.
 
+config CPU_FREQ_DEFAULT_GOV_LIONHEART
+  bool "lionheart"
+  select CPU_FREQ_GOV_LIONHEART
+  help
+    Use the CPUFreq governor 'lionheart' as default.
+
 
 config CPU_FREQ_DEFAULT_GOV_USERSPACE
 	bool "userspace"
@@ -171,6 +177,9 @@ config CPU_FREQ_GOV_MINMAX
 
 	  If in doubt, say N.
 
+config CPU_FREQ_GOV_LIONHEART
+  tristate "'lionheart' cpufreq governor"
+  depends on CPU_FREQ
 
 config CPU_FREQ_GOV_USERSPACE
 	tristate "'userspace' governor for userspace frequency scaling"
