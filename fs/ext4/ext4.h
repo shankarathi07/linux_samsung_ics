@@ -259,6 +259,9 @@ struct ext4_io_submit {
 #endif
 #define EXT4_BLOCK_ALIGN(size, blkbits)		ALIGN((size), (1 << (blkbits)))
 
+/* Translate a cluster number to a block number */
+#define EXT4_C2B(sbi, cluster)  ((cluster) << (sbi)->s_cluster_bits)
+
 /*
  * Structure of a blocks group descriptor
  */
@@ -1092,6 +1095,7 @@ struct ext4_sb_info {
 	ext4_group_t s_blockfile_groups;/* Groups acceptable for non-extent files */
 	unsigned long s_overhead_last;  /* Last calculated overhead */
 	unsigned long s_blocks_last;    /* Last seen block count */
+    unsigned int s_cluster_bits;	/* log2 of s_cluster_ratio */
 	loff_t s_bitmap_maxbytes;	/* max bytes for bitmap files */
 	struct buffer_head * s_sbh;	/* Buffer containing the super block */
 	struct ext4_super_block *s_es;	/* Pointer to the super block in the buffer */
@@ -1356,6 +1360,7 @@ static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
 #define EXT4_FEATURE_RO_COMPAT_DIR_NLINK	0x0020
 #define EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE	0x0040
 #define EXT4_FEATURE_RO_COMPAT_QUOTA		0x0100
+#define EXT4_FEATURE_RO_COMPAT_BIGALLOC     0x0200
 
 #define EXT4_FEATURE_INCOMPAT_COMPRESSION	0x0001
 #define EXT4_FEATURE_INCOMPAT_FILETYPE		0x0002
@@ -1398,7 +1403,7 @@ static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
 					 EXT4_FEATURE_RO_COMPAT_DIR_NLINK | \
 					 EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE | \
 					 EXT4_FEATURE_RO_COMPAT_BTREE_DIR |\
-					 EXT4_FEATURE_RO_COMPAT_HUGE_FILE)|\
+					 EXT4_FEATURE_RO_COMPAT_HUGE_FILE|\
                      EXT4_FEATURE_RO_COMPAT_BIGALLOC | \
                      EXT4_FEATURE_RO_COMPAT_QUOTA)
 
