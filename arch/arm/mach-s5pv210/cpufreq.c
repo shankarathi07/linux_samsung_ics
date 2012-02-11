@@ -206,7 +206,10 @@ static void s5pv210_set_refresh(enum s5pv210_dmc_port ch, unsigned long freq)
 
 	do_div(tmp1, tmp);
 #ifdef CONFIG_LIVE_OC
-	__raw_writel((tmp1 * oc_value) / 100, reg);
+	if (ch == DMC1)
+	    __raw_writel((tmp1 * oc_value) / 100, reg);
+	else
+	    __raw_writel(tmp1, reg);
 #else
 	__raw_writel(tmp1, reg);
 #endif
@@ -679,7 +682,7 @@ EXPORT_SYMBOL(liveoc_update);
 
 unsigned long get_gpuminfreq(void)
 {
-    return s5pv210_freq_table[L3].frequency;
+    return s5pv210_freq_table[L6].frequency;
 }
 EXPORT_SYMBOL(get_gpuminfreq);
 #endif
