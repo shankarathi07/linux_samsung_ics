@@ -225,6 +225,7 @@ config MMU_NOTIFIER
 
 config KSM
 	bool "Enable KSM for page merging"
+	default y
 	depends on MMU
 	help
 	  Enable Kernel Samepage Merging: KSM periodically scans those areas
