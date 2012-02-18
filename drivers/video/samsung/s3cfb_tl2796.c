@@ -1079,7 +1079,7 @@ static struct attribute_group voodoo_color_group = {
 
 static struct miscdevice voodoo_color_device = {
 	.minor = MISC_DYNAMIC_MINOR,
-	.name = "voodoo_color",
+	.name = "samoled_colors",
 };
 #endif
 
