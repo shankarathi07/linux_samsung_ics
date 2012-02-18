@@ -253,6 +253,7 @@ static void ext4_put_nojournal(handle_t *handle)
 	current->journal_info = handle;
 }
 
+
 /*
  * Wrappers for jbd2_journal_start/end.
  *
@@ -4778,6 +4779,7 @@ static int ext4_quota_enable(struct super_block *sb, int type, int format_id,
 	return err;
 }
 
+
 /* Enable usage tracking for all quota types. */
 static int ext4_enable_quotas(struct super_block *sb)
 {
@@ -4786,23 +4788,24 @@ static int ext4_enable_quotas(struct super_block *sb)
 		le32_to_cpu(EXT4_SB(sb)->s_es->s_usr_quota_inum),
 		le32_to_cpu(EXT4_SB(sb)->s_es->s_grp_quota_inum)
 	};
-
+    
 	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE;
 	for (type = 0; type < MAXQUOTAS; type++) {
 		if (qf_inums[type]) {
 			err = ext4_quota_enable(sb, type, QFMT_VFS_V1,
-						DQUOT_USAGE_ENABLED);
+                                    DQUOT_USAGE_ENABLED);
 			if (err) {
 				ext4_warning(sb,
-					"Failed to enable quota (type=%d) "
-					"tracking. Please run e2fsck to fix.",
-					type);
+                             "Failed to enable quota (type=%d) "
+                             "tracking. Please run e2fsck to fix.",
+                             type);
 				return err;
 			}
 		}
 	}
 	return 0;
 }
+
 
 /*
  * quota_on function that is used when QUOTA feature is set.
