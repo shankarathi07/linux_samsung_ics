@@ -113,6 +113,7 @@ static inline void copy_huge_page(struct page *dst, struct page *src)
 #ifndef HPAGE_MASK
 #define HPAGE_MASK	PAGE_MASK		/* Keep the compiler happy */
 #define HPAGE_SIZE	PAGE_SIZE
+#define HPAGE_SHIFT	({BUG(); 0; })
 #endif
 
 #endif /* !CONFIG_HUGETLB_PAGE */
