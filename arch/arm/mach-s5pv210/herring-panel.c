@@ -358,6 +358,7 @@ struct s5p_panel_data herring_panel_data = {
 		0x0b8,
 		0x0fc,
 	},
+#ifdef CONFIG_FB_S3C_TL2796_6500K_COLORS
 	.color_adj = {
 		/* Convert from 8500K to D65, assuming:
 		 * Rx 0.66950, Ry 0.33100
@@ -371,6 +372,7 @@ struct s5p_panel_data herring_panel_data = {
 		},
 		.rshift = 31,
 	},
+#endif
 
 	.gamma_adj_points = &gamma_adj_points,
 	.gamma_table = gamma_table,

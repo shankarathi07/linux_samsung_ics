@@ -126,6 +126,14 @@ config FB_VOODOO_DEBUG_LOG
           Logging for developers
           Super AMOLED hardware command decoding and driver calculations
 
+config FB_S3C_TL2796_6500K_COLORS
+        bool "TL2796 6500K Colors"
+        depends on FB_S3C_TL2796
+	default y
+        ---help---
+          This uses 6500K (D65) colors instead of the default 8500K
+	  of the panel.
+
 config FB_S3C_NT35580
         bool "NT35580"
         depends on FB_S3C
