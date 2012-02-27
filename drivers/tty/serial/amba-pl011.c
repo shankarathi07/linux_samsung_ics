@@ -1392,7 +1392,11 @@ static int pl011_startup(struct uart_port *port)
 	writew(cr, uap->port.membase + UART011_CR);
 	writew(0, uap->port.membase + UART011_FBRD);
 	writew(1, uap->port.membase + UART011_IBRD);
+	spin_lock_irq(&uap->port.lock);
 	writew(0, uap->port.membase + uap->lcrh_rx);
+	/* Clear all pending interrupts. */
+	writew(0xffff, uap->port.membase + UART011_ICR);
+	spin_unlock_irq(&uap->port.lock);
 	if (uap->lcrh_tx != uap->lcrh_rx) {
 		int i;
 		/*
@@ -1409,10 +1413,6 @@ static int pl011_startup(struct uart_port *port)
 
 	cr = UART01x_CR_UARTEN | UART011_CR_RXE | UART011_CR_TXE;
 	writew(cr, uap->port.membase + UART011_CR);
-
-	/* Clear pending error interrupts */
-	writew(UART011_OEIS | UART011_BEIS | UART011_PEIS | UART011_FEIS,
-	       uap->port.membase + UART011_ICR);
 
 	/*
 	 * initialise the old status of the modem signals
