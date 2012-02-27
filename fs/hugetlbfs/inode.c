@@ -931,6 +931,9 @@ struct file *hugetlb_file_setup(const char *name, size_t size,
 	struct path path;
 	struct dentry *root;
 	struct qstr quick_string;
+    
+    struct hstate *hstate;
+    int num_pages;
 
 	*user = NULL;
 	if (!hugetlbfs_vfsmount)
@@ -960,12 +963,14 @@ struct file *hugetlb_file_setup(const char *name, size_t size,
 				current_fsgid(), S_IFREG | S_IRWXUGO, 0);
 	if (!inode)
 		goto out_dentry;
+    
+    hstate = hstate_inode(inode);
+    num_pages = (size + huge_page_size(hstate) - 1) >> huge_page_shift(hstate);
 
 	error = -ENOMEM;
-	if (hugetlb_reserve_pages(inode, 0,
-			size >> huge_page_shift(hstate_inode(inode)), NULL,
-			acctflag))
-		goto out_inode;
+    
+    if (hugetlb_reserve_pages(inode, 0, num_pages, NULL, acctflag))
+ 		goto out_inode;
 
 	d_instantiate(path.dentry, inode);
 	inode->i_size = size;
