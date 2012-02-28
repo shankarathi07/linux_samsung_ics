@@ -4486,19 +4486,20 @@ void ext4_free_blocks(handle_t *handle, struct inode *inode,
 	trace_ext4_free_blocks(inode, block, count, flags);
 
 	if (flags & EXT4_FREE_BLOCKS_FORGET) {
-		struct buffer_head *tbh = bh;
 		int i;
 
 		BUG_ON(bh && (count > 1));
 
 		for (i = 0; i < count; i++) {
 			if (!bh)
-				tbh = sb_find_get_block(inode->i_sb,
-							block + i);
-			if (unlikely(!tbh))
-				continue;
-			ext4_forget(handle, flags & EXT4_FREE_BLOCKS_METADATA,
-				    inode, tbh, block + i);
+				bh = sb_find_get_block(inode->i_sb, block + i);
+						
+            
+            ext4_forget(handle, flags & EXT4_FREE_BLOCKS_METADATA,
+				    inode, bh, block + i);
+            
+            bh = NULL;
+
 		}
 	}
 
