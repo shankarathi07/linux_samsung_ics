@@ -24,6 +24,11 @@ static ssize_t liveoc_ocvalue_read(struct device * dev, struct device_attribute 
     return sprintf(buf, "%u\n", oc_value);
 }
 
+static ssize_t liveoc_octarget_read(struct device * dev, struct device_attribute * attr, char * buf)
+{
+    return sprintf(buf, "%u\n", oc_target);
+}
+
 static ssize_t liveoc_ocvalue_write(struct device * dev, struct device_attribute * attr, const char * buf, size_t size)
 {
     unsigned int data;
@@ -54,17 +59,45 @@ static ssize_t liveoc_ocvalue_write(struct device * dev, struct device_attribute
     return size;
 }
 
+static ssize_t liveoc_octarget_write(struct device * dev, struct device_attribute * attr, const char * buf, size_t size)
+{
+    unsigned int data;
+
+    if(sscanf(buf, "%u\n", &data) == 1) 
+	{
+	    if (data != oc_value)
+		{
+		    oc_target = data;
+	    
+		    liveoc_update(oc_value, oc_target);
+		    pr_info("LIVEOC oc-target set to %u\n", oc_target);
+		}
+	    else
+		{
+		    pr_info("%s: invalid input range %u\n", __FUNCTION__, data);
+		}
+	} 
+    else 
+	{
+	    pr_info("%s: invalid input\n", __FUNCTION__);
+	}
+
+    return size;
+}
+
 static ssize_t liveoc_version(struct device * dev, struct device_attribute * attr, char * buf)
 {
     return sprintf(buf, "%u\n", LIVEOC_VERSION);
 }
 
 static DEVICE_ATTR(oc_value, S_IRUGO | S_IWUGO, liveoc_ocvalue_read, liveoc_ocvalue_write);
+static DEVICE_ATTR(oc_target, S_IRUGO | S_IWUGO, liveoc_octarget_read, liveoc_octarget_write);
 static DEVICE_ATTR(version, S_IRUGO , liveoc_version, NULL);
 
 static struct attribute *liveoc_attributes[] = 
     {
 	&dev_attr_oc_value.attr,
+	&dev_attr_oc_target.attr,
 	&dev_attr_version.attr,
 	NULL
     };
