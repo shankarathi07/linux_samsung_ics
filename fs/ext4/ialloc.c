@@ -472,7 +472,6 @@ static int find_group_orlov(struct super_block *sb, struct inode *parent,
 	int inodes_per_group = EXT4_INODES_PER_GROUP(sb);
 	unsigned int freei, avefreei, grp_free;
 	ext4_fsblk_t freeb, avefreeb;
-	ext4_fsblk_t freeb, avefreec;
 	unsigned int ndirs;
 	int max_dirs, min_inodes;
 	ext4_grpblk_t min_blocks;
