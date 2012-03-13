@@ -3441,7 +3441,7 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
 	struct ext4_ext_path *path = NULL;
 	struct ext4_extent newex, *ex;
 	ext4_fsblk_t newblock = 0;
-	int err = 0, depth, ret;
+	int free_on_err = 0, err = 0, depth, ret, i;
 	unsigned int allocated = 0;
 	unsigned int punched_out = 0;
 	unsigned int result = 0;
@@ -3597,7 +3597,21 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
 			err = ext4_ext_remove_space(inode, map->m_lblk,
 				map->m_lblk + punched_out);
 
-			goto out2;
+			if (err)
+                goto out2;
+           
+            /*
+             * Walk back up the path and remove
+             * empty index blocks
+             */
+            for (i = depth - 1; i > 0; i--) {
+                if (path[i].p_hdr->eh_entries == 0) {
+                    err = ext4_ext_rm_idx(handle, inode, path + i);
+                    if (err)
+                        goto out2;
+                }
+            }
+            
 		}
 	}
 
