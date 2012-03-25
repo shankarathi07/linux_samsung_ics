@@ -2548,6 +2548,7 @@ static int ext4_ext_remove_space(struct inode *inode, ext4_lblk_t start,
 	int depth = ext_depth(inode);
 	struct ext4_ext_path *path;
 	handle_t *handle;
+    loff_t page_len;
 	int i, err;
 
 	ext_debug("truncate since %u\n", start);
