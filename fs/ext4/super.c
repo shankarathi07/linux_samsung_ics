@@ -73,7 +73,6 @@ static const char *ext4_decode_error(struct super_block *sb, int errno,
 static int ext4_remount(struct super_block *sb, int *flags, char *data);
 static int ext4_statfs(struct dentry *dentry, struct kstatfs *buf);
 static int ext4_unfreeze(struct super_block *sb);
-static void ext4_write_super(struct super_block *sb);
 static int ext4_freeze(struct super_block *sb);
 static struct dentry *ext4_mount(struct file_system_type *fs_type, int flags,
 		       const char *dev_name, void *data);
@@ -763,9 +762,6 @@ static void ext4_put_super(struct super_block *sb)
 	destroy_workqueue(sbi->dio_unwritten_wq);
 
 	lock_super(sb);
-	if (sb->s_dirt)
-		ext4_commit_super(sb, 1);
-
 	if (sbi->s_journal) {
 		err = jbd2_journal_destroy(sbi->s_journal);
 		sbi->s_journal = NULL;
@@ -782,8 +778,10 @@ static void ext4_put_super(struct super_block *sb)
 	if (!(sb->s_flags & MS_RDONLY)) {
 		EXT4_CLEAR_INCOMPAT_FEATURE(sb, EXT4_FEATURE_INCOMPAT_RECOVER);
 		es->s_state = cpu_to_le16(sbi->s_mount_state);
-		ext4_commit_super(sb, 1);
 	}
+	if (sbi->s_dirty || !(sb->s_flags & MS_RDONLY))
+		ext4_commit_super(sb, 1);
+
 	if (sbi->s_proc) {
 		remove_proc_entry(sb->s_id, ext4_proc_root);
 	}
@@ -1272,7 +1270,6 @@ static const struct super_operations ext4_nojournal_sops = {
 	.dirty_inode	= ext4_dirty_inode,
 	.drop_inode	= ext4_drop_inode,
 	.evict_inode	= ext4_evict_inode,
-	.write_super	= ext4_write_super,
 	.put_super	= ext4_put_super,
 	.statfs		= ext4_statfs,
 	.remount_fs	= ext4_remount,
@@ -3362,7 +3359,6 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
 #else
 		es->s_flags |= cpu_to_le32(EXT2_FLAGS_SIGNED_HASH);
 #endif
-		sb->s_dirt = 1;
 	}
 
 	if (sbi->s_blocks_per_group > blocksize * 8) {
@@ -4077,12 +4073,21 @@ static int ext4_load_journal(struct super_block *sb,
 
 static int ext4_commit_super(struct super_block *sb, int sync)
 {
-	struct ext4_super_block *es = EXT4_SB(sb)->s_es;
-	struct buffer_head *sbh = EXT4_SB(sb)->s_sbh;
+	struct ext4_sb_info *sbi = EXT4_SB(sb);
+	struct ext4_super_block *es = sbi->s_es;
+	struct buffer_head *sbh = sbi->s_sbh;
 	int error = 0;
 
 	if (!sbh)
 		return error;
+
+	sbi->s_dirty = 0;
+	/*
+	 * Make sure we first mark the superblock as clean and then start
+	 * writing it out.
+	 */
+	smp_wmb();
+
 	if (buffer_write_io_error(sbh)) {
 		/*
 		 * Oh, dear.  A previous attempt to write the
@@ -4111,18 +4116,18 @@ static int ext4_commit_super(struct super_block *sb, int sync)
 		es->s_wtime = cpu_to_le32(get_seconds());
 	if (sb->s_bdev->bd_part)
 		es->s_kbytes_written =
-			cpu_to_le64(EXT4_SB(sb)->s_kbytes_written +
-			    ((part_stat_read(sb->s_bdev->bd_part, sectors[1]) -
-			      EXT4_SB(sb)->s_sectors_written_start) >> 1));
+        cpu_to_le64(sbi->s_kbytes_written +
+                    ((part_stat_read(sb->s_bdev->bd_part, sectors[1]) -
+                    sbi->s_sectors_written_start) >> 1));
 	else
-		es->s_kbytes_written =
-			cpu_to_le64(EXT4_SB(sb)->s_kbytes_written);
-	ext4_free_blocks_count_set(es, percpu_counter_sum_positive(
-					   &EXT4_SB(sb)->s_freeblocks_counter));
+		es->s_kbytes_written = cpu_to_le64(sbi->s_kbytes_written);
+    
+	ext4_free_blocks_count_set(es, EXT4_C2B(sbi, percpu_counter_sum_positive(&sbi->s_freeclusters_counter)));
+    
 	es->s_free_inodes_count =
 		cpu_to_le32(percpu_counter_sum_positive(
-				&EXT4_SB(sb)->s_freeinodes_counter));
-	sb->s_dirt = 0;
+				&sbi->s_freeinodes_counter));
+    
 	BUFFER_TRACE(sbh, "marking dirty");
 	mark_buffer_dirty(sbh);
 	if (sync) {
@@ -4139,6 +4144,66 @@ static int ext4_commit_super(struct super_block *sb, int sync)
 		}
 	}
 	return error;
+}
+
+struct sb_delayed_work {
+	struct delayed_work dwork;
+	struct super_block *sb;
+};
+
+static struct sb_delayed_work *work_to_sbwork(struct work_struct *work)
+{
+	struct delayed_work *dwork;
+
+	dwork = container_of(work, struct delayed_work, work);
+	return container_of(dwork, struct sb_delayed_work, dwork);
+}
+
+static void write_super(struct work_struct *work)
+{
+	struct sb_delayed_work *sbwork = work_to_sbwork(work);
+	struct super_block *sb = sbwork->sb;
+
+	kfree(sbwork);
+
+	smp_rmb();
+	if (!EXT4_SB(sb)->s_dirty)
+		return;
+
+	lock_super(sb);
+	ext4_commit_super(sb, 1);
+	unlock_super(sb);
+}
+
+void __ext4_mark_super_dirty(struct super_block *sb)
+{
+	struct ext4_sb_info *sbi = EXT4_SB(sb);
+	struct sb_delayed_work *sbwork;
+	unsigned long delay;
+
+	/* Make sure we see 's_dirt' changes ASAP */
+	smp_rmb();
+	if (sbi->s_dirty == 1)
+		return;
+	sbi->s_dirty = 1;
+	/* Make other CPUs see the 's_dirt' change as soon as possible */
+	smp_wmb();
+
+	sbwork = kmalloc(sizeof(struct sb_delayed_work), GFP_NOFS);
+	if (!sbwork) {
+		/*
+		 * Well, should not be a big deal - the system must be in
+		 * trouble anyway, and the SB will be written out on unmount or
+		 * we may be luckier next time it is marked as dirty.
+		 */
+		sbi->s_dirty = 2;
+		return;
+	}
+
+	INIT_DELAYED_WORK(&sbwork->dwork, write_super);
+	sbwork->sb = sb;
+	delay = msecs_to_jiffies(dirty_writeback_interval * 10);
+	queue_delayed_work(sbi->dio_unwritten_wq, &sbwork->dwork, delay);
 }
 
 /*
@@ -4226,13 +4291,6 @@ int ext4_force_commit(struct super_block *sb)
 	}
 
 	return ret;
-}
-
-static void ext4_write_super(struct super_block *sb)
-{
-	lock_super(sb);
-	ext4_commit_super(sb, 1);
-	unlock_super(sb);
 }
 
 static int ext4_sync_fs(struct super_block *sb, int wait)

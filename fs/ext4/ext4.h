@@ -1121,6 +1121,7 @@ struct ext4_sb_info {
 	u32 s_hash_seed[4];
 	int s_def_hash_version;
 	int s_hash_unsigned;	/* 3 if hash should be signed, 0 if not */
+    int s_dirty;
 	struct percpu_counter s_freeblocks_counter;
 	struct percpu_counter s_freeinodes_counter;
 	struct percpu_counter s_dirs_counter;
@@ -2132,7 +2133,7 @@ static inline void ext4_unlock_group(struct super_block *sb,
 static inline void ext4_mark_super_dirty(struct super_block *sb)
 {
 	if (EXT4_SB(sb)->s_journal == NULL)
-		sb->s_dirt =1;
+		__ext4_mark_super_dirty(sb);
 }
 
 /*

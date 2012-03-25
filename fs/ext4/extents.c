@@ -2096,14 +2096,17 @@ static int ext4_ext_check_cache(struct inode *inode, ext4_lblk_t block,
 		ret = 1;
 	}
 errout:
+#if 0
 	if (!ret)
 		sbi->extent_cache_misses++;
 	else
 		sbi->extent_cache_hits++;
+#endif
+    
 	spin_unlock(&EXT4_I(inode)->i_block_reservation_lock);
 	return ret;
 }
-
+#if 0
 /*
  * ext4_ext_in_cache()
  * Checks to see if the given block is in the cache.
