@@ -2548,7 +2548,6 @@ static int ext4_ext_remove_space(struct inode *inode, ext4_lblk_t start,
 	int depth = ext_depth(inode);
 	struct ext4_ext_path *path;
 	handle_t *handle;
-    loff_t page_len;
 	int i, err;
 
 	ext_debug("truncate since %u\n", start);
@@ -4294,6 +4293,7 @@ int ext4_ext_punch_hole(struct file *file, loff_t offset, loff_t length)
 	handle_t *handle;
 	loff_t first_block_offset, last_block_offset, block_len;
 	loff_t first_page, last_page, first_page_offset, last_page_offset;
+    loff_t page_len;
 	int ret, credits, blocks_released, err = 0;
 
 	/*
