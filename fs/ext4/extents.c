@@ -2106,7 +2106,7 @@ errout:
 	spin_unlock(&EXT4_I(inode)->i_block_reservation_lock);
 	return ret;
 }
-#if 0
+
 /*
  * ext4_ext_in_cache()
  * Checks to see if the given block is in the cache.
@@ -3264,11 +3264,13 @@ static int check_eofblocks_fl(handle_t *handle, struct inode *inode,
 	depth = ext_depth(inode);
 	eh = path[depth].p_hdr;
 
-	if (unlikely(!eh->eh_entries)) {
-		EXT4_ERROR_INODE(inode, "eh->eh_entries == 0 and "
-				 "EOFBLOCKS_FL set");
-		return -EIO;
-	}
+	/*
+	 * We're going to remove EOFBLOCKS_FL entirely in future so we
+	 * do not care for this case anymore. Simply remove the flag
+	 * if there are no extents.
+	 */
+	if (unlikely(!eh->eh_entries))
+		goto out;
 	last_ex = EXT_LAST_EXTENT(eh);
 	/*
 	 * We should clear the EOFBLOCKS_FL flag if we are writing the
@@ -3292,6 +3294,7 @@ static int check_eofblocks_fl(handle_t *handle, struct inode *inode,
 	for (i = depth-1; i >= 0; i--)
 		if (path[i].p_idx != EXT_LAST_INDEX(path[i].p_hdr))
 			return 0;
+out:
 	ext4_clear_inode_flag(inode, EXT4_INODE_EOFBLOCKS);
 	return ext4_mark_inode_dirty(handle, inode);
 }
@@ -4292,12 +4295,45 @@ int ext4_ext_punch_hole(struct file *file, loff_t offset, loff_t length)
 	loff_t first_page, last_page, first_page_offset, last_page_offset;
 	int ret, credits, blocks_released, err = 0;
 
+	/*
+	 * If i_size is contained in the last page, we need to
+	 * unmap and zero the partial page after i_size
+	 */
+	if (inode->i_size >> PAGE_CACHE_SHIFT == last_page &&
+	   inode->i_size % PAGE_CACHE_SIZE != 0) {
+
+		page_len = PAGE_CACHE_SIZE -
+			(inode->i_size & (PAGE_CACHE_SIZE - 1));
+
+		if (page_len > 0) {
+			err = ext4_discard_partial_page_buffers(handle,
+			  mapping, inode->i_size, page_len, 0);
+
+			if (err)
+				goto out;
+		}
+	}
+
 	first_block = (offset + sb->s_blocksize - 1) >>
 		EXT4_BLOCK_SIZE_BITS(sb);
 	last_block = (offset + length) >> EXT4_BLOCK_SIZE_BITS(sb);
 
 	first_block_offset = first_block << EXT4_BLOCK_SIZE_BITS(sb);
 	last_block_offset = last_block << EXT4_BLOCK_SIZE_BITS(sb);
+
+	/* No need to punch hole beyond i_size */
+	if (offset >= inode->i_size)
+		return 0;
+
+	/*
+	 * If the hole extends beyond i_size, set the hole
+	 * to end after the page that contains i_size
+	 */
+	if (offset + length > inode->i_size) {
+		length = inode->i_size +
+		   PAGE_CACHE_SIZE - (inode->i_size & (PAGE_CACHE_SIZE - 1)) -
+		   offset;
+	}
 
 	first_page = (offset + PAGE_CACHE_SIZE - 1) >> PAGE_CACHE_SHIFT;
 	last_page = (offset + length) >> PAGE_CACHE_SHIFT;
@@ -4430,6 +4466,41 @@ int ext4_ext_punch_hole(struct file *file, loff_t offset, loff_t length)
 		ext4_handle_sync(handle);
 
 	up_write(&EXT4_I(inode)->i_data_sem);
+
+	/*
+	 * This is fugly, but even though we're going to get rid of the
+	 * EOFBLOCKS_LF in the future, we have to handle it correctly now
+	 * because there are still versions of e2fsck out there which
+	 * would scream otherwise. Once the new e2fsck code ignoring
+	 * this flag is common enough this can be removed entirely.
+	 */
+	if (ext4_test_inode_flag(inode, EXT4_INODE_EOFBLOCKS)) {
+		struct ext4_ext_path *path;
+		ext4_lblk_t last_block;
+
+		mutex_lock(&inode->i_mutex);
+		down_read(&EXT4_I(inode)->i_data_sem);
+
+		last_block = inode->i_size >> EXT4_BLOCK_SIZE_BITS(sb);
+
+		/*
+		 * We have to check whether there is any extent past the
+		 * i_size. If not, we probably punched that out, so we need
+		 * to clear the EOFBLOCKS flag
+		 */
+		path = ext4_ext_find_extent(inode, last_block, NULL);
+		if (IS_ERR(path))
+			err = PTR_ERR(path);
+		else {
+			err = check_eofblocks_fl(handle, inode, last_block,
+						 path, 1);
+			ext4_ext_drop_refs(path);
+			kfree(path);
+		}
+
+		up_read(&EXT4_I(inode)->i_data_sem);
+		mutex_unlock(&inode->i_mutex);
+	}
 
 out:
 	ext4_orphan_del(handle, inode);
