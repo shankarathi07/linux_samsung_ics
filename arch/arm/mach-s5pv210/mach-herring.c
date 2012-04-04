@@ -4964,6 +4964,8 @@ static unsigned int herring_cdma_wimax_sleep_gpio_table[][3] = {
 	{ S5PV210_GPJ2(2), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 	{ S5PV210_GPJ2(3), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 	{ S5PV210_GPJ2(4), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
+	{ S5PV210_GPJ2(4), S3C_GPIO_SLP_INPUT,	S3C_GPIO_PULL_DOWN},
+
 	{ S5PV210_GPJ2(5), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 
 	{ S5PV210_GPJ2(6), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
@@ -5398,6 +5400,8 @@ int __init herring_init_wifi_mem(void)
 
 /* Customized Locale table : OPTIONAL feature */
 #define WLC_CNTRY_BUF_SZ       4
+#define WLC_CNTRY_BUF_SZ	4
+
 typedef struct cntry_locales_custom {
 	char iso_abbrev[WLC_CNTRY_BUF_SZ];
 	char custom_locale[WLC_CNTRY_BUF_SZ];
