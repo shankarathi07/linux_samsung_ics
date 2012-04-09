@@ -32,9 +32,6 @@
 #include <linux/irq.h>
 #include <linux/skbuff.h>
 #include <linux/console.h>
-#ifdef CONFIG_FORCE_FAST_CHARGE
-#include <linux/fastchg.h>
-#endif
 
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
@@ -368,22 +365,16 @@ static struct s3cfb_lcd r61408 = {
 	},
 };
 
-#ifdef CONFIG_S5PV210_BIGMEM
-#define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC0 (4608 * SZ_1K)
-#define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC1 (0)
-#define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC2 (5120 * SZ_1K)
-#else
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC0 (6144 * SZ_1K)
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC1 (9900 * SZ_1K)
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMC2 (6144 * SZ_1K)
-#endif
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_MFC0 (36864 * SZ_1K)
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_MFC1 (36864 * SZ_1K)
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_FIMD (S5PV210_LCD_WIDTH * \
-S5PV210_LCD_HEIGHT * 4 * \
-(CONFIG_FB_S3C_NR_BUFFERS + \
-(CONFIG_FB_S3C_NUM_OVLY_WIN * \
-CONFIG_FB_S3C_NUM_BUF_OVLY_WIN)))
+					     S5PV210_LCD_HEIGHT * 4 * \
+					     (CONFIG_FB_S3C_NR_BUFFERS + \
+						 (CONFIG_FB_S3C_NUM_OVLY_WIN * \
+						  CONFIG_FB_S3C_NUM_BUF_OVLY_WIN)))
 #define  S5PV210_VIDEO_SAMSUNG_MEMSIZE_JPEG (8192 * SZ_1K)
 
 static struct s5p_media_device herring_media_devs[] = {
@@ -440,41 +431,26 @@ static struct s5p_media_device herring_media_devs[] = {
 
 #ifdef CONFIG_CPU_FREQ
 static struct s5pv210_cpufreq_voltage smdkc110_cpufreq_volt[] = {
-    {
-		.freq	= 1460000,
-		.varm	= 1450000,
-		.vint	= 1200000,
-	},
-    {
-		.freq	= 1300000,
-		.varm	= 1400000,
-		.vint	= 1150000,
-	},
-    {
-		.freq	= 1200000,
-		.varm	= 1325000,
-		.vint	= 1100000,
-	},
 	{
 		.freq	= 1000000,
-		.varm	= 1250000,
+		.varm	= 1275000,
 		.vint	= 1100000,
 	}, {
 		.freq	=  800000,
-		.varm	= 1175000,
-		.vint	= 1050000,
+		.varm	= 1200000,
+		.vint	= 1100000,
 	}, {
 		.freq	=  400000,
-		.varm	= 1000000,
-		.vint	= 1000000,
+		.varm	= 1050000,
+		.vint	= 1100000,
 	}, {
 		.freq	=  200000,
-		.varm	=  925000,
-		.vint	=  950000,
+		.varm	=  950000,
+		.vint	= 1100000,
 	}, {
 		.freq	=  100000,
-		.varm	=  900000,
-		.vint	=  900000,
+		.varm	=  950000,
+		.vint	= 1000000,
 	},
 };
 
@@ -2032,24 +2008,6 @@ static void touch_keypad_onoff(int onoff)
 		msleep(50);
 }
 
-static void touch_keypad_gpio_sleep(int onoff){
-	if(onoff == TOUCHKEY_ON){
-		/*
-		 * reconfigure gpio to activate touchkey controller vdd in sleep mode
-		 */
-		s3c_gpio_slp_cfgpin(_3_GPIO_TOUCH_EN, S3C_GPIO_SLP_OUT1);
-		//s3c_gpio_slp_setpull_updown(_3_GPIO_TOUCH_EN, S3C_GPIO_PULL_NONE);
-	} else {
-		/*
-		 * reconfigure gpio to deactivate touchkey vdd in sleep mode,
-		 * this is the default
-		 */
-		s3c_gpio_slp_cfgpin(_3_GPIO_TOUCH_EN, S3C_GPIO_SLP_OUT0);
-		//s3c_gpio_slp_setpull_updown(_3_GPIO_TOUCH_EN, S3C_GPIO_PULL_NONE);
-	}
-
-}
-
 static const int touch_keypad_code[] = {
 	KEY_MENU,
 	KEY_HOME,
@@ -2061,7 +2019,6 @@ static struct touchkey_platform_data touchkey_data = {
 	.keycode_cnt = ARRAY_SIZE(touch_keypad_code),
 	.keycode = touch_keypad_code,
 	.touchkey_onoff = touch_keypad_onoff,
-	.touchkey_sleep_onoff = touch_keypad_gpio_sleep,
 	.fw_name = "cypress-touchkey.bin",
 	.scl_pin = _3_TOUCH_SCL_28V,
 	.sda_pin = _3_TOUCH_SDA_28V,
@@ -2965,36 +2922,27 @@ static void k3g_irq_init(void)
 }
 
 
-static void fsa9480_charger_cb(bool attached)
-{
-        set_cable_status = attached ? CABLE_TYPE_AC : CABLE_TYPE_NONE;
-        if (callbacks && callbacks->set_cable)
-                callbacks->set_cable(callbacks, set_cable_status);
-}
-
-
 static void fsa9480_usb_cb(bool attached)
 {
-#ifdef CONFIG_FORCE_FAST_CHARGE
-	if (force_fast_charge != 0) {
-		fsa9480_charger_cb(attached);
-	} else {
-#endif
-		struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);
+	struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);
 
-		if (gadget) {
-			if (attached)
-				usb_gadget_vbus_connect(gadget);
-			else
-				usb_gadget_vbus_disconnect(gadget);
-		}
-
-		set_cable_status = attached ? CABLE_TYPE_USB : CABLE_TYPE_NONE;
-		if (callbacks && callbacks->set_cable)
-			callbacks->set_cable(callbacks, set_cable_status);
-#ifdef CONFIG_FORCE_FAST_CHARGE
+	if (gadget) {
+		if (attached)
+			usb_gadget_vbus_connect(gadget);
+		else
+			usb_gadget_vbus_disconnect(gadget);
 	}
-#endif
+
+	set_cable_status = attached ? CABLE_TYPE_USB : CABLE_TYPE_NONE;
+	if (callbacks && callbacks->set_cable)
+		callbacks->set_cable(callbacks, set_cable_status);
+}
+
+static void fsa9480_charger_cb(bool attached)
+{
+	set_cable_status = attached ? CABLE_TYPE_AC : CABLE_TYPE_NONE;
+	if (callbacks && callbacks->set_cable)
+		callbacks->set_cable(callbacks, set_cable_status);
 }
 
 static struct switch_dev switch_dock = {
@@ -3003,31 +2951,23 @@ static struct switch_dev switch_dock = {
 
 static void fsa9480_deskdock_cb(bool attached)
 {
-#ifdef CONFIG_FORCE_FAST_CHARGE
-	if (force_fast_charge != 0) {
-	        fsa9480_charger_cb(attached);
-        } else {
-#endif
-		struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);
+	struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);
 
+	if (attached)
+		switch_set_state(&switch_dock, 1);
+	else
+		switch_set_state(&switch_dock, 0);
+
+	if (gadget) {
 		if (attached)
-			switch_set_state(&switch_dock, 1);
+			usb_gadget_vbus_connect(gadget);
 		else
-			switch_set_state(&switch_dock, 0);
-
-		if (gadget) {
-			if (attached)
-				usb_gadget_vbus_connect(gadget);
-			else
-				usb_gadget_vbus_disconnect(gadget);
-		}
-
-		set_cable_status = attached ? CABLE_TYPE_USB : CABLE_TYPE_NONE;
-		if (callbacks && callbacks->set_cable)
-			callbacks->set_cable(callbacks, set_cable_status);
-#ifdef CONFIG_FORCE_FAST_CHARGE
+			usb_gadget_vbus_disconnect(gadget);
 	}
-#endif
+
+	set_cable_status = attached ? CABLE_TYPE_USB : CABLE_TYPE_NONE;
+	if (callbacks && callbacks->set_cable)
+		callbacks->set_cable(callbacks, set_cable_status);
 }
 
 static void fsa9480_cardock_cb(bool attached)
@@ -4830,8 +4770,8 @@ static unsigned int herring_cdma_wimax_sleep_gpio_table[][3] = {
 	{ S5PV210_GPC1(2), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
 
 	/*WIMAX EEPROM I2C LINES*/
-	{ S5PV210_GPC1(3), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
-	{ S5PV210_GPC1(4), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
+	{ S5PV210_GPC1(3), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
+	{ S5PV210_GPC1(4), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
 
 	/*WIMAX DBGEN*/
 	{ S5PV210_GPD0(0), S3C_GPIO_SLP_PREV,   S3C_GPIO_PULL_NONE},
@@ -4840,7 +4780,7 @@ static unsigned int herring_cdma_wimax_sleep_gpio_table[][3] = {
 	{ S5PV210_GPD0(2), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 
 	/*WIMAX RESET_N*/
-	{ S5PV210_GPD0(3), S3C_GPIO_SLP_PREV,   S3C_GPIO_PULL_NONE},
+	{ S5PV210_GPD0(3), S3C_GPIO_SLP_INPUT,   S3C_GPIO_PULL_UP},
 
 	{ S5PV210_GPD1(0), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
 	{ S5PV210_GPD1(1), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
@@ -4902,20 +4842,20 @@ static unsigned int herring_cdma_wimax_sleep_gpio_table[][3] = {
 
 
 	{ S5PV210_GPG0(0), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
-	{ S5PV210_GPG0(1), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
+	{ S5PV210_GPG0(1), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 	{ S5PV210_GPG0(2), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
-	{ S5PV210_GPG0(3), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
-	{ S5PV210_GPG0(4), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
-	{ S5PV210_GPG0(5), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
-	{ S5PV210_GPG0(6), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
+	{ S5PV210_GPG0(3), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
+	{ S5PV210_GPG0(4), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
+	{ S5PV210_GPG0(5), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
+	{ S5PV210_GPG0(6), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 
 	{ S5PV210_GPG1(0), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 	{ S5PV210_GPG1(1), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 	{ S5PV210_GPG1(2), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
-	{ S5PV210_GPG1(3), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
-	{ S5PV210_GPG1(4), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
-	{ S5PV210_GPG1(5), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
-	{ S5PV210_GPG1(6), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
+	{ S5PV210_GPG1(3), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
+	{ S5PV210_GPG1(4), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
+	{ S5PV210_GPG1(5), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
+	{ S5PV210_GPG1(6), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 
 	/*wimax SDIO pins*/
 	{ S5PV210_GPG2(0), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_NONE},
@@ -4971,11 +4911,11 @@ static unsigned int herring_cdma_wimax_sleep_gpio_table[][3] = {
 	{ S5PV210_GPJ2(1), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 	{ S5PV210_GPJ2(2), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 	{ S5PV210_GPJ2(3), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
-	{ S5PV210_GPJ2(4), S3C_GPIO_SLP_PREV, 	S3C_GPIO_PULL_DOWN},
+	{ S5PV210_GPJ2(4), S3C_GPIO_SLP_INPUT,	S3C_GPIO_PULL_DOWN},
 	{ S5PV210_GPJ2(5), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 
 	{ S5PV210_GPJ2(6), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
-	{ S5PV210_GPJ2(7), S3C_GPIO_SLP_OUT1,   S3C_GPIO_PULL_NONE},
+	{ S5PV210_GPJ2(7), S3C_GPIO_SLP_OUT0,   S3C_GPIO_PULL_NONE},
 
 	{ S5PV210_GPJ3(0), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
 	{ S5PV210_GPJ3(1), S3C_GPIO_SLP_INPUT,  S3C_GPIO_PULL_DOWN},
@@ -5403,11 +5343,82 @@ int __init herring_init_wifi_mem(void)
 
 	return -ENOMEM;
 }
+
+/* Customized Locale table : OPTIONAL feature */
+#define WLC_CNTRY_BUF_SZ	4
+typedef struct cntry_locales_custom {
+	char iso_abbrev[WLC_CNTRY_BUF_SZ];
+	char custom_locale[WLC_CNTRY_BUF_SZ];
+	int  custom_locale_rev;
+} cntry_locales_custom_t;
+
+static cntry_locales_custom_t herring_wlan_translate_custom_table[] = {
+/* Table should be filled out based on custom platform regulatory requirement */
+	{"",   "XY", 4},  /* universal */
+	{"US", "US", 69}, /* input ISO "US" to : US regrev 69 */
+	{"CA", "US", 69}, /* input ISO "CA" to : US regrev 69 */
+	{"EU", "EU", 5},  /* European union countries */
+	{"AT", "EU", 5},
+	{"BE", "EU", 5},
+	{"BG", "EU", 5},
+	{"CY", "EU", 5},
+	{"CZ", "EU", 5},
+	{"DK", "EU", 5},
+	{"EE", "EU", 5},
+	{"FI", "EU", 5},
+	{"FR", "EU", 5},
+	{"DE", "EU", 5},
+	{"GR", "EU", 5},
+	{"HU", "EU", 5},
+	{"IE", "EU", 5},
+	{"IT", "EU", 5},
+	{"LV", "EU", 5},
+	{"LI", "EU", 5},
+	{"LT", "EU", 5},
+	{"LU", "EU", 5},
+	{"MT", "EU", 5},
+	{"NL", "EU", 5},
+	{"PL", "EU", 5},
+	{"PT", "EU", 5},
+	{"RO", "EU", 5},
+	{"SK", "EU", 5},
+	{"SI", "EU", 5},
+	{"ES", "EU", 5},
+	{"SE", "EU", 5},
+	{"GB", "EU", 5},  /* input ISO "GB" to : EU regrev 05 */
+	{"IL", "IL", 0},
+	{"CH", "CH", 0},
+	{"TR", "TR", 0},
+	{"NO", "NO", 0},
+	{"KR", "XY", 3},
+	{"AU", "XY", 3},
+	{"CN", "XY", 3},  /* input ISO "CN" to : XY regrev 03 */
+	{"TW", "XY", 3},
+	{"AR", "XY", 3},
+	{"MX", "XY", 3}
+};
+
+static void *herring_wlan_get_country_code(char *ccode)
+{
+	int size = ARRAY_SIZE(herring_wlan_translate_custom_table);
+	int i;
+
+	if (!ccode)
+		return NULL;
+
+	for (i = 0; i < size; i++)
+		if (strcmp(ccode, herring_wlan_translate_custom_table[i].iso_abbrev) == 0)
+			return &herring_wlan_translate_custom_table[i];
+	return &herring_wlan_translate_custom_table[0];
+}
+
+
 static struct wifi_platform_data wifi_pdata = {
 	.set_power		= wlan_power_en,
 	.set_reset		= wlan_reset_en,
 	.set_carddetect		= wlan_carddetect_en,
 	.mem_prealloc		= herring_mem_prealloc,
+	.get_country_code	= herring_wlan_get_country_code,
 };
 
 static struct platform_device sec_device_wifi = {
@@ -5483,12 +5494,6 @@ static struct platform_device *herring_devices[] __initdata = {
 	&herring_i2c11_device, /* optical sensor */
 	&herring_i2c12_device, /* magnetic sensor */
 	&herring_i2c14_device, /* nfc sensor */
-#if defined CONFIG_USB_S3C_OTG_HOST
- 	&s3c_device_usb_otghcd,
-#endif
-#if defined CONFIG_USB_DWC_OTG
-	&s3c_device_usb_dwcotg,
-#endif
 #ifdef CONFIG_USB_GADGET
 	&s3c_device_usbgadget,
 #endif
@@ -5963,18 +5968,17 @@ void otg_phy_init(void)
 			S3C_USBOTG_PHYCLK);
 	writel((readl(S3C_USBOTG_RSTCON) & ~(0x3<<1)) | (0x1<<0),
 			S3C_USBOTG_RSTCON);
-	mdelay(1);
+	msleep(1);
 	writel(readl(S3C_USBOTG_RSTCON) & ~(0x7<<0),
 			S3C_USBOTG_RSTCON);
-	mdelay(1);
+	msleep(1);
 
 	/* rising/falling time */
 	writel(readl(S3C_USBOTG_PHYTUNE) | (0x1<<20),
 			S3C_USBOTG_PHYTUNE);
 
-	/* set DC level as 6 (6%) */
-	writel((readl(S3C_USBOTG_PHYTUNE) & ~(0xf)) | (0x1<<2) | (0x1<<1),
-			S3C_USBOTG_PHYTUNE);
+	/* set DC level as 0xf (24%) */
+	writel(readl(S3C_USBOTG_PHYTUNE) | 0xf, S3C_USBOTG_PHYTUNE);
 }
 EXPORT_SYMBOL(otg_phy_init);
 
@@ -6023,44 +6027,6 @@ void usb_host_phy_off(void)
 			S5P_USB_PHY_CONTROL);
 }
 EXPORT_SYMBOL(usb_host_phy_off);
-#endif
-
-#if defined CONFIG_USB_S3C_OTG_HOST || defined CONFIG_USB_DWC_OTG
-
-/* Initializes OTG Phy */
-void otg_host_phy_init(void)
-{
-       __raw_writel(__raw_readl(S5P_USB_PHY_CONTROL)
-               |(0x1<<0), S5P_USB_PHY_CONTROL); /*USB PHY0 Enable */
-// from galaxy tab otg host:
-       __raw_writel((__raw_readl(S3C_USBOTG_PHYPWR)
-             &~(0x3<<3)&~(0x1<<0))|(0x1<<5), S3C_USBOTG_PHYPWR);
-// from galaxy s2 otg host:
-//     __raw_writel((__raw_readl(S3C_USBOTG_PHYPWR)
-//           &~(0x7<<3)&~(0x1<<0)), S3C_USBOTG_PHYPWR);
-       __raw_writel((__raw_readl(S3C_USBOTG_PHYCLK)
-               &~(0x1<<4))|(0x7<<0), S3C_USBOTG_PHYCLK);
-
-       __raw_writel((__raw_readl(S3C_USBOTG_RSTCON)
-               &~(0x3<<1))|(0x1<<0), S3C_USBOTG_RSTCON);
-       mdelay(1);
-       __raw_writel((__raw_readl(S3C_USBOTG_RSTCON)
-               &~(0x7<<0)), S3C_USBOTG_RSTCON);
-       mdelay(1);
-
-       __raw_writel((__raw_readl(S3C_UDC_OTG_GUSBCFG)
-               |(0x3<<8)), S3C_UDC_OTG_GUSBCFG);
-
-//     smb136_set_otg_mode(1);
-
-       printk("otg_host_phy_int : USBPHYCTL=0x%x,PHYPWR=0x%x,PHYCLK=0x%x,USBCFG=0x%x\n",
-               readl(S5P_USB_PHY_CONTROL),
-               readl(S3C_USBOTG_PHYPWR),
-               readl(S3C_USBOTG_PHYCLK),
-               readl(S3C_UDC_OTG_GUSBCFG)
-               );
-}
-EXPORT_SYMBOL(otg_host_phy_init);
 #endif
 
 MACHINE_START(HERRING, "herring")
