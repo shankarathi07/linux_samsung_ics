@@ -715,7 +715,7 @@ exit_err:
 	}
 }
 
-
+]
 /*
  * ext4_add_new_descs() adds @count group descriptor of groups
  * starting at @group
@@ -1062,6 +1062,8 @@ static int ext4_setup_next_flex_gd(struct super_block *sb,
 }
 
 
+=======
+>>>>>>> parent of c00f37c... tweak
 /* Add group descriptor data to an existing or new group descriptor block.
  * Ensure we handle all possible error conditions _before_ we start modifying
  * the filesystem, because we cannot abort the transaction and not have it
@@ -1210,13 +1212,6 @@ int ext4_group_add(struct super_block *sb, struct ext4_new_group_data *input)
 	 * descriptor
 	 */
 	err = ext4_mb_add_groupinfo(sb, input->group, gdp);
-	ext4_blocks_count_set(es, o_blocks_count + add);
-	ext4_free_blocks_count_set(es, ext4_free_blocks_count(es) + add);
-	ext4_debug("freeing blocks %llu through %llu\n", o_blocks_count,
-		   o_blocks_count + add);
-	/* We add the blocks to the bitmap and set the group need init bit */
-	err = ext4_group_add_blocks(handle, sb, o_blocks_count, add);
-
 	if (err)
 		goto exit_journal;
 
