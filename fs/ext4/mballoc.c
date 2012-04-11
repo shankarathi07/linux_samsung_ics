@@ -4900,10 +4900,12 @@ ext4_trim_all_free(struct super_block *sb, ext4_group_t group,
 int ext4_trim_fs(struct super_block *sb, struct fstrim_range *range)
 {
 	struct ext4_group_info *grp;
-	ext4_group_t first_group, last_group;
 	ext4_group_t group, ngroups = ext4_get_groups_count(sb);
 	ext4_grpblk_t cnt = 0, first_block, last_block;
 	uint64_t start, len, minlen, trimmed = 0;
+    ext4_group_t first_group, last_group;
+	ext4_grpblk_t first_cluster, last_cluster;
+    uint64_t start, len, minlen, trimmed = 0;
 	ext4_fsblk_t first_data_blk =
 			le32_to_cpu(EXT4_SB(sb)->s_es->s_first_data_block);
 	int ret = 0;
@@ -4949,7 +4951,7 @@ int ext4_trim_fs(struct super_block *sb, struct fstrim_range *range)
 			last_block = first_block + len;
 		len -= last_block - first_block;
 
-		if (grp->bb_free >= minlen) {
+		if (grp->bb_free >= minlen) 
 			cnt = ext4_trim_all_free(sb, group, first_block,
 						last_block, minlen);
 			if (cnt < 0) {
@@ -4960,6 +4962,13 @@ int ext4_trim_fs(struct super_block *sb, struct fstrim_range *range)
 		trimmed += cnt;
 		first_block = 0;
 	}
+
+		/*
+		 * For every group except the first one, we are sure
+		 * that the first cluster to discard will be cluster #0.
+		 */
+		first_cluster = 0;
+    }
 	range->len = trimmed * sb->s_blocksize;
 
 	return ret;
