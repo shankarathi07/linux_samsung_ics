@@ -492,8 +492,9 @@ int simple_fill_super(struct super_block *s, unsigned long magic,
 	root = d_alloc_root(inode);
 	if (!root) {
 		iput(inode);
-	set_nlink(inode, 2);
-	root = d_make_root(inode);
+        set_nlink(inode, 2);
+        root = d_make_root(inode);
+    }
 	if (!root)
 		return -ENOMEM;
 	for (i = 0; !files->name || files->name[0]; i++, files++) {
@@ -524,7 +525,7 @@ out:
 	d_genocide(root);
 	dput(root);
 	return -ENOMEM;
-}
+    }
 
 static DEFINE_SPINLOCK(pin_fs_lock);
 
