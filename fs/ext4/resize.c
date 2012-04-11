@@ -1061,7 +1061,7 @@ static int ext4_setup_next_flex_gd(struct super_block *sb,
 	return 1;
 }
 
->>>>>>> 636d7e2... ext4: update s_free_{inodes,blocks}_count during online resize
+
 /* Add group descriptor data to an existing or new group descriptor block.
  * Ensure we handle all possible error conditions _before_ we start modifying
  * the filesystem, because we cannot abort the transaction and not have it
