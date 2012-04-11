@@ -4963,7 +4963,7 @@ int ext4_trim_fs(struct super_block *sb, struct fstrim_range *range)
 			last_block = first_block + len;
 		len -= last_block - first_block;
 
-		if (grp->bb_free >= minlen) {
+		if (grp->bb_free >= minlen) 
 			cnt = ext4_trim_all_free(sb, group, first_block,
 						last_block, minlen);
 		if (group == last_group)
@@ -4985,7 +4985,7 @@ int ext4_trim_fs(struct super_block *sb, struct fstrim_range *range)
 		 * that the first cluster to discard will be cluster #0.
 		 */
 		first_cluster = 0;
-	}
+    }
 	range->len = trimmed * sb->s_blocksize;
 
 	return ret;
