@@ -493,7 +493,7 @@ int proc_fill_super(struct super_block *s)
 	if (s->s_root)
 		return 0;
 
-    -out_no_root:
+    out_no_root:
 	printk("proc_read_super: get root inode failed\n");
 	iput(root_inode);
 	pde_put(&proc_root);
