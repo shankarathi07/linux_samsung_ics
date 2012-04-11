@@ -4900,13 +4900,11 @@ ext4_trim_all_free(struct super_block *sb, ext4_group_t group,
 int ext4_trim_fs(struct super_block *sb, struct fstrim_range *range)
 {
 	struct ext4_group_info *grp;
-	ext4_group_t first_group, last_group;
 	ext4_group_t group, ngroups = ext4_get_groups_count(sb);
 	ext4_grpblk_t cnt = 0, first_block, last_block;
-	uint64_t start, len, minlen, trimmed = 0;
-	ext4_group_t first_group, last_group;
+    ext4_group_t first_group, last_group;
 	ext4_grpblk_t first_cluster, last_cluster;
-	uint64_t start, end, minlen, trimmed = 0;
+    uint64_t start, len, minlen, trimmed = 0;
 	ext4_fsblk_t first_data_blk =
 			le32_to_cpu(EXT4_SB(sb)->s_es->s_first_data_block);
 	ext4_fsblk_t max_blks = ext4_blocks_count(EXT4_SB(sb)->s_es);
