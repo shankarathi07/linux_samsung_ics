@@ -19,6 +19,8 @@
 #include <linux/module.h>
 #include <linux/magic.h>
 #include <linux/slab.h>
+#include <linux/dcache.h>
+
 
 #include "sysfs.h"
 

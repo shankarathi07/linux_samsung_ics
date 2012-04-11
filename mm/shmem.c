@@ -30,6 +30,7 @@
 #include <linux/module.h>
 #include <linux/percpu_counter.h>
 #include <linux/swap.h>
+#include <linux/dcache.h>
 
 static struct vfsmount *shm_mnt;
 
