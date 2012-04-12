@@ -1225,6 +1225,52 @@ void shrink_dcache_parent(struct dentry * parent)
 }
 EXPORT_SYMBOL(shrink_dcache_parent);
 
+struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+{
+    struct dentry *dentry;
+    char *dname;
+    
+    dentry = kmem_cache_alloc(dentry_cache, GFP_KERNEL);
+    if (!dentry)
+        return NULL;
+     
+    if (name->len > DNAME_INLINE_LEN-1) {
+        dname = kmalloc(name->len + 1, GFP_KERNEL);
+        if (!dname) {
+            kmem_cache_free(dentry_cache, dentry); 
+            return NULL;
+            }
+        } else  {
+                dname = dentry->d_iname;
+                }       
+    dentry->d_name.name = dname;
+     
+          dentry->d_name.len = name->len;
+             dentry->d_name.hash = name->hash;
+         memcpy(dname, name->name, name->len);
+            dname[name->len] = 0;
+ 
+         dentry->d_count = 1;
+            dentry->d_flags = 0;
+        spin_lock_init(&dentry->d_lock);
+           seqcount_init(&dentry->d_seq);
+       dentry->d_inode = NULL;
+         dentry->d_parent = dentry;
+        dentry->d_sb = sb;
+        dentry->d_op = NULL;
+           dentry->d_fsdata = NULL;
+        INIT_HLIST_BL_NODE(&dentry->d_hash);
+           INIT_LIST_HEAD(&dentry->d_lru);
+           INIT_LIST_HEAD(&dentry->d_subdirs);
+       INIT_LIST_HEAD(&dentry->d_alias);
+            INIT_LIST_HEAD(&dentry->d_u.d_child);
+          d_set_d_op(dentry, dentry->d_sb->s_d_op);
+   
+         this_cpu_inc(nr_dentry);
+   
+          return dentry;
+    }
+
 /*
  * Scan `sc->nr_slab_to_reclaim' dentries and return the number which remain.
  *

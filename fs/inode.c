@@ -276,6 +276,27 @@ static void destroy_inode(struct inode *inode)
 		call_rcu(&inode->i_rcu, i_callback);
 }
 
+/**
+ 315  * set_nlink - directly set an inode's link count
+ 316  * @inode: inode
+ 317  * @nlink: new nlink (should be non-zero)
+ 318  *
+ 319  * This is a low-level filesystem helper to replace any
+ 320  * direct filesystem manipulation of i_nlink.
+ 321  */
+void set_nlink(struct inode *inode, unsigned int nlink)
+{
+    if (!nlink) {
+        clear_nlink(inode);
+        } else {
+            /* Yes, some filesystems do change nlink from zero to one */
+            if (inode->i_nlink == 0)
+               atomic_long_dec(&inode->i_sb->s_remove_count);
+               inode->__i_nlink = nlink;
+            }
+   }
+EXPORT_SYMBOL(set_nlink);
+
 void address_space_init_once(struct address_space *mapping)
 {
 	memset(mapping, 0, sizeof(*mapping));
