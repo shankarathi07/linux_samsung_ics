@@ -764,6 +764,9 @@ struct inode {
 		struct rcu_head		i_rcu;
 	};
 	unsigned long		i_ino;
+  
+        unsigned int __i_nlink;
+    
 	atomic_t		i_count;
 	unsigned int		i_nlink;
 	dev_t			i_rdev;
@@ -1472,6 +1475,9 @@ struct super_block {
 	 * Saved pool identifier for cleancache (-1 means none)
 	 */
 	int cleancache_poolid;
+    
+    /* Number of inodes with nlink == 0 but still referenced */
+    atomic_long_t s_remove_count;
 };
 
 extern struct timespec current_fs_time(struct super_block *sb);
