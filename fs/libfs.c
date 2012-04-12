@@ -8,6 +8,7 @@
 #include <linux/slab.h>
 #include <linux/mount.h>
 #include <linux/vfs.h>
+#include <linux/fs.h>
 #include <linux/quotaops.h>
 #include <linux/mutex.h>
 #include <linux/exportfs.h>
