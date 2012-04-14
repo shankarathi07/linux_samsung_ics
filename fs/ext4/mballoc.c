@@ -1383,7 +1383,7 @@ static void mb_free_blocks(struct inode *inode, struct ext4_buddy *e4b,
 	mb_check_buddy(e4b);
 }
 
-static int mb_find_extent(struct ext4_buddy *e4b, int order, int block,
+static int mb_find_extent(struct ext4_buddy *e4b, int block,
                           int needed, struct ext4_free_extent *ex)
 {
 	int next = block;
