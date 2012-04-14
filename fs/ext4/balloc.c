@@ -17,6 +17,7 @@
 #include <linux/jbd2.h>
 #include <linux/quotaops.h>
 #include <linux/buffer_head.h>
+#include <linux/percpu_counter.h>
 #include "ext4.h"
 #include "ext4_jbd2.h"
 #include "mballoc.h"

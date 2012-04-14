@@ -2061,11 +2061,6 @@ do {								\
 #define EXT4_FREEBLOCKS_WATERMARK 0
 #endif
 
-#define EXT4_FREECLUSTERS_WATERMARK (4 * (percpu_counter_batch * nr_cpu_ids))
-#else
-#define EXT4_FREECLUSTERS_WATERMARK 0
-#endif
-
 
 static inline void ext4_update_i_disksize(struct inode *inode, loff_t newsize)
 {
