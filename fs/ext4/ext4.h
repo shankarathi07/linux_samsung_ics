@@ -1743,6 +1743,7 @@ extern ext4_fsblk_t ext4_new_meta_blocks(handle_t *handle, struct inode *inode,
 					 unsigned int flags,
 					 unsigned long *count,
 					 int *errp);
+extern int ext4_claim_free_clusters(struct ext4_sb_info *sbi, s64 nclusters, unsigned int flags);
 extern int ext4_claim_free_blocks(struct ext4_sb_info *sbi,
 				  s64 nblocks, unsigned int flags);
 extern ext4_fsblk_t ext4_count_free_blocks(struct super_block *);

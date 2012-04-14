@@ -46,6 +46,7 @@
 #include "ext4_jbd2.h"
 #include "xattr.h"
 #include "acl.h"
+#include "ext4.h"
 #include "ext4_extents.h"
 
 #include <trace/events/ext4.h>
