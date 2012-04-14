@@ -262,6 +262,9 @@ struct ext4_io_submit {
 /* Translate a cluster number to a block number */
 #define EXT4_C2B(sbi, cluster)  ((cluster) << (sbi)->s_cluster_bits)
 
+/* Translate a block number to a cluster number */
+#define EXT4_B2C(sbi, blk)      ((blk) >> (sbi)->s_cluster_bits)
+
 /*
  * Structure of a blocks group descriptor
  */
