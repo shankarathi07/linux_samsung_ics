@@ -1134,15 +1134,6 @@ void ext4_da_update_reserve_space(struct inode *inode,
 		used = ei->i_reserved_data_blocks;
 	}
 
-	if (unlikely(ei->i_allocated_meta_blocks > ei->i_reserved_meta_blocks)) {
-		ext4_msg(inode->i_sb, KERN_NOTICE, "%s: ino %lu, allocated %d "
-			 "with only %d reserved metadata blocks\n", __func__,
-			 inode->i_ino, ei->i_allocated_meta_blocks,
-			 ei->i_reserved_meta_blocks);
-		WARN_ON(1);
-		ei->i_allocated_meta_blocks = ei->i_reserved_meta_blocks;
-	}
-
 	/* Update per-inode reservations */
 	ei->i_reserved_data_blocks -= used;
 	ei->i_reserved_meta_blocks -= ei->i_allocated_meta_blocks;
@@ -1944,13 +1935,13 @@ repeat:
 	 * We do still charge estimated metadata to the sb though;
 	 * we cannot afford to run out of free blocks.
 	 */
-	if (ext4_claim_free_blocks(sbi, md_needed + 1, 0)) {
-		dquot_release_reservation_block(inode, 1);
+	ret = ext4_claim_free_clusters(sbi, md_needed + 1, 0);
+    if (ret) {
 		if (ext4_should_retry_alloc(inode->i_sb, &retries)) {
 			yield();
 			goto repeat;
 		}
-		return -ENOSPC;
+		goto error;
 	}
 	spin_lock(&ei->i_block_reservation_lock);
 	ei->i_reserved_data_blocks++;
@@ -1958,6 +1949,19 @@ repeat:
 	spin_unlock(&ei->i_block_reservation_lock);
 
 	return 0;       /* success */
+
+error:
+	/*
+	 * We've failed to reserve the space. Undo the effect
+	 * of ext4_calc_metadata_amount() to ensure the next
+	 * attempt correctly accounts for metadata.
+	 */
+	spin_lock(&ei->i_block_reservation_lock);
+	if (ei->i_da_metadata_calc_len)
+		ei->i_da_metadata_calc_len--;
+	spin_unlock(&ei->i_block_reservation_lock);
+
+	return ret;
 }
 
 static void ext4_da_release_space(struct inode *inode, int to_free)
