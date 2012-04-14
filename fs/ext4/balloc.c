@@ -20,6 +20,7 @@
 #include "ext4.h"
 #include "ext4_jbd2.h"
 #include "mballoc.h"
+#include "balloc.c"
 
 #include <trace/events/ext4.h>
 
