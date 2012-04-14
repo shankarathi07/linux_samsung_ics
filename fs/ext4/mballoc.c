@@ -1387,7 +1387,7 @@ static int mb_find_extent(struct ext4_buddy *e4b, int block,
                           int needed, struct ext4_free_extent *ex)
 {
 	int next = block;
-	int max, order;
+	int max,order;
 	int ord;
 	void *buddy;
     
