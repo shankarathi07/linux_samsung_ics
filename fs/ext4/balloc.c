@@ -362,6 +362,49 @@ ext4_read_block_bitmap(struct super_block *sb, ext4_group_t block_group)
 }
 
 /**
+ * ext4_has_free_clusters()
+ * @sbi:        in-core super block structure.
+ * @nclusters:  number of needed blocks
+ * @flags:      flags from ext4_mb_new_blocks()
+ *
+ * Check if filesystem has nclusters free & available for allocation.
+ * On success return 1, return 0 on failure.
+ */
+static int ext4_has_free_clusters(struct ext4_sb_info *sbi,
+                s64 nclusters, unsigned int flags)
+{
+    s64 free_clusters, dirty_clusters, root_clusters;
+    struct percpu_counter *fcc = &sbi->s_freeclusters_counter;
+    struct percpu_counter *dcc = &sbi->s_dirtyclusters_counter;
+     
+    free_clusters  = percpu_counter_read_positive(fcc);
+    dirty_clusters = percpu_counter_read_positive(dcc);
+    root_clusters = EXT4_B2C(sbi, ext4_r_blocks_count(sbi->s_es));
+   
+if (free_clusters - (nclusters + root_clusters + dirty_clusters) <EXT4_FREECLUSTERS_WATERMARK) {
+    free_clusters  = EXT4_C2B(sbi, percpu_counter_sum_positive(fcc));
+    dirty_clusters = percpu_counter_sum_positive(dcc);
+        }
+    /* Check whether we have space after accounting for current
+     * dirty clusters & root reserved clusters.
+     */
+    if (free_clusters >= ((root_clusters + nclusters) + dirty_clusters))
+        return 1;
+  
+    /* Hm, nope.  Are (enough) root reserved clusters available? */
+    if (sbi->s_resuid == current_fsuid() ||
+    ((sbi->s_resgid != 0) && in_group_p(sbi->s_resgid)) ||
+        capable(CAP_SYS_RESOURCE) ||
+        (flags & EXT4_MB_USE_ROOT_BLOCKS)) {
+        
+       if (free_clusters >= (nclusters + dirty_clusters))
+           return 1;
+    }
+    
+            return 0;
+   }
+
+/**
  * ext4_has_free_blocks()
  * @sbi:	in-core super block structure.
  * @nblocks:	number of needed blocks
