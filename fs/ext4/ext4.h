@@ -524,6 +524,9 @@ struct ext4_new_group_data {
 	/* Don't normalize allocation size (used for fallocate) */
 #define EXT4_GET_BLOCKS_NO_NORMALIZE		0x0040
 
+/* Do not acquire i_data_sem lock */
+#define EXT4_GET_BLOCKS_NO_LOCK			0x0100
+
 /*
  * Flags used by ext4_free_blocks
  */
