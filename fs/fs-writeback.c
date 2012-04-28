@@ -1282,6 +1282,45 @@ int writeback_inodes_sb_nr_if_idle(struct super_block *sb,
 EXPORT_SYMBOL(writeback_inodes_sb_nr_if_idle);
 
 /**
+ * try_to_writeback_inodes_sb_nr - try to start writeback if none underway
+ * @sb: the superblock
+ * @nr: the number of pages to write
+ * @reason: the reason of writeback
+ *
+ * Invoke writeback_inodes_sb_nr if no writeback is currently underway.
+ * Returns 1 if writeback was started, 0 if not.
+ */
+int try_to_writeback_inodes_sb_nr(struct super_block *sb,
+				  unsigned long nr,
+				  enum wb_reason reason)
+{
+	if (writeback_in_progress(sb->s_bdi))
+		return 1;
+
+	if (!down_read_trylock(&sb->s_umount))
+		return 0;
+
+	writeback_inodes_sb_nr(sb, nr, reason);
+	up_read(&sb->s_umount);
+	return 1;
+}
+EXPORT_SYMBOL(try_to_writeback_inodes_sb_nr);
+
+/**
+ * try_to_writeback_inodes_sb - try to start writeback if none underway
+ * @sb: the superblock
+ * @reason: reason why some writeback work was initiated
+ *
+ * Implement by try_to_writeback_inodes_sb_nr()
+ * Returns 1 if writeback was started, 0 if not.
+ */
+int try_to_writeback_inodes_sb(struct super_block *sb, enum wb_reason reason)
+{
+	return try_to_writeback_inodes_sb_nr(sb, get_nr_dirty_pages(), reason);
+}
+EXPORT_SYMBOL(try_to_writeback_inodes_sb);
+
+/**
  * sync_inodes_sb	-	sync sb inode pages
  * @sb: the superblock
  *
