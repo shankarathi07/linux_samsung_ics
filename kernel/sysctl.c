@@ -103,6 +103,7 @@ extern int percpu_pagelist_fraction;
 extern int compat_log;
 extern int latencytop_enabled;
 extern int sysctl_nr_open_min, sysctl_nr_open_max;
+extern int sysctl_enable_falloc_no_hide_stale;
 #ifndef CONFIG_MMU
 extern int sysctl_nr_trim_pages;
 #endif
@@ -1541,6 +1542,15 @@ static struct ctl_table fs_table[] = {
 		.mode		= 0644,
 		.proc_handler	= &pipe_proc_fn,
 		.extra1		= &pipe_min_size,
+	},
+	{
+		.procname	= "falloc_no_hide_stale",
+		.data		= &sysctl_enable_falloc_no_hide_stale,
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.proc_handler	= proc_dointvec_minmax,
+		.extra1		= &zero,
+		.extra2		= &one,
 	},
 	{ }
 };

@@ -213,6 +213,11 @@ SYSCALL_ALIAS(sys_ftruncate64, SyS_ftruncate64);
 #endif
 #endif /* BITS_PER_LONG == 32 */
 
+/*
+ * enable/disable FALLOC_FL_NO_HIDE_STALE flag
+ * 0: disable (default), 1: enable
+ */
+int sysctl_enable_falloc_no_hide_stale = 0;
 
 int do_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
 {
@@ -223,7 +228,7 @@ int do_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
 		return -EINVAL;
 
 	/* Return error if mode is not supported */
-	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
+	if (mode & ~FALLOC_FL_SUPPORTED_FLAGS)
 		return -EOPNOTSUPP;
 
 	/* Punch hole must have keep size set */
@@ -248,6 +253,11 @@ int do_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
 	ret = security_file_permission(file, MAY_WRITE);
 	if (ret)
 		return ret;
+
+	/* Check for enabling _NO_HIDE_STALE flag */
+	if (mode & FALLOC_FL_NO_HIDE_STALE &&
+	    !sysctl_enable_falloc_no_hide_stale)
+		return -EPERM;
 
 	if (S_ISFIFO(inode->i_mode))
 		return -ESPIPE;

@@ -820,6 +820,7 @@ enum
 	FS_AIO_NR=18,	/* current system-wide number of aio requests */
 	FS_AIO_MAX_NR=19,	/* system-wide maximum number of aio requests */
 	FS_INOTIFY=20,	/* inotify submenu */
+	FS_FALLOC_STALE=21,	/* enable fallocate _NO_HIDE_STALE flag */
 	FS_OCFS2=988,	/* ocfs2 */
 };
 
