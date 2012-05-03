@@ -3123,7 +3123,7 @@ static int ext4_nonda_switch(struct super_block *sb)
 	 * start pushing delalloc when 1/2 of free blocks are dirty.
 	 */
 	if (free_blocks < 2 * dirty_blocks)
-		try_to_writeback_inodes_sb(sb, WB_REASON_FS_FREE_SPACE);
+		writeback_inodes_sb_if_idle(sb);
 
 	return 0;
 }
