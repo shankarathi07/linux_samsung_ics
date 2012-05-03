@@ -1955,7 +1955,8 @@ int dhd_get_dtim_skip(dhd_pub_t *dhd)
 	int bcn_li_dtim;
 	char buf[128];
 	int ret;
-	int dtim_assoc = 0;
+	int dtim_assoc;
+    dtim_assoc = 0;
     
 	if ((dhd->dtim_skip == 0) || (dhd->dtim_skip == 1))
 		bcn_li_dtim = 3;
@@ -2442,7 +2443,7 @@ wl_iw_parse_ssid_list(char** list_str, wlc_ssid_t* ssid, int idx, int max)
  * Parse channel list from iwpriv CSCAN
  */
 int
-wl_iw_parse_channel_list(char** list_str, uint16* channel_list, int channel_num)
+wl_iw_parse_channel_list(char** list_str, uint16* channel_list,int channel_num)
 {
 	int num;
 	int val;

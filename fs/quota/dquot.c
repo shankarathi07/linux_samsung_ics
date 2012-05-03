@@ -907,13 +907,15 @@ static void add_dquot_ref(struct super_block *sb, int type)
 			spin_unlock(&inode->i_lock);
 			continue;
 		}
+        __iget(inode);
+		spin_unlock(&inode->i_lock);
+		spin_unlock(&inode_sb_list_lock);
+        
 #ifdef CONFIG_QUOTA_DEBUG
 		if (unlikely(inode_get_rsv_space(inode) > 0))
 			reserved = 1;
 #endif
-		__iget(inode);
-		spin_unlock(&inode->i_lock);
-		spin_unlock(&inode_sb_list_lock);
+		
 
 		iput(old_inode);
 		__dquot_initialize(inode, type);
