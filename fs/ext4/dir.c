@@ -39,7 +39,7 @@ static int ext4_release_dir(struct inode *inode,
 				struct file *filp);
 
 const struct file_operations ext4_dir_operations = {
-	.llseek		= ext4_dir_llseek,
+	.llseek		= ext4_llseek,
 	.read		= generic_read_dir,
 	.readdir	= ext4_readdir,		/* we take BKL. needed?*/
 	.unlocked_ioctl = ext4_ioctl,
@@ -309,6 +309,7 @@ loff_t ext4_dir_llseek(struct file *file, loff_t offset, int origin)
 	else
 		return ext4_llseek(file, offset, origin);
 }
+
 
 /*
  * This functoin implements a non-recursive way of freeing all of the
