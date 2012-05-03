@@ -3811,7 +3811,7 @@ static ssize_t ext4_ext_direct_IO(int rw, struct kiocb *iocb,
         if (overwrite)
           ret = __blockdev_direct_IO(rw, iocb, inode,
           inode->i_sb->s_bdev, iov, offset, nr_segs, ext4_get_block_write_nolock,
-          ext4_end_io_dio, NULL, 0;
+          ext4_end_io_dio, NULL, 0);
        else
             ret = __blockdev_direct_IO(rw, iocb, inode,
             inode->i_sb->s_bdev, iov,
