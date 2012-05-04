@@ -29,8 +29,8 @@
  * It helps to keep variable names smaller, simpler
  */
 
-#define DEF_FREQUENCY_UP_THRESHOLD		(80)
-#define DEF_FREQUENCY_DOWN_THRESHOLD		(20)
+#define DEF_FREQUENCY_UP_THRESHOLD		(70)
+#define DEF_FREQUENCY_DOWN_THRESHOLD		(30)
 
 /*
  * The polling frequency of this governor depends on the capability of
@@ -534,7 +534,7 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
             min_sampling_rate = 10000;
 			/* Bring kernel and HW constraints together */
             
-            dbs_tuners_ins.sampling_rate = 40000;
+            dbs_tuners_ins.sampling_rate = 15000;
 			cpufreq_register_notifier(
 					&dbs_cpufreq_notifier_block,
 					CPUFREQ_TRANSITION_NOTIFIER);
