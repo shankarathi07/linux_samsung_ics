@@ -524,9 +524,6 @@ struct ext4_new_group_data {
 	/* Don't normalize allocation size (used for fallocate) */
 #define EXT4_GET_BLOCKS_NO_NORMALIZE		0x0040
 
-/* Do not acquire i_data_sem lock */
-#define EXT4_GET_BLOCKS_NO_LOCK			0x0100
-
 /*
  * Flags used by ext4_free_blocks
  */
@@ -1571,10 +1568,6 @@ struct dx_hash_info
 	int		hash_version;
 	u32		*seed;
 };
-
-/* 32 and 64 bit signed EOF for dx directories */
-#define EXT4_HTREE_EOF_32BIT   ((1UL  << (32 - 1)) - 1)
-#define EXT4_HTREE_EOF_64BIT   ((1ULL << (64 - 1)) - 1)
 
 #define EXT4_HTREE_EOF	0x7fffffff
 

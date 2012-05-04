@@ -89,185 +89,12 @@ ext4_unaligned_aio(struct inode *inode, const struct iovec *iov,
 	return 0;
 }
 
-static inline ssize_t
-ext4_file_buffered_write(struct kiocb *iocb, const struct iovec *iov,
-			 unsigned long nr_segs, loff_t pos)
-{
-	return generic_file_aio_write(iocb, iov, nr_segs, pos);
-}
-
-static ssize_t
-ext4_file_dio_write(struct kiocb *iocb, const struct iovec *iov,
-		    unsigned long nr_segs, loff_t pos)
-{
-	struct file *file = iocb->ki_filp;
-	struct address_space * mapping = file->f_mapping;
-	struct inode *inode = file->f_path.dentry->d_inode;
-	struct blk_plug plug;
-	ssize_t ret;
-	ssize_t written, written_buffered;
-	size_t length = iov_length(iov, nr_segs);
-	size_t ocount;		/* original count */
-	size_t count;		/* after file limit checks */
-	int unaligned_aio = 0;
-	int overwrite = 0;
-	loff_t *ppos = &iocb->ki_pos;
-	loff_t endbyte;
-
-	BUG_ON(iocb->ki_pos != pos);
-
-	if (!is_sync_kiocb(iocb))
-		unaligned_aio = ext4_unaligned_aio(inode, iov, nr_segs, pos);
-
-	/* Unaligned direct AIO must be serialized; see comment above */
-	if (unaligned_aio) {
-		static unsigned long unaligned_warn_time;
-
-		/* Warn about this once per day */
-		if (printk_timed_ratelimit(&unaligned_warn_time, 60*60*24*HZ))
-			ext4_msg(inode->i_sb, KERN_WARNING,
-				 "Unaligned AIO/DIO on inode %ld by %s; "
-				 "performance will be poor.",
-				 inode->i_ino, current->comm);
-		mutex_lock(ext4_aio_mutex(inode));
-		ext4_aiodio_wait(inode);
-	}
-
-	mutex_lock(&inode->i_mutex);
-	blk_start_plug(&plug);
-
-	ocount = 0;
-	ret = generic_segment_checks(iov, &nr_segs, &ocount, VERIFY_READ);
-	if (ret)
-		goto unlock_out;
-
-	count = ocount;
-	pos = *ppos;
-
-	vfs_check_frozen(inode->i_sb, SB_FREEZE_WRITE);
-
-	/* We can write back this queue in page reclaim */
-	current->backing_dev_info = mapping->backing_dev_info;
-	written = 0;
-
-	ret = generic_write_checks(file, &pos, &count, S_ISBLK(inode->i_mode));
-	if (ret)
-		goto out;
-
-	if (count == 0)
-		goto out;
-
-	ret = file_remove_suid(file);
-	if (ret)
-		goto out;
-
-	file_update_time(file);
-
-	iocb->private = NULL;
-
-	if (!unaligned_aio && !file->f_mapping->nrpages &&
-	    pos + length < i_size_read(inode) &&
-	    ext4_should_dioread_nolock(inode)) {
-		struct ext4_map_blocks map;
-		unsigned int blkbits = inode->i_blkbits;
-		int err;
-		int len;
-
-		map.m_lblk = pos >> blkbits;
-		map.m_len = (EXT4_BLOCK_ALIGN(pos + length, blkbits) >> blkbits)
-			- map.m_lblk;
-		len = map.m_len;
-
-		err = ext4_map_blocks(NULL, inode, &map, 0);
-		if (err == len && (!map.m_flags ||
-		    map.m_flags & EXT4_MAP_MAPPED)) {
-			overwrite = 1;
-			iocb->private = &overwrite;
-			mutex_unlock(&inode->i_mutex);
-			down_read(&EXT4_I(inode)->i_data_sem);
-		}
-	}
-
-	if (file->f_mapping->nrpages && overwrite) {
-		overwrite = 0;
-		up_read(&EXT4_I(inode)->i_data_sem);
-		mutex_lock(&inode->i_mutex);
-	}
-
-	written = generic_file_direct_write(iocb, iov, &nr_segs, pos,
-						ppos, count, ocount);
-	if (written < 0 || written == count)
-		goto out;
-	/*
-	 * direct-io write to a hole: fall through to buffered I/O
-	 * for completing the rest of the request.
-	 */
-	pos += written;
-	count -= written;
-	written_buffered = generic_file_buffered_write(iocb, iov,
-					nr_segs, pos, ppos, count,
-					written);
-	/*
-	 * If generic_file_buffered_write() retuned a synchronous error
-	 * then we want to return the number of bytes which were
-	 * direct-written, or the error code if that was zero.  Note
-	 * that this differs from normal direct-io semantics, which
-	 * will return -EFOO even if some bytes were written.
-	 */
-	if (written_buffered < 0) {
-		ret = written_buffered;
-		goto out;
-	}
-
-	/*
-	 * We need to ensure that the page cache pages are written to
-	 * disk and invalidated to preserve the expected O_DIRECT
-	 * semantics.
-	 */
-	endbyte = pos + written_buffered - written - 1;
-	ret = filemap_write_and_wait_range(file->f_mapping, pos, endbyte);
-	if (ret == 0) {
-		written = written_buffered;
-		invalidate_mapping_pages(mapping,
-					 pos >> PAGE_CACHE_SHIFT,
-					 endbyte >> PAGE_CACHE_SHIFT);
-	} else {
-		/*
-		 * We don't know how much we wrote, so just return
-		 * the number of bytes which were direct-written
-		 */
-	}
-
-out:
-	current->backing_dev_info = NULL;
-	ret = written ? written : ret;
-
-unlock_out:
-	if (overwrite)
-		up_read(&EXT4_I(inode)->i_data_sem);
-	else
-		mutex_unlock(&inode->i_mutex);
-
-	if (ret > 0 || ret == -EIOCBQUEUED) {
-		ssize_t err;
-
-		err = generic_write_sync(file, pos, ret);
-		if (err < 0 && ret > 0)
-			ret = err;
-	}
-	blk_finish_plug(&plug);
-
-	if (unaligned_aio)
-		mutex_unlock(ext4_aio_mutex(inode));
-
-	return ret;
-}
-
 static ssize_t
 ext4_file_write(struct kiocb *iocb, const struct iovec *iov,
 		unsigned long nr_segs, loff_t pos)
 {
 	struct inode *inode = iocb->ki_filp->f_path.dentry->d_inode;
+	int unaligned_aio = 0;
 	int ret;
 
 	/*
@@ -287,12 +114,29 @@ ext4_file_write(struct kiocb *iocb, const struct iovec *iov,
 			nr_segs = iov_shorten((struct iovec *)iov, nr_segs,
 					      sbi->s_bitmap_maxbytes - pos);
 		}
+	} else if (unlikely((iocb->ki_filp->f_flags & O_DIRECT) &&
+		   !is_sync_kiocb(iocb))) {
+		unaligned_aio = ext4_unaligned_aio(inode, iov, nr_segs, pos);
 	}
 
-	if (unlikely(iocb->ki_filp->f_flags & O_DIRECT))
-		ret = ext4_file_dio_write(iocb, iov, nr_segs, pos);
-	else
-		ret = generic_file_aio_write(iocb, iov, nr_segs, pos);
+	/* Unaligned direct AIO must be serialized; see comment above */
+	if (unaligned_aio) {
+		static unsigned long unaligned_warn_time;
+
+		/* Warn about this once per day */
+		if (printk_timed_ratelimit(&unaligned_warn_time, 60*60*24*HZ))
+			ext4_msg(inode->i_sb, KERN_WARNING,
+				 "Unaligned AIO/DIO on inode %ld by %s; "
+				 "performance will be poor.",
+				 inode->i_ino, current->comm);
+		mutex_lock(ext4_aio_mutex(inode));
+		ext4_aiodio_wait(inode);
+	}
+
+	ret = generic_file_aio_write(iocb, iov, nr_segs, pos);
+
+	if (unaligned_aio)
+		mutex_unlock(ext4_aio_mutex(inode));
 
 	return ret;
 }

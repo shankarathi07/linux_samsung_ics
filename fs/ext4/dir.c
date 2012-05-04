@@ -60,25 +60,6 @@ static unsigned char get_dtype(struct super_block *sb, int filetype)
 	return (ext4_filetype_table[filetype]);
 }
 
-/**
-* Check if the given dir-inode refers to an htree indexed directory
-*
-* Return 1 if it is a dx dir, 0 if not
-*/
-static int is_dx_dir(struct inode *inode)
-{
-    struct super_block *sb = inode->i_sb;
-   
-    if (EXT4_HAS_COMPAT_FEATURE(inode->i_sb, EXT4_FEATURE_COMPAT_DIR_INDEX) &&
-        ((ext4_test_inode_flag(inode, EXT4_INODE_INDEX)) ||
-                    ((inode->i_size >> sb->s_blocksize_bits) == 1)))
-       return 1;
-    
-    
-    return 0;
-}
-
-
 /*
  * Return 0 if the directory entry is OK, and 1 if there is a problem
  *
@@ -304,39 +285,6 @@ struct fname {
 	__u8		file_type;
 	char		name[0];
 };
-
-static inline loff_t ext4_get_htree_eof(struct file *filp)
-{
-    if ((filp->f_mode & FMODE_32BITHASH) ||
-        (!(filp->f_mode & FMODE_64BITHASH) && is_32bit_api()))
-       return EXT4_HTREE_EOF_32BIT;
-    else
-        return EXT4_HTREE_EOF_64BIT;
-}
-
-/*
- * ext4_dir_llseek() calls generic_file_llseek_size to handle htree
- * directories, where the "offset" is in terms of the filename hash
- * value instead of the byte offset.
- *
- * Because we may return a 64-bit hash that is well beyond offset limits,
- * we need to pass the max hash as the maximum allowable offset in
- * the htree directory case.
- *
- * For non-htree, ext4_llseek already chooses the proper max offset.
- */
-loff_t ext4_dir_llseek(struct file *file, loff_t offset, int origin)
-{
-	struct inode *inode = file->f_mapping->host;
-	int dx_dir = is_dx_dir(inode);
-
-	if (likely(dx_dir))
-		return generic_file_llseek_size(file, offset, origin,
-						ext4_get_htree_eof(file));
-	else
-		return ext4_llseek(file, offset, origin);
-}
-
 
 /*
  * This functoin implements a non-recursive way of freeing all of the
