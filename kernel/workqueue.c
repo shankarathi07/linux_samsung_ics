@@ -2033,7 +2033,7 @@ static int rescuer_thread(void *__wq)
 	bool is_unbound = wq->flags & WQ_UNBOUND;
 	unsigned int cpu;
 
-	set_user_nice(current, RESCUER_NICE_LEVEL);
+	set_user_nice(current, -5);
 repeat:
 	set_current_state(TASK_INTERRUPTIBLE);
 
