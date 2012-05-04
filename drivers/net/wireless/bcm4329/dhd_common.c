@@ -1920,24 +1920,6 @@ bool is_associated(dhd_pub_t *dhd, void *bss_buf)
 	if ((memcmp(bssid, zbuf, ETHER_ADDR_LEN) != 0)) {
 		/*  STA is assocoated BSSID is non zero */
         
-
-	bzero(bssid, ETHER_ADDR_LEN);
-	bzero(zbuf, ETHER_ADDR_LEN);
-
-	ret = dhdcdc_set_ioctl(dhd, 0, WLC_GET_BSSID, (char *)bssid, ETHER_ADDR_LEN);
-	DHD_TRACE((" %s WLC_GET_BSSID ioctl res = %d\n", __FUNCTION__, ret));
-
-	if (ret == BCME_NOTASSOCIATED) {
-		DHD_TRACE(("%s: not associated! res:%d\n", __FUNCTION__, ret));
-	}
-
-	if (ret < 0)
-		return FALSE;
-
-	if ((memcmp(bssid, zbuf, ETHER_ADDR_LEN) != 0)) {
-		/*  STA is assocoated BSSID is non zero */
-
-
 		if (bss_buf) {
 			/* return bss if caller provided buf */
 			memcpy(bss_buf, bssid, ETHER_ADDR_LEN);
@@ -1955,8 +1937,7 @@ int dhd_get_dtim_skip(dhd_pub_t *dhd)
 	int bcn_li_dtim;
 	char buf[128];
 	int ret;
-	int dtim_assoc;
-    dtim_assoc = 0;
+	int dtim_assoc = 0;
     
 	if ((dhd->dtim_skip == 0) || (dhd->dtim_skip == 1))
 		bcn_li_dtim = 3;
@@ -2443,7 +2424,7 @@ wl_iw_parse_ssid_list(char** list_str, wlc_ssid_t* ssid, int idx, int max)
  * Parse channel list from iwpriv CSCAN
  */
 int
-wl_iw_parse_channel_list(char** list_str, uint16* channel_list,int channel_num)
+wl_iw_parse_channel_list(char** list_str, uint16* channel_list, int channel_num)
 {
 	int num;
 	int val;
