@@ -37,6 +37,7 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		struct ext4_iloc iloc;
 		unsigned int oldflags;
 		unsigned int jflag;
+		unsigned long state_flags;
 
 		if (!inode_owner_or_capable(inode))
 			return -EACCES;
@@ -57,6 +58,7 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 			goto flags_out;
 
 		oldflags = ei->i_flags;
+		state_flags = ext4_save_state_flags(ei);
 
 		/* The JOURNAL_DATA flag is modifiable only by root */
 		jflag = flags & EXT4_JOURNAL_DATA_FL;
@@ -115,6 +117,7 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		flags = flags & EXT4_FL_USER_MODIFIABLE;
 		flags |= oldflags & ~EXT4_FL_USER_MODIFIABLE;
 		ei->i_flags = flags;
+		ext4_restore_state_flags(ei, state_flags);
 
 		ext4_set_inode_flags(inode);
 		inode->i_ctime = ext4_current_time(inode);

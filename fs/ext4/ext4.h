@@ -1290,12 +1290,33 @@ static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
 {
 	(ei)->i_state_flags = 0;
 }
+
+static inline unsigned long ext4_save_state_flags(struct ext4_inode_info *ei)
+{
+	return (ei)->i_state_flags;
+}
+
+static inline void ext4_restore_state_flags(struct ext4_inode_info *ei,
+					    unsigned long state)
+{
+}
 #else
 EXT4_INODE_BIT_FNS(state, flags, 32)
 
 static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
 {
 	/* We depend on the fact that callers will set i_flags */
+}
+
+static inline unsigned long ext4_save_state_flags(struct ext4_inode_info *ei)
+{
+	return (ei)->i_flags >> 32;
+}
+
+static inline void ext4_restore_state_flags(struct ext4_inode_info *ei,
+					    unsigned long state)
+{
+	(ei)->i_flags |= state << 32;
 }
 #endif
 #else
