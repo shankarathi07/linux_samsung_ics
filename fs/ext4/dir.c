@@ -60,6 +60,25 @@ static unsigned char get_dtype(struct super_block *sb, int filetype)
 	return (ext4_filetype_table[filetype]);
 }
 
+/**
+* Check if the given dir-inode refers to an htree indexed directory
+*
+* Return 1 if it is a dx dir, 0 if not
+*/
+static int is_dx_dir(struct inode *inode)
+{
+    struct super_block *sb = inode->i_sb;
+   
+    if (EXT4_HAS_COMPAT_FEATURE(inode->i_sb, EXT4_FEATURE_COMPAT_DIR_INDEX) &&
+        ((ext4_test_inode_flag(inode, EXT4_INODE_INDEX)) ||
+                    ((inode->i_size >> sb->s_blocksize_bits) == 1)))
+       return 1;
+    
+    
+    return 0;
+}
+
+
 /*
  * Return 0 if the directory entry is OK, and 1 if there is a problem
  *
@@ -286,6 +305,14 @@ struct fname {
 	char		name[0];
 };
 
+static inline loff_t ext4_get_htree_eof(struct file *filp)
+{
+    if ((filp->f_mode & FMODE_32BITHASH) ||
+        (!(filp->f_mode & FMODE_64BITHASH) && is_32bit_api()))
+       return EXT4_HTREE_EOF_32BIT;
+    else
+        return EXT4_HTREE_EOF_64BIT;
+}
 
 /*
  * ext4_dir_llseek() calls generic_file_llseek_size to handle htree
