@@ -18,6 +18,7 @@
 #include <linux/module.h>
 #include <linux/fsnotify.h>
 #include <linux/audit.h>
+#include <linux/gfp.h>
 #include <asm/uaccess.h>
 
 
