@@ -500,7 +500,8 @@ ext4_xattr_release_block(handle_t *handle, struct inode *inode,
 		ea_bdebug(bh, "refcount now=%d; releasing",
 			  le32_to_cpu(BHDR(bh)->h_refcount));
 	
-	}
+	
+    }
 out:
 	ext4_std_error(inode->i_sb, error);
 	return;
