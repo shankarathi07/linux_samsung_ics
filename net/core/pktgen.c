@@ -1932,7 +1932,7 @@ static int pktgen_device_event(struct notifier_block *unused,
 {
 	struct net_device *dev = ptr;
 
-	if (!net_eq(dev_net(dev), &init_net) || pktgen_exiting)
+	if (!net_eq(dev_net(dev), &init_net))
 		return NOTIFY_DONE;
 
 	/* It is OK that we do not hold the group lock right now,
@@ -3755,18 +3755,12 @@ static void __exit pg_cleanup(void)
 {
 	struct pktgen_thread *t;
 	struct list_head *q, *n;
-	LIST_HEAD(list);
 
 	/* Stop all interfaces & threads */
 	pktgen_exiting = true;
 
-	mutex_lock(&pktgen_thread_lock);
-	list_splice_init(&pktgen_threads, &list);
-	mutex_unlock(&pktgen_thread_lock);
-
-	list_for_each_safe(q, n, &list) {
+	list_for_each_safe(q, n, &pktgen_threads) {
 		t = list_entry(q, struct pktgen_thread, th_list);
-		list_del(&t->th_list);
 		kthread_stop(t->tsk);
 		kfree(t);
 	}
